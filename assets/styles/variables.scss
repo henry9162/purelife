@@ -1,0 +1,164 @@
+//40BCB6
+//light red - #F85151
+$brandColor: #750C0D;
+$navLinkColor: #F60003;
+$post-title-home-size: 1.25rem;
+$post-title-home-weight: 500;
+$post-title-font-family: "gotham-black", sans-serif;
+$post-body-font-family: "gotham-light", sans-serif;
+
+$phone: 320px;
+$tablet: 768px;
+
+@mixin phone {
+    @media screen and (min-width: #{$phone}), screen and (min-height: 640px) {
+        @content;
+    }
+}
+
+@mixin tablet {
+    @media (min-width: #{$tablet}) {
+        @content;
+    }
+}
+
+@font-face {
+    font-family: 'gotham-black';
+    src: url('~assets/fonts/Gotham-Black.otf');
+}
+@font-face {
+    font-family: 'gotham-light';
+    src: url('~assets/fonts/Gotham-Light.otf');
+}
+$fonts: (
+    "family": "gotham-black",
+    "weight": 500,
+    "h6": "16px",
+    "h5": "20px",
+    "h4": "24px",
+    "h3": "28px",
+    "h2": "32px"
+);
+$fontLight: (
+    "family": "gotham-light",
+    "weight": 500,
+    "h6": "16px",
+    "h5": "20px",
+    "h4": "24px",
+    "h3": "28px",
+    "h2": "32px"
+);
+@function font($name) {
+    @return map-get($fonts, $name)
+};
+@function light-font($name) {
+    @return map-get($fontLight, $name)
+};
+@font-face {
+    font-family: 'gotham-bold';
+    src: url('~assets/fonts/Gotham-Bold.otf');
+}
+@font-face {
+    font-family: 'gotham-light';
+    src: url('~assets/fonts/Gotham-Light.otf');
+}
+@font-face {
+    font-family: 'gotham-thin';
+    src: url('~assets/fonts/Gotham-Thin.otf');
+}
+.custom-h5 {
+    font-size: font(h5) !important;
+    font-weight: font(weight);
+    font-family: font(family) !important;
+    line-height: normal;
+}
+.custom-h6 {
+    font-size: font(h6);
+    font-weight: font(weight);
+    font-family: font(family) !important;
+    line-height: normal;
+}
+.custom-h4 {
+    font-size: font(h4) !important;
+    font-weight: font(weight) !important;
+    font-family: font(family) !important;
+    line-height: normal !important;
+}
+
+.custom-h3 {
+    font-size: font(h3) !important;
+    font-weight: font(weight) !important;
+    font-family: font(family) !important;
+    line-height: normal !important;
+}
+
+.custom-h2 {
+    font-size: font(h2) !important;
+    font-weight: font(weight) !important;
+    font-family: font(family) !important;
+    line-height: normal !important;
+}
+
+
+.custom-light-h5 {
+    font-size: light-font(h5) !important;
+    font-weight: light-font(weight);
+    font-family: light-font(family) !important;
+    line-height: normal;
+}
+.custom-light-h6 {
+    font-size: light-font(h6);
+    font-weight: light-font(weight);
+    font-family: light-font(family) !important;
+    line-height: normal;
+}
+.custom-light-h4 {
+    font-size: light-font(h4) !important;
+    font-weight: light-font(weight) !important;
+    font-family: light-font(family) !important;
+    line-height: normal !important;
+}
+
+.custom-light-h3 {
+    font-size: light-font(h3) !important;
+    font-weight: light-font(weight) !important;
+    font-family: light-font(family) !important;
+    line-height: normal !important;
+}
+
+.custom-light-h2 {
+    font-size: light-font(h2) !important;
+    font-weight: light-font(weight) !important;
+    font-family: light-font(family) !important;
+    line-height: normal !important;
+}
+
+.sideNav-title {
+    color: #3CB371;
+}
+
+.custom-loader {
+    animation: loader 1s infinite;
+    display: flex;
+}
+
+@-moz-keyframes loader {
+    from { transform: rotate(0) }
+    to { transform: rotate(360deg);}
+}
+
+@-webkit-keyframes loader {
+    from { transform: rotate(0);}
+    to { transform: rotate(360deg); }
+}
+
+@-o-keyframes loader {
+    from { transform: rotate(0); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes loader {
+    from { transform: rotate(0); }
+    to { transform: rotate(360deg); }
+}
+

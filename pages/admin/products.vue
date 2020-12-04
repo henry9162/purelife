@@ -2,8 +2,8 @@
 <div>
     <v-card class="mx-10 mt-14" color="#22A64E">
         <modal
-            name="products-modal" :min-width="700"
-            :max-width="700" :adaptive="true"
+            name="products-modal" :min-width="1000"
+            :max-width="1000" :adaptive="true"
             :scrollable="true" height="auto"
             transition="fade-transition" :clickToClose="false">
 
@@ -22,11 +22,32 @@
                 <v-card-text>
                     <v-container>
                         <v-row class="px-4">
-                            <v-col cols="12" md="6" class="py-0 pr-8">
+                            <v-col cols="12" md="4">
+                                <div class="viewImage mr-4">
+                                    <v-img :src="tempImage ? tempImage : threadImage ? threadImage : defaultImage" aspect-ratio="1.7"></v-img>
+
+                                    <v-btn class="mx-2 viewImageBtn" fab dark small color="#40BCB6">
+                                            <v-file-input
+                                                class="pt-0 pl-2"
+                                                hide-input
+                                                v-model="file"
+                                                placeholder="Upload image"
+                                                label="Image"
+                                                accept="image/*"
+                                                show-size
+                                            >
+                                                <template v-slot:selection="{ text }">
+                                                    <v-chip small label color="#40BCB6">{{ text }}</v-chip>
+                                                </template>
+                                            </v-file-input>
+                                    </v-btn>
+                                </div>
+                            </v-col>
+                            <v-col cols="12" md="4" class="py-0 pr-8">
                                 <v-text-field v-model="editedItem.productName" label="Product Name"></v-text-field>
                                 <v-text-field v-model="editedItem.price" label="Price"></v-text-field>
                                 <v-select
-                                      v-model="editedItem.pharmacyBranchId"
+                                      v-model="editedItem.productBranchId"
                                       :items="branches"
                                       item-text="pharmacyBranchName"
                                       item-value="pharmacyBranchId"
@@ -36,8 +57,8 @@
                             </v-col>
 
 
-                            <v-col cols="12" md="6" class="py-0 px-0">
-                                <v-text-field v-model="editedItem.quantity" label="Quantity"></v-text-field>
+                            <v-col cols="12" md="4" class="py-0 px-0">
+                                <v-text-field v-model="editedItem.quantity" type="number" label="Quantity"></v-text-field>
                                 <v-text-field v-model="editedItem.serialNumber" label="Serial Number"></v-text-field>
                                 <v-select
                                       v-model="editedItem.productGroupId"
@@ -49,23 +70,45 @@
                                 </v-select>
                             </v-col>
 
-                            <v-col cols="12" class="py-0 pr-0">
-                              <v-text-field v-model="editedItem.expiryDate" label="Expiry Date"></v-text-field>
+                            <v-col cols="12" offset-md="4" md="8" class="py-0 pr-0">
+                              <!-- <v-text-field v-model="editedItem.expiryDate" label="Expiry Date"></v-text-field> -->
+                                <v-menu
+                                    ref="menu" v-model="menu" :close-on-content-click="false" :return-value.sync="editedItem.expiryDate"
+                                    transition="scale-transition" offset-y min-width="290px">
+
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-text-field
+                                            v-model="editedItem.expiryDate"
+                                            label="Expiry Date"
+                                            
+                                            readonly
+                                            v-bind="attrs"
+                                            v-on="on"
+                                        ></v-text-field>
+                                    </template>
+
+                                    <v-date-picker v-model="editedItem.expiryDate" no-title scrollable>
+                                        <v-spacer></v-spacer>
+
+                                        <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
+                                        <v-btn text color="primary" @click="$refs.menu.save(editedItem.expiryDate)">OK</v-btn>
+                                    </v-date-picker>
+                                </v-menu>
                             </v-col>
 
 
-
-                            <v-btn block @click="save" depressed large prepend-inner-icon="mdi-map-marker" clearable
-                                class="white--text rounded-0 mt-6 mb-10 px-8 py-5 text-capitalize"
-                                color="#009933" :loading="loading" :disabled="loading" v-text="btnText">
-                                <v-icon right>mdi-send</v-icon>
-                                <template v-slot:loader>
-                                    <span class="custom-loader">
-                                        <v-icon light>mdi-cached</v-icon>
-                                    </span>
-                                </template>
-                            </v-btn>
-
+                            <v-col cols="12" offset-md="4" md="8" class="py-0 pr-0">
+                                <v-btn block @click="save" depressed large prepend-inner-icon="mdi-map-marker" clearable
+                                    class="white--text rounded-0 mt-6 mb-10 px-8 py-5 text-capitalize"
+                                    color="#009933" :loading="loading" :disabled="loading" v-text="btnText">
+                                    <v-icon right>mdi-send</v-icon>
+                                    <template v-slot:loader>
+                                        <span class="custom-loader">
+                                            <v-icon light>mdi-cached</v-icon>
+                                        </span>
+                                    </template>
+                                </v-btn>
+                            </v-col>
                         </v-row>
                     </v-container>
                 </v-card-text>
@@ -113,13 +156,15 @@ export default {
             },
             { text: 'Quantity', value: 'quantity' },
             { text: 'Price', value: 'price' },
+            { text: 'Packaging', value: 'productPackageName'},
             { text: 'Expiry', value: 'expiryDate' },
             { text: 'Serial Number', value: 'serialNumber' },
-            { text: 'Branch', value: 'productBranchId' },
-            { text: 'Group', value: 'productGroupId' },
+            { text: 'Branch', value: 'productBrandName' },
+            { text: 'Group', value: 'productGroupName' },
             { text: 'Created On', value: 'createdOn' },
             { text: 'Actions', value: 'actions', sortable: false },
         ],
+        menu: false,
         editedIndex: -1,
         editedItem: {
             productId: '',
@@ -127,9 +172,10 @@ export default {
             quantity: '',
             price: '',
             serialNumber: '',
-            expiryDate: '',
+            expiryDate: new Date().toISOString().substr(0, 10),
             productBranchId: '',
             productGroupId: '',
+            productImage: '',
             createdOn: '',
         },
         defaultItem: {
@@ -141,13 +187,21 @@ export default {
             expiryDate: '',
             productBranchId: '',
             productGroupId: '',
+            productImage: '',
             createdOn: '',
-        }
+        },
+        file: '',
+        threadImage: '',
+        tempImage: '',
+        defaultImage: 'https://via.placeholder.com/150'
     }),
 
     watch: {
         dialog (val) {
             val || this.close()
+        },
+        file(val){
+            val ? this.processImage(val) : ''
         }
     },
 
@@ -167,10 +221,25 @@ export default {
     },
 
     methods: {
+        processImage(imageFile){
+            // let imageSize = Number((imageFile.size / 1024 / 1024).toFixed(3));
+            // if(imageSize > 0.322){
+            //     this.$toast.error('Image should be of size 320kb or less, Please resize!').goAway(3500)
+            //     return
+            // }
+            let reader = new FileReader();
+            reader.readAsDataURL(imageFile);
+            reader.onload = e => {
+                let base64 = e.target.result;
+                this.tempImage = base64
+                this.editedItem.productImage = base64
+            };
+        },
         editItem (item) {
-            this.editedIndex = this.products.indexOf(item)
-            this.editedItem = Object.assign({}, item)
+            this.editedIndex = this.products.indexOf(item);
+            this.editedItem = Object.assign({}, item);
             this.btnText = 'Update';
+            this.threadImage = item.productImage;
             this.$modal.show('products-modal')
         },
         addProduct(){
@@ -183,8 +252,10 @@ export default {
                 expiryDate: this.editedItem.expiryDate,
                 productBranchId: this.editedItem.productBranchId,
                 productGroupId: this.editedItem.productGroupId,
+                productImage: this.editedItem.productImage,
                 createdOn: new Date(),
             }
+            
             this.$store.dispatch('productss/addProduct', data).then(response => {
                 this.loading = false
                 this.refreshTable()
@@ -192,6 +263,7 @@ export default {
             })
         },
         updateProduct(){
+            this.loading = true
             let data = {
                 productId: this.products[this.editedIndex].productId,
                 productName: this.editedItem.productName,
@@ -201,11 +273,14 @@ export default {
                 expiryDate: this.editedItem.expiryDate,
                 productBranchId: this.editedItem.productBranchId,
                 productGroupId: this.editedItem.productGroupId,
+                productImage: this.editedItem.productImage,
                 modifiedOn: new Date(),
                 isDeprecated: this.products[this.editedIndex].isDeprecated
             }
+            //console.log(data)
 
-            this.$store.dispatch('productss/updateProducts', data).then(response => {
+            this.$store.dispatch('productss/updateProduct', data).then(response => {
+                this.loading  = false
                 this.refreshTable();
                 this.close();
             })
@@ -214,7 +289,7 @@ export default {
             confirm('Are you sure you want to delete this product?') && this.deleteProduct(item)
         },
         deleteProduct(item){
-            let index = this.branches.indexOf(item)
+            let index = this.products.indexOf(item)
             this.$store.dispatch('productss/deleteProduct', this.products[index].productId).then(response => {
                 this.refreshTable()
             })
@@ -243,6 +318,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+    .viewImage {
+        position: relative
+    }
+    .viewImageBtn {
+        position: absolute;
+        bottom: -15px;
+        right: -12px
+    }
     .list-color { color: #22A64E !important}
 
     .post-caption {

@@ -2,7 +2,7 @@
 <div>
     <v-card class="mx-10 mt-14" color="#22A64E">
         <modal
-            name="classifications-modal" :min-width="500"
+            name="diseases-modal" :min-width="500"
             :max-width="700" :adaptive="true"
             :scrollable="true" height="auto"
             transition="fade-transition" :clickToClose="false">
@@ -23,10 +23,11 @@
                     <v-container>
                         <v-row class="px-8">
                             <v-col cols="12" class="py-0 px-0">
-                                <v-text-field v-model="editedItem.productClassificationName" label="Classification Name"></v-text-field>
+                                <v-text-field v-model="editedItem.diseaseName" label="Disease Name"></v-text-field>
                             </v-col>
                             <v-col cols="12" class="py-0 px-0">
-                                <v-text-field v-model="editedItem.productClassificationDescription" label="Description"></v-text-field>
+                                <!-- <v-text-field v-model="editedItem.severity" label="Severity"></v-text-field> -->
+                                <v-select v-model="editedItem.severity" :items="severities" label="Severity"></v-select>
                             </v-col>
 
                             <v-btn block @click="save" depressed large prepend-inner-icon="mdi-map-marker" clearable
@@ -48,15 +49,15 @@
         </modal>
 
 
-        <v-data-table :headers="headers" :items="classifications" sort-by="calories" class="px-8 py-4">
+        <v-data-table :headers="headers" :items="diseases" sort-by="calories" class="px-8 py-4">
             <template v-slot:top>
                 <v-toolbar flat color="white">
-                    <v-toolbar-title class="list-color custom-style">All Classifications</v-toolbar-title>
+                    <v-toolbar-title class="list-color custom-style">All Diseases</v-toolbar-title>
                     <v-divider class="mx-4" inset vertical></v-divider>
                     <v-spacer></v-spacer>
 
-                    <v-btn @click="$modal.show('classifications-modal')" depressed large color="#22A64E" dark class="rounded-0 post-caption">
-                        <v-icon left>mdi-plus-circle-outline</v-icon> Add Classification
+                    <v-btn @click="$modal.show('diseases-modal')" depressed large color="#22A64E" dark class="rounded-0 post-caption">
+                        <v-icon left>mdi-plus-circle-outline</v-icon> Add Disease
                     </v-btn>
                 </v-toolbar>
             </template>
@@ -64,9 +65,6 @@
             <template v-slot:item.actions="{ item }">
                 <v-icon small class="mr-2 green--text" @click="editItem(item)">mdi-pencil</v-icon>
                 <v-icon small class="red--text" @click="deleteItem(item)">mdi-delete</v-icon>
-            </template>
-            <template v-slot:no-data>
-                <v-btn color="primary">Reset</v-btn>
             </template>
         </v-data-table>
     </v-card>
@@ -86,25 +84,24 @@ export default {
                 text: 'Name',
                 align: 'start',
                 sortable: false,
-                value: 'productClassificationName',
+                value: 'diseaseName',
             },
-            { text: 'Description', value: 'productClassificationDescription' },
+            { text: 'Severity', value: 'severity' },
             { text: 'Created On', value: 'createdOn' },
             { text: 'Actions', value: 'actions', sortable: false },
         ],
         editedIndex: -1,
         editedItem: {
-            productGroupClassificationId: '',
-            productClassificationName: '',
-            productClassificationDescription: '',
+            diseaseName: '',
+            severity: '',
             createdOn: '',
         },
         defaultItem: {
-            productGroupClassificationId: '',
-            productClassificationName: '',
-            productClassificationDescription: '',
+            diseaseName: '',
+            severity: '',
             createdOn: '',
         },
+        severities: ['Low', 'Moderate', 'High', 'Very High', 'Extremely High']
     }),
 
     watch: {
@@ -114,79 +111,75 @@ export default {
     },
 
     computed: {
-        classifications(){
-            return this.$store.getters["classifications/allClassifications"];
+        diseases(){
+            return this.$store.getters["diseases/allDiseases"];
         },
         formTitle () {
-            return this.editedIndex === -1 ? 'Add Classification' : 'Edit Classification';
+            return this.editedIndex === -1 ? 'Add Disease' : 'Edit Disease';
         }
     },
 
     methods: {
         editItem (item) {
-            this.editedIndex = this.classifications.indexOf(item)
+            this.editedIndex = this.diseases.indexOf(item)
             this.editedItem = Object.assign({}, item)
             this.btnText = 'Update';
-            this.$modal.show('classifications-modal')
+            this.$modal.show('diseases-modal')
         },
-        addClassification(){
+        addDisease(){
             this.loading = true
             let data = {
-                productClassificationName: this.editedItem.productClassificationName,
-                productClassificationDescription: this.editedItem.productClassificationDescription,
+                diseaseName: this.editedItem.diseaseName,
+                severity: this.editedItem.severity,
                 createdOn: new Date()
             }
-            this.$store.dispatch('classifications/addClassification', data).then(response => {
+            this.$store.dispatch('diseases/addDisease', data).then(response => {
                 this.loading = false
                 this.refreshTable()
                 this.close();
             })
         },
-        updateClassification(){
-            this.btnText = 'Update'
-            this.loading = true
+        updateDisease(){
             let data = {
-                productGroupClassificationId: this.classifications[this.editedIndex].productGroupClassificationId,
-                productClassificationName: this.editedItem.productClassificationName,
-                productClassificationDescription: this.editedItem.productClassificationDescription,
-                createdOn: this.editedItem.createdOn,
-                modifiedOn: this.classifications[this.editedIndex].modifiedOn,
-                isDeprecated: this.classifications[this.editedIndex].isDeprecated,
-                createdBy: this.classifications[this.editedIndex].createdBy
+                diseaseId: this.diseases[this.editedIndex].diseaseId,
+                diseaseName: this.editedItem.diseaseName,
+                severity: this.editedItem.severity,
+                createdOn: this.diseases[this.editedIndex].createdOn,
+                modifiedOn: new Date(),
+                isDeprecated: this.diseases[this.editedIndex].isDeprecated
             }
-            this.$store.dispatch('classifications/updateClassification', data).then(response => {
-                this.loading = false
+        
+            this.$store.dispatch('diseases/updateDisease', data).then(response => {
                 this.refreshTable();
                 this.close();
             })
         },
         deleteItem (item) {
-            confirm('Are you sure you want to delete this classification?') && this.deleteClassification(item)
+            confirm('Are you sure you want to delete this disease?') && this.deleteDisease(item)
         },
-        deleteClassification(item){
-            let index = this.classifications.indexOf(item)
-            this.$store.dispatch('classifications/deleteClassification', this.classifications[index].productGroupClassificationId).then(response => {
+        deleteDisease(item){
+            let index = this.diseases.indexOf(item)
+            this.$store.dispatch('diseases/deleteDisease', this.diseases[index].diseaseId).then(response => {
                 this.refreshTable()
             })
         },
         refreshTable(){
-            this.$store.dispatch('classifications/getAllClassifications');
+            this.$store.dispatch('diseases/getAllDiseases');
         },
         close () {
             this.$nextTick(() => {
                 this.editedItem = Object.assign({}, this.defaultItem)
                 this.editedIndex = -1
                 this.loading = false
-                this.btnText = 'Submit'
             })
-            this.$modal.hide('classifications-modal');
+            this.$modal.hide('diseases-modal');
         },
 
         save () {
             if (this.editedIndex > -1) {
-                this.updateClassification();
+                this.updateDisease();
             } else {
-                this.addClassification();
+                this.addDisease();
             }
         },
     }

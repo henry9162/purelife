@@ -209,6 +209,7 @@ export default {
             })
         },
         updateProductGroup(){
+            this.loading = true
             let data = {
                 productGroupId: this.productGroups[this.editedIndex].productGroupId,
                 productGroupName: this.editedItem.productGroupName,
@@ -225,6 +226,7 @@ export default {
             }
             //console.log(data);
             this.$store.dispatch('groups/updateProductGroup', data).then(response => {
+                this.loading = false
                 this.refreshTable();
                 this.close();
             })

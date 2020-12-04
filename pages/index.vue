@@ -1,545 +1,248 @@
 <template>
-    <div class="index">
-        <!-- <div class="clip">
-            <v-carousel dark cycle height="500" hide-delimiters show-arrows-on-hover>
-                <v-carousel-item v-for="(slide, i) in slides" :key="i" :src="require(`~/assets/images/${slide.src}`)">
-                </v-carousel-item>
-            </v-carousel>
-        </div> -->
-
-        <div class="slide">
-            <!-- <div class="in-carousel">
-                <div class="text-center">
-                    <p class="mg-h1 mg-gradient">Introducing</p>
-                </div>
-            </div> -->
-            <client-only>
-                <vue-flux
-                    :options="fluxOptions"
-                    :images="fluxImages"
-                    :transitions="fluxTransitions"
-                    :captions="vfCaptions"
-                    style="width:100%;height: 100%"
-                    ref="slider">
-
-                    <template v-slot:preloader>
-                        <flux-preloader />
-                    </template>
-
-                    <template v-slot:pagination>
-                        <flux-pagination />
-                    </template>
-
-                    <template v-slot:index>
-                        <flux-index />
-                    </template>
-
-                    <template v-slot:caption>
-                        <!-- <flux-caption> -->
-                            <v-container>
-                                <v-row>
-                                    <v-col cols="12" md="6"></v-col>
-                                    <v-col cols="12" md="6">
-                                        <div class="custom-caption ml-6">
-                                            <span class="white--text custom-h4"></span>
-                                            <div class="custom-text white--text">DRUGS AND PHARMACEUTICALS</div>
-                                            <div class="pt-1 pb-4 custom-h3 custom-red">SPECIAL 20% OFF</div>
-                                            <div class="post-caption white--text">FOR ALL AGE CATEGORY</div>
-                                            <v-btn style="padding-left: 40px !important; padding-right: 40px !important" class="text-capitalize white--text mt-6" x-large rounded color="rgb(237,0,0)">
-                                                Get Started
-                                            </v-btn>
-                                        </div>      
-                                    </v-col>
-                                </v-row>
-                            </v-container>
-                        <!-- </flux-caption> -->
-                    </template>
-                </vue-flux>
-
-                <!-- <flux-caption :slider="$refs.slider" /> -->
-            </client-only>
+    <div>
+        <!-- Breadcrumbs -->
+        <div class="d-flex justify-center">
+            <v-breadcrumbs class="pa-4" :items="items" small></v-breadcrumbs>
         </div>
 
-        <div class="d-flex justify-center quick-info">
-            <div class="d-flex">
-                <div class="quickInfo-1 pl-6">
-                    <div class="d-flex mt-5 pb-5">
-                        <div class="d-flex justify-center align-center pr-4">
+        <!-- Product title parallax -->
+        <titleParalax>{{ $route.query.name ? $route.query.name : 'All-Product' }}</titleParalax>
+
+        <v-container class="white px-0 pt-0 pb-0" fluid>
+            <v-row class="white mx-0 px-0 pb-0">
+                <transition enter-active-class="animated pulse" mode="out-in">
+                    <v-col v-if="visible" class="px-0" md="3" style="border-right: 1px solid lightgrey">
+                        <div class="px-4 pt-2">
+                            <div class="title font-weight-bold text-uppercase">Filters</div>
+                            <v-divider class="mt-2"></v-divider>
+                        </div>
+                        <!-- Price -->
+                        <div class="px-4 pt-2">
+                            <v-list>
+                                <v-list-group v-model="expandPrice" no-action>
+                                    <template v-slot:activator>
+                                        <v-list-item-content>
+                                            <v-list-item-title>
+                                                <div class="grey--text text--darken-2 font-weight-bold">Price</div>
+                                            </v-list-item-title>
+                                        </v-list-item-content>
+                                    </template>
+                                    <v-list-item class="pl-0" @click="">
+                                        <v-list-item-content>
+                                            <div class="px-3">
+                                                <v-range-slider v-model="range" :max="max" :min="min" hide-details class="align-center"></v-range-slider>
+                                                <div class="d-flex justify-space-between">
+                                                    <div>
+                                                        <v-text-field v-model="range[0]" class="mt-0 pt-0" prepend-icon="mdi-currency-ngn" hide-details single-line type="number" style="width: 100px"></v-text-field>
+                                                    </div>
+                                                    <div>
+                                                        <v-text-field v-model="range[1]" class="mt-0 pt-0" prepend-icon="mdi-currency-ngn" hide-details single-line type="number" style="width: 100px"></v-text-field>
+                                                    </div>   
+                                                </div>    
+                                            </div>
+                                        </v-list-item-content>
+                                    </v-list-item>
+                                </v-list-group>
+                            </v-list>
+                        </div>
+                        <!-- Availability -->
+                        <!-- <div class="px-4">
+                            <v-list class="pb-0">
+                                <v-list-group v-model="expandAvailability" no-action>
+                                    <template v-slot:activator>
+                                        <v-list-item-content>
+                                            <v-list-item-title>
+                                                <div class="grey--text text--darken-2 font-weight-bold">Availability</div>
+                                            </v-list-item-title>
+                                        </v-list-item-content>
+                                    </template>
+                                    <v-list-item class="pl-0 pb-0" @click="">
+                                        <v-list-item-content class="pb-0">
+                                            <div class="px-3">
+                                                <v-checkbox class="mt-0" v-model="inStock" label="In Stock"></v-checkbox>
+                                            </div>
+                                        </v-list-item-content>
+                                    </v-list-item>
+                                </v-list-group>
+                            </v-list>
+                        </div> -->
+                        <!-- Categories -->
+                        <div class="px-4">
+                             <v-list class="pb-0">
+                                <v-list-group v-model="expandCategories" no-action>
+                                    <template v-slot:activator>
+                                        <v-list-item-content>
+                                            <v-list-item-title>
+                                                <div class="grey--text text--darken-2 font-weight-bold">Categories</div>
+                                            </v-list-item-title>
+                                        </v-list-item-content>
+                                    </template>
+                                    <v-list-item v-for="(category, i) in categories" :key="i" @click="">
+                                        <v-list-item-title @click="$store.dispatch('filters/displayBaseFilter', { name: category.productCategyName, id: category.productCategyId, type: 'category' });" v-text="category.productCategyName"></v-list-item-title>
+                                    </v-list-item>
+                                    <!-- <v-list-item class="pl-0 pb-0" @click="">
+                                        <v-list-item-content class="pb-0">
+                                            <div class="px-3">
+                                                <v-checkbox class="mt-0" v-model="inStock" label="In Stock"></v-checkbox>
+                                            </div>
+                                        </v-list-item-content>
+                                    </v-list-item> -->
+                                </v-list-group>
+                            </v-list>
+
+
+                            <!-- <v-list>
+                                <v-list-group v-model="expandCategories">
+                                    <template v-slot:activator>
+                                        <v-list-item-title>
+                                            <div class="grey--text text--darken-2 font-weight-bold">Categories</div>
+                                        </v-list-item-title>
+                                    </template>
+
+                                    <v-list-group v-for="(category, i) in categories" :key="i" no-action sub-group>
+                                        <template v-slot:activator>
+                                            <v-list-item-content>
+                                                <v-list-item-title v-text="category.name"></v-list-item-title>
+                                            </v-list-item-content>
+                                        </template>
+
+                                        <v-list-item v-for="(subcategory, index) in category.subcategories" :key="index" @click="">
+                                            <v-list-item-title @click="$store.dispatch('filters/displayBaseFilter', { name: subcategory.name, id: subcategory.id, type: 'subcategory' });" v-text="subcategory.name"></v-list-item-title>
+                                        </v-list-item>
+                                    </v-list-group>
+                                </v-list-group>
+                            </v-list> -->
+                        </div>
+                    </v-col>
+                </transition>
+
+                <!-- Products lists -->
+                <v-col :md="visible ? '9' : '12'">
+                    <div class="header mt-5 mb-2">
+                        <div class="d-flex px-2 justify-space-between">
                             <div>
-                                <i class="fas fa-2x fa-truck custom-red"></i>
+                                <v-btn v-if="visible" depressed @click="toggleVisibility('hidden')" small tile color="red" dark>
+                                    <v-icon small left>mdi-arrow-left</v-icon> Hide Filter
+                                </v-btn>
+                                <v-btn v-if="!visible" depressed @click="toggleVisibility('open')" small tile color="blue" dark>
+                                    Open Filter <v-icon small right>mdi-arrow-right</v-icon>
+                                </v-btn>
+                            </div>
+                            <div class="d-flex">
+                                <div class="blue--text mt-1 mr-2">Change Layout</div>
+                                <div class="d-flex">
+                                    <v-tooltip color="primary" top>
+                                        <template v-slot:activator="{ on }">                                   
+                                            <v-icon class="font-weight-bold mx-2 black--text" @click="changeGrid('3')" v-on="on">mdi-format-list-bulleted</v-icon>                                   
+                                        </template>
+                                        <span>3 Grid View</span>
+                                    </v-tooltip>
+
+                                    <v-tooltip color="primary" top>
+                                        <template v-slot:activator="{ on }">                                   
+                                            <v-icon class="font-weight-bold black--text mx-2" @click="changeGrid('4')" v-on="on">mdi-filter-variant</v-icon>                               
+                                        </template>
+                                        <span>4 Grid View</span>
+                                    </v-tooltip>
+                                </div>
                             </div>
                         </div>
-                        <div>
-                            <div class="custom-red custom-h5">Quick Delivery</div>
-                            <div class="custom-text pt-1 custom-red">Our delivery service is not just fast, but consistent and reliable to meet your needs.</div>
-                        </div>
                     </div>
-                </div>
-                <div class="quickInfo-2 mx-3 pl-6">
-                    <div class="d-flex mt-5 pb-5">
-                         <div class="d-flex justify-center align-center pr-4">
-                            <div >
-                                <i class="fas fa-2x fa-credit-card custom-red"></i>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="custom-red custom-h5">Pay With Ease</div>
-                            <div class="custom-text pt-1 custom-red">Make payment easily without stress via our various payment platform.</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="quickInfo-3 pl-6 pr-6">
-                    <div class="d-flex mt-5 pb-5">
-                        <div class="d-flex justify-center align-center pr-4">
-                            <div>
-                                <i class="fa fa-2x fa-shield custom-red"></i>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="custom-red custom-h5">Secured Payment</div>
-                            <div class="custom-text pt-1 custom-red">We make your security our priority, so shop with peace of mind.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="shop-categories">
-            <div class="custom-h4 text-center white--text categories-title">Shop thousands of items storewide</div>
-            <v-container class="categories-container">
-                <div class="d-flex justify-center">
-                    <div>
-                        <div class="d-flex">
-                            <v-card  @click="$router.push({ path: 'allProduct', query: { name: 'Pharmacy' } })" flat color="rgb(237,0,0)" class="custom-card">
-                                <div class="d-flex justify-center">
-                                    <div>
-                                        <div>
-                                            <v-img  
-                                                class="rounded-circle"
-                                                height="200"
-                                                max-width="200"
-                                                src="https://previews.123rf.com/images/suthisakaewkajng/suthisakaewkajng1803/suthisakaewkajng180300041/97667127-colorful-medicines-and-drugs-in-a-bottle-on-a-white-background-.jpg">
-                                            </v-img>
-                                        </div>
-                                        
-                                        <div class="text-center py-6 white--text post-caption">Pharmacy</div>
-                                    </div>   
-                                </div>
-                            </v-card>
-
-                            <v-card @click="$router.push({ path: 'allProduct', query: { name: 'Child Care' } })" flat color="rgb(237,0,0)" class="mx-10 custom-card">
-                                <div class="d-flex justify-center">
-                                    <div>
-                                        <div >
-                                            <v-img  
-                                                class="rounded-circle"
-                                                height="200"
-                                                max-width="200"
-                                                src="https://www.pipandsox.com.au/wp-content/uploads/2020/06/australian-gifts-souvenirs-wood-toys-doll-accessories-kit_03.jpg">
-                                            </v-img>
-                                        </div>
-                                        <div class="text-center py-6 white--text post-caption">Baby/Child Care</div>
-                                    </div>   
-                                </div>
-                            </v-card>
-
-                             <v-card @click="$router.push({ path: 'allProduct', query: { name: 'Personal Care' } })" flat color="rgb(237,0,0)" class="custom-card">
-                                <div class="d-flex justify-center">
-                                    <div>
-                                        <div>
-                                            <v-img  
-                                                class="rounded-circle"
-                                                height="200"
-                                                max-width="200"
-                                                src="https://img.lovepik.com/photo/50139/6552.jpg_wh860.jpg">
-                                            </v-img>
-                                        </div>
-                                        <div class="text-center py-6 white--text post-caption">Personal Care</div>
-                                    </div>   
-                                </div>
-                            </v-card>
-
-                            <v-card @click="$router.push({ path: 'allProduct', query: { name: 'Beauty' } })" flat color="rgb(237,0,0)" class="mx-10 custom-card">
-                                <div class="d-flex justify-center">
-                                    <div>
-                                        <div>
-                                            <v-img  
-                                                class="rounded-circle"
-                                                height="200"
-                                                max-width="200"
-                                                src="https://preview.pixlr.com/images/800wm/1162/2/1162212830.jpg">
-                                            </v-img>
-                                        </div>
-                                        <div class="text-center py-6 white--text post-caption">Beauty</div>
-                                    </div>   
-                                </div>
-                            </v-card>
-
-                            <v-card @click="$router.push({ path: 'allProduct', query: { name: 'Perfumes & Aromatherapy' } })" flat color="rgb(237,0,0)" class="custom-card">
-                                <div class="d-flex justify-center">
-                                    <div>
-                                        <div>
-                                            <v-img  
-                                                class="rounded-circle"
-                                                height="200"
-                                                max-width="200"
-                                                src="https://patriciarnhealthandbeautyproducts.com/wp-content/uploads/2019/10/FX502413.jpg">
-                                            </v-img>
-                                        </div>
-                                        <div class="text-center py-6 white--text post-caption">Perfume & Aromatherapy</div>
-                                    </div>   
-                                </div>
-                            </v-card>
-                        </div>
-                    </div>
-                </div>
-            </v-container>
-        </div>
-
-        <!-- <categories /> -->
-        <!-- <div>
-            <product-filters />
-        </div> -->
-
-        <div class="">
-            <!-- <vueper-slides>
-                <vueper-slide v-for="(slide, i) in slides" :key="i" :title="slide.title" :content="slide.content" />
-            </vueper-slides> -->
-            
-            <!-- <vueper-slides
-                ref="myVueperSlides"
-                autoplay
-                :pause-on-hover="pauseOnHover"
-                @autoplay-pause="internalAutoPlaying = false"
-                @autoplay-resume="internalAutoPlaying = true">
-                <vueper-slide
-                    v-for="(slide, i) in slides"
-                    :key="slide.id"
-                    :title="slide.title"
-                    :content="slide.content"
-                    :style="'background-color: ' + colors[i % 4]" />
-                <template v-slot:pause>
-                    <i class="icon pause_circle_outline"></i>
-                </template>
-            </vueper-slides> -->
-
-            <!-- <v-container>
-                <div>
-                    <vueper-slides
-                        class="no-shadow"
-                        :visible-slides="3"
-                        :slide-ratio="1 / 6"
-                        :dragging-distance="70">
-
-                        <vueper-slide 
-                            v-for="(slide, i) in slides"
-                            :key="i" :title="slide.title" 
-                            :image="slide.image">
-                        </vueper-slide>
-                    </vueper-slides>
-                </div>
-            </v-container> -->
-        </div>
-
-        <!-- Banna Info -->
-        <v-container class="px-0 py-0" fluid>
-            <v-row>
-                <v-col class="py-0">
-                    <div style="background: #fff; height: 200px" class="d-flex justify-center align-center px-8 text-uppercase">
-                        <div class="">
-                            <div class="white--text custom-h4 custom-green">Use our free app</div>
-                            <div class="white--text post-caption custom-green">To place your order!</div>
-                        </div>
-                        <div class="ml-12 d-flex">
-                            <v-btn depressed x-large color="black" class="white--text text-capitalize post-caption">
-                                <v-icon large left class="pr-4 pl-2">mdi-apple</v-icon>
-                                App Store
-                            </v-btn>
-
-                            <v-btn depressed x-large color="black" class="white--text text-capitalize ml-4 post-caption">
-                                <v-icon large left class="pr-4 pl-2">mdi-google-play</v-icon>
-                                Google Play
-                            </v-btn>
-                        </div>
-                    </div>
+                    <!-- Product Cards -->
+                    <product-modal @cartAdded="$store.dispatch('activateSnackbar')"></product-modal>
+                    <transition enter-active-class="animated pulse" leave-active-class="animated fadeOut" mode="out-in">
+                        <product-list :visible="visible" :gridValue="gridValue" :products="products"></product-list>
+                    </transition>
                 </v-col>
             </v-row>
         </v-container>
-
-        <!-- <v-container class="px-0 about-section mt-5 py-0" fluid>
-            <div>
-                <v-row class="py-0">
-                    <v-col cols="12" md="5">
-                        <div class="about-content pt-12 pb-8">
-                            <div class="subtitle-2 custom-green">WELCOME TO PURELIFE PHARMACY</div>
-                            <div class="pt-3 pb-6 text-h5 white--text">Focus On Purity and Quality</div>
-                            <div class="about-body white--text">
-                                Your wellness is our priority, we don’t just provide the medicines prescribed to you by your physician, 
-                                we make your needs our priority.
-                            </div>
-                            <div class="pt-12 pb-6">
-                                <v-btn outlined rounded x-large style="padding-left: 35px; padding-right: 35px" class="white--text">More About Us</v-btn>
-                            </div>
-                        </div>
-                    </v-col>
-                    <v-col class="aboutImage px-0 py-0 my-0" cols="12" md="7">
-                        <div class="aboutImage"></div>
-                    </v-col>
-                </v-row>
-            </div>
-        </v-container> -->
-
     </div>
 </template>
 
 <script>
-import categories from '../components/home/categories'
-import productFilters from '../components/home/productFilters'
-import { VueperSlides, VueperSlide } from 'vueperslides'
-import 'vueperslides/dist/vueperslides.css'
-
-let VueFlux;
-let Transitions;
-let FluxCaption;
-let FluxControls;
-let FluxPagination;
-let FluxPreloader;
-let FluxIndex 
-
-if (process.client) {
-   const VF = require('vue-flux');
-   VueFlux = VF.VueFlux;
-   Transitions = VF.Transitions;
-   FluxCaption = VF.FluxCaption;
-   FluxControls = VF.FluxControls;
-   FluxPagination = VF.FluxPagination;
-   FluxPreloader = VF.FluxPreloader;
-   FluxIndex = VF.FluxIndex;
-}
+import titleParalax from '../components/TitleParalax'
+import productModal from '../components/home/productModal'
+import productList from '../components/productList'
+import { mapState, mapGetters, mapActions } from 'vuex'
 
 export default {
     layout: 'home',
-    components: { 
-        categories, productFilters, VueFlux, FluxCaption, 
-        FluxControls, FluxPagination, FluxPreloader, FluxIndex, VueperSlides, VueperSlide
-    },
+    components: { titleParalax, productModal, productList },
 
     data: () => ({
-        slides: [
+        expandPrice: true,
+        expandAvailability: false,
+        expandCategories: true,
+        expandSizes: true,
+        expandMaterials: false,
+        expandStyles: true,
+        expandBrands: false,
+        expandColors: true,
+        min: 0,
+        max: 30000,
+        range: [0, 30000],
+        inStock: false,
+        outOfStock: false,
+        open: false,
+        gridValue: '',
+        visible: true,
+        items: [
             {
-                id: 'slide-1',
-                title: 'Slide <b style="font-size: 1.3em;color: yellow">#1</b>',
-                content: 'Slide title can be HTML.<br>And so does the slide content, <span style="font-size: 1.2em;color: yellow">why not?</span>',
-                image:  require("@/assets/images/large/pharmacy/pharmacyNew6.jpg")
+                text: 'Shop/Order',
+                disabled: true,
+                href: 'breadcrumbs_link_2',
             },
-            {
-                id: 'slide-2',
-                title: 'Slide <b style="font-size: 1.3em;color: blue">#2</b>',
-                content: 'Slide title can be HTML.<br>And so does the slide content, <span style="font-size: 1.2em;color: blue">why not?</span>',
-                image: require("@/assets/images/large/pharmacy/pharmacyNew16.jpg")
-            },
-            {
-                id: 'slide-3',
-                title: 'Slide <b style="font-size: 1.3em;color: brown">#3</b>',
-                content: 'Slide title can be HTML.<br>And so does the slide content, <span style="font-size: 1.2em;color: brown">why not?</span>',
-                image: require("@/assets/images/large/pharmacy/pharmacyNew29.jpg")
-            },
-            {
-                id: 'slide-4',
-                title: 'Slide <b style="font-size: 1.3em;color: pink">#4</b>',
-                content: 'Slide title can be HTML.<br>And so does the slide content, <span style="font-size: 1.2em;color: pink">why not?</span>',
-                image: require("@/assets/images/large/pharmacy/pharmacyNew3.jpg")
-            },
-            {
-                id: 'slide-5',
-                title: 'Slide <b style="font-size: 1.3em;color: yellow">#5</b>',
-                content: 'Slide title can be HTML.<br>And so does the slide content, <span style="font-size: 1.2em;color: yellow">why not?</span>',
-                image:  require("@/assets/images/large/pharmacy/pharmacyNew6.jpg")
-            },
-            {
-                id: 'slide-6',
-                title: 'Slide <b style="font-size: 1.3em;color: blue">#6</b>',
-                content: 'Slide title can be HTML.<br>And so does the slide content, <span style="font-size: 1.2em;color: blue">why not?</span>',
-                image: require("@/assets/images/large/pharmacy/pharmacyNew16.jpg")
-            },
-            {
-                id: 'slide-7',
-                title: 'Slide <b style="font-size: 1.3em;color: brown">#7</b>',
-                content: 'Slide title can be HTML.<br>And so does the slide content, <span style="font-size: 1.2em;color: brown">why not?</span>',
-                image: require("@/assets/images/large/pharmacy/pharmacyNew29.jpg")
-            },
-        ],
-        data: [
-            '<div class="example-slide">Slide 1</div>',
-            '<div class="example-slide">Slide 2</div>',
-            '<div class="example-slide">Slide 3</div>',
-        ],
-        carouseldata: 
-        [
-            {
-                id: 1,
-                message: 'First message',
-                content(createElement, content) {
-                    return createElement('img', {
-                    attrs: {
-                        src: require('@/assets/images/large/pharmacy/pharmacyNew2.jpg'),
-                    }
-                    })
-                }
-            },
-            {
-                id: 2,
-                message: 'Any message',
-                content(createElement, content) {
-                    return createElement('img', {
-                    attrs: {
-                        src: require('@/assets/images/large/pharmacy/pharmacyNew3.jpg'),
-                    }
-                    })
-                }
-            }
-        ],
-        fluxOptions: {
-            autoplay: true
-        },
-        fluxImages: [
-            require("@/assets/images/large/pharmacy/pharmacyNew6.jpg"),
-            require("@/assets/images/large/pharmacy/pharmacyNew16.jpg"),
-            require("@/assets/images/large/pharmacy/pharmacyNew29.jpg")
-        ],
-        fluxTransitions: [ 'fade', 'cube', 'book', 'wave' ],
-        vfCaptions: [
-            'Image URL1 caption',
-            'Image URL2 caption',
-            'Image URL3 caption',
-        ],
+        ]
     }),
 
     computed: {
-        index(){
-            return this.$refs.slider
+        ...mapGetters({
+            allProducts: 'filters/filteredProducts',
+            categories: 'filters/getCategories',
+        }),
+        products(){
+            return this.getAllProducts().filter(product => {
+                return this.inStock ? product.price > this.range[0] && product.price < this.range[1] && product.quantity > 0 : product.price > this.range[0] && product.price < this.range[1];
+            })
         }
     },
 
-    methods: {
-        getImage(name) {
-            return require(`@/assets/images/large/pharmacy/${name}`)
+     methods: {
+        //Please change the ordering later
+        getAllProducts() { return this.allProducts.sort((a, b) => (a.date > b.date) ? 1 : -1); }, 
+
+        // onChangeSelectbox(event, name, type) {
+        //     let payload = { name: name, type: type}
+        //     if (event) {
+        //         this.$store.dispatch('addToFilter', payload);
+        //     } else {
+        //         this.$store.dispatch('removeFromFilter', payload);
+        //     }
+        // },
+
+        changeGrid(value) {
+            this.gridValue = value
+        },
+
+        toggleVisibility(mode) {
+            if (mode == 'hidden') this.visible = false
+            if (mode == 'open') this.visible = true
+        },
+    },
+
+    mounted() {
+        let name = this.$route.query.name;
+        if (name) {
+            this.$store.dispatch('filters/categoryProducts', name)
+            this.expandCategories = true
+            // this.expandPrice = false
+            // this.expandSizes = false
+            // this.expandStyles = false
+            // this.expandColors = false
+        } else {
+            this.$store.commit('filters/emptyFilteredProduct');
         }
     }
 }
+
 </script>
-
-<style lang="scss" scoped>
-    .custom-caption {
-        margin-top: 80px !important;
-    }
-    .shop-categories {
-        background: rgb(237,0,0);
-
-        .categories-title {
-            padding-top: 70px
-        }
-
-        .categories-container {
-            padding: 80px 0px 100px 0px;
-
-            .custom-card {
-                &:hover {
-                    cursor: pointer;
-                }
-            }
-        }
-    }
-    .quick-info {
-        width: 100%;
-
-        .quickInfo-1, .quickInfo-2, .quickInfo-3 {
-            width: 300px;
-            border-left: 1px solid  rgb(237,0,0);
-        }
-
-        .quickInfo-3 {
-            border-right: 1px solid  rgb(237,0,0);
-        }
-    }
-    .custom-h5 {
-        font-family: light-font(family);
-        font-size: 18px;
-    }
-    .custom-h4 {
-        font-family: light-font(family);
-        font-size: 24px;
-    }
-    .custom-h3 {
-        font-family: light-font(family);
-        font-size: 32px;
-    }
-    .custom-text {
-        font-family: light-font(family);
-        font-weight: 100;
-        font-size: 14px;
-    }
-    .post-caption {
-        font-family: light-font(family);
-        font-weight: 100;
-    }
-    .example-slide {
-        align-items: center;
-        background-color: black;
-        color: #999;
-        display: flex;
-        font-size: 1.5rem;
-        justify-content: center;
-        min-height: 10rem;
-    }
-    .in-carousel {
-        position: absolute;
-        width: 100%;
-        top: 4vw;
-        z-index: 5;
-    }
-    .mg-h1 {
-        font-size: 2.5vw;
-        font-weight: 300;
-        font-family: Ubuntu;
-        color: white;
-    }
-    .mg-gradient {
-        display: inline;
-        padding: 0px 0em;
-        margin: 0;
-        text-shadow: 0 0 0.5vw hsla(0, 0, 0%, 1);
-    }
-    .clip {
-        clip-path: polygon(50% 0%, 100% 0, 100% 35%, 100% 100%, 76% 93%, 53% 100%, 29% 92%, 0 100%, 0% 35%, 0 0);
-    }
-    .slide {
-        height: 60vh;
-    }
-    .custom-green {
-        color: #009933 !important;
-    }
-    .custom-red {
-        color:  rgb(237,0,0) !important;
-    }
-    .about-section {
-        background: rgb(237,0,0);
-        //height: 70vh;
-
-        .about-content {
-            padding-left: 80px !important;
-
-            .about-body {
-                font-size: 16px;
-                font-family: "Roboto", sans-serif !important;
-            }
-        }
-        .aboutImage {
-            width: 100%;
-            //height: 100%;
-            background: url("~assets/images/pharmacy/pharmacyAbout1.jpg");
-            background-size: cover;
-            background-repeat: no-repeat;
-        }
-    }
-</style>

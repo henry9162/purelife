@@ -2,7 +2,7 @@
 <div>
     <v-card class="mx-10 mt-14" color="#22A64E">
         <modal
-            name="classifications-modal" :min-width="500"
+            name="categories-modal" :min-width="500"
             :max-width="700" :adaptive="true"
             :scrollable="true" height="auto"
             transition="fade-transition" :clickToClose="false">
@@ -23,10 +23,10 @@
                     <v-container>
                         <v-row class="px-8">
                             <v-col cols="12" class="py-0 px-0">
-                                <v-text-field v-model="editedItem.productClassificationName" label="Classification Name"></v-text-field>
+                                <v-text-field v-model="editedItem.productCategyName" label="Category Name"></v-text-field>
                             </v-col>
                             <v-col cols="12" class="py-0 px-0">
-                                <v-text-field v-model="editedItem.productClassificationDescription" label="Description"></v-text-field>
+                                <v-text-field v-model="editedItem.description" label="Description"></v-text-field>
                             </v-col>
 
                             <v-btn block @click="save" depressed large prepend-inner-icon="mdi-map-marker" clearable
@@ -48,15 +48,15 @@
         </modal>
 
 
-        <v-data-table :headers="headers" :items="classifications" sort-by="calories" class="px-8 py-4">
+        <v-data-table :headers="headers" :items="categories" sort-by="calories" class="px-8 py-4">
             <template v-slot:top>
                 <v-toolbar flat color="white">
-                    <v-toolbar-title class="list-color custom-style">All Classifications</v-toolbar-title>
+                    <v-toolbar-title class="list-color custom-style">All Categories</v-toolbar-title>
                     <v-divider class="mx-4" inset vertical></v-divider>
                     <v-spacer></v-spacer>
 
-                    <v-btn @click="$modal.show('classifications-modal')" depressed large color="#22A64E" dark class="rounded-0 post-caption">
-                        <v-icon left>mdi-plus-circle-outline</v-icon> Add Classification
+                    <v-btn @click="$modal.show('categories-modal')" depressed large color="#22A64E" dark class="rounded-0 post-caption">
+                        <v-icon left>mdi-plus-circle-outline</v-icon> Add Category
                     </v-btn>
                 </v-toolbar>
             </template>
@@ -86,23 +86,23 @@ export default {
                 text: 'Name',
                 align: 'start',
                 sortable: false,
-                value: 'productClassificationName',
+                value: 'productCategyName',
             },
-            { text: 'Description', value: 'productClassificationDescription' },
+            { text: 'Description', value: 'description' },
             { text: 'Created On', value: 'createdOn' },
             { text: 'Actions', value: 'actions', sortable: false },
         ],
         editedIndex: -1,
         editedItem: {
-            productGroupClassificationId: '',
-            productClassificationName: '',
-            productClassificationDescription: '',
+            productCategyId: '',
+            productCategyName: '',
+            description: '',
             createdOn: '',
         },
         defaultItem: {
-            productGroupClassificationId: '',
-            productClassificationName: '',
-            productClassificationDescription: '',
+            productCategyId: '',
+            productCategyName: '',
+            description: '',
             createdOn: '',
         },
     }),
@@ -114,79 +114,74 @@ export default {
     },
 
     computed: {
-        classifications(){
-            return this.$store.getters["classifications/allClassifications"];
+        categories(){
+            return this.$store.getters["categories/allCategories"];
         },
         formTitle () {
-            return this.editedIndex === -1 ? 'Add Classification' : 'Edit Classification';
+            return this.editedIndex === -1 ? 'Add Category' : 'Edit Category';
         }
     },
 
     methods: {
         editItem (item) {
-            this.editedIndex = this.classifications.indexOf(item)
+            this.editedIndex = this.categories.indexOf(item)
             this.editedItem = Object.assign({}, item)
             this.btnText = 'Update';
-            this.$modal.show('classifications-modal')
+            this.$modal.show('categories-modal')
         },
-        addClassification(){
+        addCategory(){
             this.loading = true
             let data = {
-                productClassificationName: this.editedItem.productClassificationName,
-                productClassificationDescription: this.editedItem.productClassificationDescription,
+                productCategyName: this.editedItem.productCategyName,
+                description: this.editedItem.description,
                 createdOn: new Date()
             }
-            this.$store.dispatch('classifications/addClassification', data).then(response => {
+            this.$store.dispatch('categories/addCategory', data).then(response => {
                 this.loading = false
                 this.refreshTable()
                 this.close();
             })
         },
-        updateClassification(){
-            this.btnText = 'Update'
-            this.loading = true
+        updateCategory(){
             let data = {
-                productGroupClassificationId: this.classifications[this.editedIndex].productGroupClassificationId,
-                productClassificationName: this.editedItem.productClassificationName,
-                productClassificationDescription: this.editedItem.productClassificationDescription,
+                productCategyId: this.categories[this.editedIndex].productCategyId,
+                productCategyName: this.editedItem.productCategyName,
+                description: this.editedItem.description,
                 createdOn: this.editedItem.createdOn,
-                modifiedOn: this.classifications[this.editedIndex].modifiedOn,
-                isDeprecated: this.classifications[this.editedIndex].isDeprecated,
-                createdBy: this.classifications[this.editedIndex].createdBy
+                modifiedOn: this.categories[this.editedIndex].modifiedOn,
+                isDeprecated: this.categories[this.editedIndex].isDeprecated
             }
-            this.$store.dispatch('classifications/updateClassification', data).then(response => {
-                this.loading = false
+            this.$store.dispatch('categories/updateCategory', data).then(response => {
                 this.refreshTable();
                 this.close();
             })
         },
         deleteItem (item) {
-            confirm('Are you sure you want to delete this classification?') && this.deleteClassification(item)
+            confirm('Are you sure you want to delete this category?') && this.deleteCategory(item)
         },
-        deleteClassification(item){
-            let index = this.classifications.indexOf(item)
-            this.$store.dispatch('classifications/deleteClassification', this.classifications[index].productGroupClassificationId).then(response => {
+        deleteCategory(item){
+            let index = this.categories.indexOf(item)
+            this.$store.dispatch('categories/deleteCategory', this.categories[index].productCategyId).then(response => {
                 this.refreshTable()
             })
         },
         refreshTable(){
-            this.$store.dispatch('classifications/getAllClassifications');
+            this.$store.dispatch('categories/getAllCategories');
         },
         close () {
             this.$nextTick(() => {
                 this.editedItem = Object.assign({}, this.defaultItem)
                 this.editedIndex = -1
                 this.loading = false
-                this.btnText = 'Submit'
             })
-            this.$modal.hide('classifications-modal');
+            this.$modal.hide('categories-modal');
         },
 
         save () {
             if (this.editedIndex > -1) {
-                this.updateClassification();
+                this.updateCategory();
             } else {
-                this.addClassification();
+                this.addCategory();
             }
         },
     }

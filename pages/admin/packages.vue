@@ -123,8 +123,7 @@ export default {
         addPackage(){
             this.loading = true
             let data = {
-                productBrandName: this.editedItem.productPackageName,
-                createdOn: new Date()
+                productPackageName: this.editedItem.productPackageName
             }
             this.$store.dispatch('packages/addPackage', data).then(response => {
                 this.loading = false
@@ -133,6 +132,7 @@ export default {
             }).catch(error => this.loading = false)
         },
         updatePackage(){
+            this.loading = true
             let data = { 
                 productPackageId: this.packages[this.editedIndex].productPackageId,
                 productPackageName: this.editedItem.productPackageName,
@@ -142,6 +142,7 @@ export default {
                 createdBy: this.packages[this.editedIndex].createdBy
             }
             this.$store.dispatch('packages/updatePackage', data).then(response => {
+                this.loading = false
                 this.refreshTable();
                 this.close();
             }).catch(error => this.loading = false)

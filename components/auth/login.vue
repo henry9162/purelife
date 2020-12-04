@@ -76,30 +76,34 @@ export default {
         ],
         show1: false,
         valid: true,
+        loading: false
     }),
-
-    computed: {
-        loading() {
-            return this.$store.state.loader
-        }
-    },
 
     methods: {
         getView(){
             this.$store.dispatch('auths/changeView', 'register')
         },
-        login(){
-            this.$store.dispatch("auths/login")
-            // if (this.$refs.form.validate()) {
-            //     let user = {
-            //         email: this.email,
-            //         password: this.password
-            //     }
+        async login(){
+            this.loading = true
+            if (this.$refs.form.validate()) {
+                let data = {
+                    email: this.email,
+                    password: this.password
+                }
 
-            //     this.$store.dispatch("auths/login", user).then(response => {
-            //         if(response) this.$refs.form.reset()
-            //     })
-            // }
+                await this.$store.dispatch("auths/login", data).then(response => {
+                    if(response) {
+                        this.$auth.setUser(response.data.data)
+                        this.loading = false
+                        this.$toast.success(response.data.message).goAway(3000)
+                        //this.$refs.form.resetValidation()
+                        //this.$refs.form.reset()
+                        this.$router.push({path: '/'})
+                    } 
+                })
+            } else {
+                this.loading = false
+            }
         }
     }
 }

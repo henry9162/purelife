@@ -26,7 +26,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="product in cartProducts" :key="product.title">
+                                        <tr v-for="product in cartProducts" :key="product.id">
                                             <td class="text-center py-4">
                                                 <v-card tile flat>
                                                     <v-img :aspect-ratio="16/9" :src="product.image_front"></v-img>
@@ -73,7 +73,7 @@
                                     <v-col md="8">
                                         <div style="border: 20px solid #b6bbc6">
                                             <v-expansion-panels flat focusable>
-                                                <v-expansion-panel>
+                                                <!-- <v-expansion-panel>
                                                     <v-expansion-panel-header>Use Coupon Code</v-expansion-panel-header>
                                                     <v-expansion-panel-content>
                                                         <div class="d-flex justify-space-between pt-8">
@@ -84,16 +84,16 @@
                                                             </div>
                                                         </div> 
                                                     </v-expansion-panel-content>
-                                                </v-expansion-panel>
+                                                </v-expansion-panel> -->
 
                                                 <v-expansion-panel>
-                                                    <v-expansion-panel-header>Use Gift Card</v-expansion-panel-header>
+                                                    <v-expansion-panel-header>Use Loyalty Card</v-expansion-panel-header>
                                                     <v-expansion-panel-content>
                                                         <div class="d-flex justify-space-between pt-8">
-                                                            <div>Enter your Gift certificate code here</div>
+                                                            <div>Enter your Loyalty code here</div>
                                                             <div class="ml-4 d-flex">
                                                                 <v-text-field label="Enter Gift Code" clearable outlined dense></v-text-field>
-                                                                <v-btn class="ml-2" tile depressed color="primary" dark>Apply Gift Code</v-btn>
+                                                                <v-btn class="ml-2" tile depressed color="primary" dark>Apply Loyalty Code</v-btn>
                                                             </div>
                                                         </div> 
                                                     </v-expansion-panel-content>
@@ -123,7 +123,7 @@
                         </div>
 
                         <div class="white darken-2 pa-4 mx-2 mb-4 d-flex justify-space-between">
-                            <v-btn @click="$router.push({ path: 'allProduct', query: { name: '' } })" depressed tile large color="red" dark>
+                            <v-btn @click="$router.push({ path: '/', query: { name: '' } })" depressed tile large color="red" dark>
                                 <v-icon left>mdi-arrow-left</v-icon> Continue Shopping
                             </v-btn>
                         
@@ -312,17 +312,17 @@ export default {
         imageSelected: '',
         items: [
             {
-                text: 'Dashboard',
+                text: 'Shop & Order',
                 disabled: false,
                 href: 'breadcrumbs_dashboard',
             },
+            // {
+            //     text: 'Link 1',
+            //     disabled: false,
+            //     href: 'breadcrumbs_link_1',
+            // },
             {
-                text: 'Link 1',
-                disabled: false,
-                href: 'breadcrumbs_link_1',
-            },
-            {
-                text: 'Link 2',
+                text: 'Cart',
                 disabled: true,
                 href: 'breadcrumbs_link_2',
             },
@@ -331,24 +331,24 @@ export default {
 
     computed: {
         ...mapGetters({
-            cartProducts: 'products/cartProducts',
-            quantity: 'products/quantity'
+            cartProducts: 'productss/cartProducts',
+            quantity: 'productss/quantity'
         })
         
     },
 
     methods: {
         ...mapActions({
-            updateQuantity: 'products/updateQuantity',
-            addToCart: 'products/addToCart',
-            removeCartItem: 'products/removeCartItem'
+            updateQuantity: 'productss/updateQuantity',
+            addToCart: 'productss/addToCart',
+            removeCartItem: 'productss/removeCartItem'
         }),
         selectImage(image){
             this.imageSelected = image;
         },
         productDetails(event) {
             this.product = event.params.product;
-            this.imageSelected = event.params.product.image_front
+            this.imageSelected = event.params.product.productImage
         },
     }
 }

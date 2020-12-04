@@ -5,25 +5,25 @@
                     <v-col>
                         <v-row>
                             <v-card color="grey lighten-3" flat>
-                                <v-card-title v-text="product.title" class="pt-0 title pl-0"></v-card-title>
+                                <v-card-title v-text="product.productName" class="pt-0 title pl-0"></v-card-title>
                                 <zoom :img-normal="imageSelected"></zoom>
                                 <!-- <v-img :aspect-ratio="16/18" :src="product.image"></v-img> -->
                             </v-card>
                         </v-row>
                         <v-row>
                             <v-col class="pl-0">
-                                <v-card @click="selectImage(product.image_front)" tile flat max-width="100" color="white">
-                                    <v-img :aspect-ratio="16/16" :src="product.image_front"></v-img>
+                                <v-card @click="selectImage(product.productImage)" tile flat max-width="100" color="white">
+                                    <v-img :aspect-ratio="16/16" :src="product.productImage"></v-img>
                                 </v-card>
                             </v-col>
                             <v-col>
-                                <v-card @click="selectImage(product.image_back)" tile flat max-width="100" color="white">
-                                    <v-img :aspect-ratio="16/16" :src="product.image_back"></v-img>
+                                <v-card @click="selectImage(product.productImage)" tile flat max-width="100" color="white">
+                                    <v-img :aspect-ratio="16/16" :src="product.productImage"></v-img>
                                 </v-card>
                             </v-col>
                             <v-col class="pr-0">
-                                <v-card @click="selectImage(product.image_side)" tile flat max-width="100" color="white">
-                                    <v-img :aspect-ratio="16/16" :src="product.image_side"></v-img>
+                                <v-card @click="selectImage(product.productImage)" tile flat max-width="100" color="white">
+                                    <v-img :aspect-ratio="16/16" :src="product.productImage"></v-img>
                                 </v-card>
                             </v-col>
                         </v-row>
@@ -31,21 +31,21 @@
                     <v-col>
                         <div>
                             <div class="text-right">
-                                <v-btn @click="$router.push({ path: '/ProductPage', query: {productId: product.id} })" class="mb-3" small depressed dark color="orange darken-1">
+                                <v-btn @click="$router.push({ path: '/ProductPage', query: {productId: product.productId} })" class="mb-3" small depressed dark color="orange darken-1">
                                     More Details <v-icon small right>mdi-arrow-right</v-icon>
                                 </v-btn>
                             </div>
                             <v-card flat class="pt-3">
                                 <v-card-title class="subtitle-2 pt-1 pb-0">Description</v-card-title>
-                                <v-card-text class="caption grey--text text--darken-4" v-text="product.description"></v-card-text>
+                                <v-card-text class="caption grey--text text--darken-4" v-text="product.productName"></v-card-text>
                             </v-card>
                         </div>
 
                         <div class="mt-3">
                             <v-card flat >
                                 <v-card-text class="caption">
-                                    <div><span class="subtitle-2 font-weight-bold">Quantity: </span> <span class="font-weight-bold" :class="product.inventory > 0 ? 'green--text' : 'red--text'">{{ product.inventory > 0 ? product.inventory : 'Out Of Stock' }}</span></div>
-                                    <div><span class="subtitle-2 font-weight-bold">Brand: </span> <span class="blue--text">Example Brand</span></div>
+                                    <div><span class="subtitle-2 font-weight-bold">Quantity: </span> <span class="font-weight-bold" :class="product.quantity > 0 ? 'green--text' : 'red--text'">{{ product.quantity > 0 ? product.quantity : 'Out Of Stock' }}</span></div>
+                                    <div><span class="subtitle-2 font-weight-bold">Brand: </span> <span class="blue--text" v-text="product.productBrandName"></span></div>
                                 </v-card-text>
                             </v-card>
                         </div>
@@ -71,7 +71,15 @@
                                 </v-btn>
                             </div>
                     
-                            <v-btn @click="addToCart({ productId: product.id, quantity: quantity })" tile class="ml-6 mt-1" large depressed color="primary" dark>
+                            <v-btn 
+                                @click="addToCart({ 
+                                    productId: product.productId, 
+                                    productName: product.productName, 
+                                    inventory: product.quantity,
+                                    quantity: quantity,
+                                    price: product.price * quantity
+                                })" 
+                                tile class="ml-6 mt-1" large depressed color="primary" dark>
                                 <v-icon left>mdi-cart-arrow-down</v-icon> Add to Cart
                             </v-btn>
                         </div>
@@ -85,7 +93,7 @@
 import zoom from './zoomOnHover'
 //import cart from '../../mixins/Carts.js'
 import { mapState, mapGetters, mapActions } from 'vuex'
-import products from '../../plugins/products';
+//import products from '../../plugins/products';
 
 export default {
     components: { zoom },
@@ -98,7 +106,7 @@ export default {
 
     computed: {
          ...mapGetters({
-            quantity: 'products/quantity'
+            quantity: 'productss/quantity'
         }),
         classes() {
             return ['grey lighten-3'];
@@ -107,15 +115,15 @@ export default {
 
     methods: {
         ...mapActions({
-            updateQuantity: 'products/updateQuantity',
-            addToCart: 'products/addToCart'
+            updateQuantity: 'productss/updateQuantity',
+            addToCart: 'productss/addToCart'
         }),
         selectImage(image){
             this.imageSelected = image;
         },
         productDetails(event) {
             this.product = event.params.product;
-            this.imageSelected = event.params.product.image_front
+            this.imageSelected = event.params.product.productImage
         },
     }
 }

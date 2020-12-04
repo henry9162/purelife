@@ -3,18 +3,24 @@
         <v-navigation-drawer width="330" color="#fff" light @update:mini-variant="navEvent" v-model="drawer" fixed permanent :mini-variant.sync="miniVariant" app expand-on-hover>
             <v-list style="padding: 0px" two-line>
                 <v-list-item class="pl-2 post-caption">
-                    <v-list-item-avatar style="margin-bottom: 13px">
+                    <v-list-item-avatar  style="margin-bottom: 13px">
+                        <!-- <img @click="$router.push({path: '/'})" :src="require(`~/assets/logos/${imgSrc.src}`)" weight="120px" height="120px"> -->
                         <img src="~assets/images/deborah.jpg">
                     </v-list-item-avatar>
 
                     <v-list-item-content>
                         <v-list-item-title class="post-caption list-color">Henry Ekwonwa</v-list-item-title>
                         <v-list-item-subtitle>henimastic@gmail.com</v-list-item-subtitle>
+                        <!-- <img @click="$router.push({path: '/'})" :src="require(`~/assets/logos/${imgSrc.src}`)" weight="30px" height="43px"> -->
                     </v-list-item-content>
                 </v-list-item>
 
                 <v-divider class="mt-3"></v-divider>
             </v-list>
+
+            <!-- <v-toolbar-title class="custom-h4 navLink" @click="$router.push({path: '/'})">
+                <img src="~assets/logos/newLogo.png" height="60px">
+            </v-toolbar-title> -->
 
             <v-list>
                 <v-list-item class="post-caption" @click="$router.push({path: '/admin/dashboard'})" link>
@@ -24,7 +30,7 @@
                     <v-list-item-title class="list-color">Dashboard</v-list-item-title>
                 </v-list-item>
 
-                <v-list-group color="#22A64E" class="post-caption list-color" no-action prepend-icon="mdi-post-outline">
+                <v-list-group class="post-caption list-color" no-action prepend-icon="mdi-shape">
                     <template v-slot:activator>
                         <v-list-item-title class="list-color">Branch Management</v-list-item-title>
                     </template>
@@ -43,6 +49,37 @@
                         <v-list-item-title class="list-color" v-text="admin.name"></v-list-item-title>
                     </v-list-item>
                 </v-list-group>
+
+                <v-list-group color="#22A64E" class="post-caption list-color" no-action prepend-icon="mdi-shape">
+                    <template v-slot:activator>
+                        <v-list-item-title class="list-color">Disease Management</v-list-item-title>
+                    </template>
+
+                    <v-list-item @click="$router.push({path: disease.url})" v-for="(disease, i) in diseaseList" :key="i" link class="post-caption">
+                        <v-list-item-title class="list-color" v-text="disease.name"></v-list-item-title>
+                    </v-list-item>
+                </v-list-group>
+
+                <v-list-group color="#22A64E" class="post-caption list-color" no-action prepend-icon="mdi-post-outline">
+                    <template v-slot:activator>
+                        <v-list-item-title class="list-color">Prescription Management</v-list-item-title>
+                    </template>
+
+                    <v-list-item @click="$router.push({path: prescription.url})" v-for="(prescription, i) in prescriptionList" :key="i" link class="post-caption">
+                        <v-list-item-title class="list-color" v-text="prescription.name"></v-list-item-title>
+                    </v-list-item>
+                </v-list-group>
+
+                <v-list-group color="#22A64E" class="post-caption list-color" no-action prepend-icon="mdi-grain">
+                    <template v-slot:activator>
+                        <v-list-item-title class="list-color">Loyalty Management</v-list-item-title>
+                    </template>
+
+                    <v-list-item @click="$router.push({path: loyalty.url})" v-for="(loyalty, i) in loyaltyList" :key="i" link class="post-caption">
+                        <v-list-item-title class="list-color" v-text="loyalty.name"></v-list-item-title>
+                    </v-list-item>
+                </v-list-group>
+
 
                 <v-list-group color="#22A64E" class="post-caption list-color" no-action prepend-icon="mdi-account">
                     <template v-slot:activator>
@@ -70,8 +107,70 @@
             <v-toolbar-title class="custom-h4 navLink" @click="$router.push({path: '/'})">
                 <img src="~assets/logos/newLogo.png" height="60px">
             </v-toolbar-title>
+
             <v-spacer />
-            <v-btn @click="logout" depressed outlined rounded class="navLinkColor custom-h6 px-8 py-3 text-capitalize">Logout</v-btn>
+
+            <div v-if="$auth.loggedIn">
+                <v-menu v-model="userMenu" close-delay="200" 
+                    max-width="200" :close-on-content-click="false" 
+                    nudge-bottom="13" nudge-right="20" open-on-hover 
+                    :nudge-width="200" offset-y>
+                    <template v-slot:activator="{ on }">
+                        <v-btn class="post-caption white--text" text style="height: 57px" v-on="on">
+                            <v-avatar class="mr-4" size="36">
+                                <img :src="$auth.user.image ? url+$auth.user.image.image : defaultImage" :alt="$auth.user.firstName">
+                            </v-avatar>
+                            <span class="white--text" v-text="userName"></span> <v-icon>mdi-chevron-down</v-icon>
+                        </v-btn>
+                    </template>
+
+                    <v-card>
+                        <v-list nav dense>
+                            <v-list-item-group color="primary">
+                                <!-- <div>
+                                    <v-list-item v-for="(item, i) in itemsss" :key="i" :to="item.url">
+                                        <v-list-item-icon class="mr-4">
+                                            <v-icon v-text="item.icon"></v-icon>
+                                        </v-list-item-icon>
+
+                                        <v-list-item-content>
+                                            <v-list-item-title v-text="item.text"></v-list-item-title>
+                                        </v-list-item-content>
+                                    </v-list-item>
+                                </div> -->
+
+                                <!-- <div v-else>
+                                    <v-list-item v-for="(item, i) in itemsss" :key="i" :to="item.url">
+                                        <v-list-item-icon class="mr-4">
+                                            <v-icon v-text="item.icon"></v-icon>
+                                        </v-list-item-icon>
+
+                                        <v-list-item-content>
+                                            <v-list-item-title v-text="item.text"></v-list-item-title>
+                                        </v-list-item-content>
+                                    </v-list-item>
+                                </div> -->
+
+                                <!-- <v-divider></v-divider> -->
+
+                                <v-list-item @click="logout">
+                                    <v-list-item-icon class="mr-4">
+                                        <v-icon>mdi-logout</v-icon>
+                                    </v-list-item-icon>
+
+                                    <v-list-item-content>
+                                        <v-list-item-title>Logout</v-list-item-title>
+                                    </v-list-item-content>
+                                </v-list-item>
+                            </v-list-item-group>
+                        </v-list>
+                    </v-card>
+                </v-menu>
+            </div>
+
+            <div v-else>
+                <v-btn @click="logout" depressed outlined rounded class="navLinkColor custom-h6 px-8 py-3 text-capitalize">Logout</v-btn>
+            </div>
         </v-app-bar>
 
         <v-main style="background: #f4f0ec">
@@ -89,6 +188,14 @@ export default {
     data: () => ({
         drawer: false,
         miniVariant: true,
+        userMenu: false,
+        imgSrc: {
+            state: false,
+            src: 'logo1.png'
+        },
+        itemsss: [
+            { text: 'Dashboard', icon: 'mdi-view-dashboard-outline', url: '/admin/dashboard' },
+        ],
         adminList: [
             { name: 'Product Categories', icon: 'mdi-shape', url: '/admin/categories' },
             { name: 'Product Brands', icon: 'mdi-grain', url: '/admin/brands' },
@@ -100,17 +207,28 @@ export default {
         branchList: [
             { name: 'Pharmacy Branch', icon: 'mdi-shape', url: '/admin/branches' },
         ],
+        diseaseList: [
+            { name: 'Diseases', icon: 'mdi-grain', url: '/admin/diseases' },
+        ],
+        prescriptionList: [
+            { name: 'Prescriptions', icon: 'mdi-supervisor', url: '/admin/prescriptions' },
+        ],
+        loyaltyList: [
+            { name: 'Loyalties', icon: 'mdi-shape', url: '/admin/loyalties' },
+        ],
         userList: [
             { name: 'Users', icon: 'mdi-account', url: '/admin/users' },
         ],
         settings: [
             { name: 'Roles', icon: 'mdi-post', url: '/admin/roles' },
-            { name: 'Branches', icon: 'mdi-account', url: '/admin/branches' },
         ],
         defaultImage: 'https://via.placeholder.com/150',
     }),
 
     computed: {
+        userName(){
+            return this.$auth.user.firstName;
+        },
         userImage(){
             let url = this.$store.state.productionUrl
             return this.$auth.user.image ? url+this.$auth.user.image.image : this.defaultImage;
@@ -127,13 +245,23 @@ export default {
             this.$store.dispatch('branches/getAllBranches');
             this.$store.dispatch('productss/getAllProducts');
             this.$store.dispatch('getAllStates');
+            this.$store.dispatch('getAccountTypes');
+            this.$store.dispatch('users/getAllUsers');
+            this.$store.dispatch('prescriptions/getAllPrescriptions');
+            this.$store.dispatch('diseases/getAllDiseases');
         },
         navEvent(){
+            if(this.imgSrc.state == false){
+                this.imgSrc.state = true
+                this.imgSrc.src = 'newLogo.png'
+            } else {
+                this.imgSrc.state = false
+                this.imgSrc.src = 'logo1.png'
+            }
             console.log('You just hovered over ma')
         },
-        logout(){
-            //this.$auth.logout();
-            this.$router.push({path: '/'})
+        async logout(){
+            await this.$auth.logout();
         }
     },
     mounted(){

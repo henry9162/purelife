@@ -119,27 +119,90 @@
                 <div v-else class="pa-4 white red--text font-weight-bold">You have no item in cart</div>
             </v-menu>
 
-            <v-btn href="/auth" large text
-                
+            
+            <v-btn v-if="!$auth.loggedIn" href="/auth" large text
                 class="custom-red post-caption text-capitalize px-3 mr-2 d-none d-sm-flex">
                     Log In
             </v-btn>
 
-            <v-btn href="/" large text
-                
+            <v-btn v-if="!$auth.loggedIn" href="/" large text 
                 class="custom-red post-caption text-capitalize px-3 mr-2 d-none d-sm-flex">
                     Create Account
             </v-btn>
 
+            <div v-if="$auth.loggedIn">
+                <v-menu v-model="userMenu" close-delay="200" 
+                    max-width="200" :close-on-content-click="false" 
+                    nudge-bottom="13" nudge-right="20" open-on-hover 
+                    :nudge-width="200" offset-y>
+                    <template v-slot:activator="{ on }">
+                        <v-btn class="post-caption" text style="height: 57px" v-on="on">
+                            <v-avatar class="mr-4" size="36">
+                                <img :src="$auth.user.image ? url+$auth.user.image.image : defaultImage" :alt="$auth.user.firstName">
+                            </v-avatar>
+                            <span v-text="$auth.user.firstName"></span> <v-icon>mdi-chevron-down</v-icon>
+                        </v-btn>
+                    </template>
+
+                    <v-card>
+                        <v-list nav dense>
+                            <v-list-item-group color="primary">
+                                <div>
+                                    <v-list-item v-for="(item, i) in itemsss" :key="i" :to="item.url">
+                                        <v-list-item-icon class="mr-4">
+                                            <v-icon v-text="item.icon"></v-icon>
+                                        </v-list-item-icon>
+
+                                        <v-list-item-content>
+                                            <v-list-item-title v-text="item.text"></v-list-item-title>
+                                        </v-list-item-content>
+                                    </v-list-item>
+                                </div>
+
+                                <!-- <div v-else>
+                                    <v-list-item v-for="(item, i) in itemsss" :key="i" :to="item.url">
+                                        <v-list-item-icon class="mr-4">
+                                            <v-icon v-text="item.icon"></v-icon>
+                                        </v-list-item-icon>
+
+                                        <v-list-item-content>
+                                            <v-list-item-title v-text="item.text"></v-list-item-title>
+                                        </v-list-item-content>
+                                    </v-list-item>
+                                </div> -->
+
+                                <!-- <v-divider></v-divider> -->
+
+                                <v-list-item @click="logout">
+                                    <v-list-item-icon class="mr-4">
+                                        <v-icon>mdi-logout</v-icon>
+                                    </v-list-item-icon>
+
+                                    <v-list-item-content>
+                                        <v-list-item-title>Logout</v-list-item-title>
+                                    </v-list-item-content>
+                                </v-list-item>
+                            </v-list-item-group>
+                        </v-list>
+                    </v-card>
+                </v-menu>
+            </div>
+            
+           
             <!-- <v-btn @click="logout" depressed outlined rounded class="custom-green custom-h6 px-8 py-3 text-capitalize">SignIn/Logout</v-btn> -->
         </v-app-bar>
 
         <div class="sub-nav">
             <v-card class="d-flex justify-center align-center" color="rgb(237,0,0)" elevation="6" width="100%" height="70px">
                 <div class="text-center d-flex">
-                    <v-btn href="/" large text
+                    <!-- <v-btn href="/" large text
                         class="white--text post-caption text--darken-5 text-capitalize px-3 mr-2 d-none d-sm-flex">
                             Home
+                    </v-btn> -->
+
+                    <v-btn @click="$router.push({ path: '/', query: { name: '' } })" large text 
+                        class="white--text post-caption text-capitalize px-3 mr-2 d-none d-sm-flex">
+                            Shop/Order
                     </v-btn>
 
                     <v-menu z-index="99999999999999999999999999999" transition="slide-x-transition" open-on-hover nudge-bottom="60" bottom right>
@@ -156,12 +219,7 @@
                         </v-list>
                     </v-menu>
 
-                    <v-btn @click="$router.push({ path: 'allProduct', query: { name: '' } })" large text 
-                        class="white--text post-caption text-capitalize px-3 mr-2 d-none d-sm-flex">
-                            Shop/Order
-                    </v-btn>
-
-                    <v-menu z-index="9999999999999999999999999999999" transition="scale-transition" close-delay="1000" open-on-hover nudge-bottom="60" bottom origin="center right">
+                    <!-- <v-menu z-index="9999999999999999999999999999999" transition="scale-transition" close-delay="1000" open-on-hover nudge-bottom="60" bottom origin="center right">
                         <template v-slot:activator="{ on, attrs }">
                             <v-btn class="post-caption white--text text-capitalize" large text v-bind="attrs" v-on="on">
                                 Book Consultations/Appointment
@@ -173,12 +231,12 @@
                                 <v-list-item-title class="post-caption custom-green">{{ item.text }}</v-list-item-title>
                             </v-list-item>
                         </v-list>
-                    </v-menu>
+                    </v-menu> -->
 
-                    <v-btn href="/" large text
+                    <!-- <v-btn href="/" large text
                         class="white--text post-caption text-capitalize px-3 mr-2 d-none d-sm-flex">
                             Loyalty Cards/Rewards
-                    </v-btn>
+                    </v-btn> -->
                 </div>
             </v-card>
         </div>
@@ -209,12 +267,11 @@ export default {
         categories: [ { title: 'MEN' }, { title: 'WOMEN'}, { title: 'KIDS'} ],
         categories2: [ { title: 'ACCESORIES' }, { title: 'BAGS'}, { title: 'MORE'} ],
         itemss: [
-            { text: 'Upload Prescription', icon: 'mdi-account'},
-            { text: 'Refill Prescription', icon: 'mdi-view-dashboard-outline' },
-            { text: 'Refill Prescription', icon: 'mdi-view-dashboard-outline' },
-            { text: 'Upload Laboratory Results', icon: 'mdi-view-dashboard-outline' },
-            { text: 'Prescription History', icon: 'mdi-view-dashboard-outline' },
-            { text: 'Pill Reminder', icon: 'mdi-view-dashboard-outline' },
+            { text: 'Add Prescription', href: '/prescription', icon: 'mdi-account'},
+            { text: 'Refill Prescription', href: 'refill', icon: 'mdi-view-dashboard-outline' },
+            // { text: 'Upload Laboratory Results', icon: 'mdi-view-dashboard-outline' },
+            { text: 'Prescription History', href: '/admin/history', icon: 'mdi-view-dashboard-outline' },
+            // { text: 'Pill Reminder', icon: 'mdi-view-dashboard-outline' },
         ],
         appointments : [
             { text: 'Laboratory', icon: 'mdi-account'},
@@ -234,6 +291,12 @@ export default {
           'Lonart DS',
           'Amaterm Soft Gel'
         ],
+        itemsss: [
+            { text: 'Dashboard', icon: 'mdi-view-dashboard-outline', url: '/admin/dashboard' },
+        ],
+        // itemsss: [
+        //     { text: 'Dashboard', icon: 'mdi-view-dashboard-outline', url: '/admin/myThreads' },
+        // ],
     }),
 
     watch: {
@@ -246,9 +309,9 @@ export default {
          ...mapGetters({
             //isAuth: 'isAuthenticated',
             //user: 'loggedUser',
-            cartItem: 'products/numberOfCartItems',
-            cartProducts: 'products/cartProducts',
-            cartTotal: 'products/cartTotal'
+            cartItem: 'productss/numberOfCartItems',
+            cartProducts: 'productss/cartProducts',
+            cartTotal: 'productss/cartTotal'
         }),
         snackBar: {
             get: function() { return this.$store.getters['snackBar'] },
@@ -262,7 +325,7 @@ export default {
     methods: {
         ...mapActions({
             //logout: 'logout',
-            removeCartItem: 'products/removeCartItem'
+            removeCartItem: 'productss/removeCartItem'
         }),
         querySelections (v) {
             this.loading = true
@@ -283,15 +346,33 @@ export default {
         },
         deactivateSnackbar(){
             this.$store.dispatch('deactivateSnackbar')
-        }
-    },
+        },
+        async logout() {
+            await this.$auth.logout();
+        },
+    },    
 
     mounted(){
         //this.getAll()
         //this.deactivateSnackbar();
         this.$store.dispatch('products/getAllProducts');
         this.$store.dispatch('products/persistCart');
+        this.$store.dispatch('categories/getAllCategories');
+        this.$store.dispatch('filters/getAllProducts');
+        
+        this.$store.dispatch('brands/getAllBrands');
+        this.$store.dispatch('classifications/getAllClassifications');
+        this.$store.dispatch('packages/getAllPackages');
+        this.$store.dispatch('groups/getAllProductGroups');
+        this.$store.dispatch('branches/getAllBranches');
+        this.$store.dispatch('productss/getAllProducts');
+        this.$store.dispatch('getAllStates');
+        this.$store.dispatch('getAccountTypes');
+        this.$store.dispatch('users/getAllUsers');
+        this.$store.dispatch('prescriptions/getAllPrescriptions');
+        this.$store.dispatch('diseases/getAllDiseases');
         this.$store.dispatch('filters/getAllCategories');
+        
         // this.$store.dispatch('filters/getAllStyles');
         // this.$store.dispatch('filters/getAllMaterials');
         // this.$store.dispatch('filters/getAllColors');

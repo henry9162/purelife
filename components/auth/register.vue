@@ -25,10 +25,29 @@
                                     dense rounded label="Last Name" color="green" required>
                                 </v-text-field>
 
-                                <v-text-field 
-                                    v-model="username" prepend-inner-icon="mdi-comment-account" :rules="usernameRules" 
-                                    filled dense rounded label="Username" color="green" required>
-                                </v-text-field>
+                                <v-menu
+                                    ref="menu" v-model="menu" :close-on-content-click="false" :return-value.sync="date"
+                                    transition="scale-transition" offset-y min-width="290px">
+
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-text-field
+                                            v-model="date"
+                                            label="Date Of Birth"
+                                            prepend-inner-icon="mdi-calendar"
+                                            readonly
+                                            v-bind="attrs"
+                                            v-on="on"
+                                            filled dense rounded 
+                                        ></v-text-field>
+                                    </template>
+
+                                    <v-date-picker v-model="date" no-title scrollable>
+                                        <v-spacer></v-spacer>
+
+                                        <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
+                                        <v-btn text color="primary" @click="$refs.menu.save(date)">OK</v-btn>
+                                    </v-date-picker>
+                                </v-menu>
                             </v-col>
 
                             <v-col cols="12" md="6">
@@ -82,6 +101,8 @@
 
 export default {
     data: () => ({
+        date: new Date().toISOString().substr(0, 10),
+        menu: false,
         firstName: '',
         firstNameRules: [
             v => !!v || 'First name is required',
@@ -114,32 +135,34 @@ export default {
         ],
         show1: false,
         valid: true,
+        loading: false
     }),
-
-     computed: {
-        loading() {
-            return this.$store.state.loader
-        }
-    },
 
     methods: {
         getView(){
             this.$store.dispatch('auths/changeView', 'login')
         },
         register(){
+            this.loading = true
             if (this.$refs.form.validate()) {
                 let user = {
                     firstName: this.firstName,
                     lastName: this.lastName,
                     email: this.email,
-                    username: this.username,
                     phoneNumber: this.phone,
-                    password: this.password
+                    password: this.password,
+                    dob: this.date
                 }
 
                 this.$store.dispatch("auths/register", user).then(response => {
-                    if(response) this.$refs.form.reset()
+                    if(response) {
+                        this.loading = false
+                        //this.$refs.form.resetValidation()
+                        this.getView()
+                    }
                 })
+            } else {
+                this.loading = false
             }
         }
     }

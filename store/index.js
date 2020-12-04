@@ -4,7 +4,9 @@ export const state = () => ({
     alertMessage: '',
     alertColor: '',
     states: [],
-    lgas: []
+    lgas: [],
+    accountTypes: [],
+    defaultImage: 'https://via.placeholder.com/150'
 })
 
 export const mutations = {
@@ -24,6 +26,9 @@ export const mutations = {
     },
     setLgas(state, data){
         state.lgas = data
+    },
+    setAccountTypes(state, data){
+        state.accountTypes = data
     }
 }
 
@@ -40,6 +45,14 @@ export const actions = {
       this.$axios.get(`/CommonMethod/GetLGAsByState/${id}`)
         .then(response => {
             context.commit('setLgas', response.data.data)
+        }).catch(error => {
+            this.$toast.error(error).goAway(3500)
+        })
+    },
+    getAccountTypes(context){
+        this.$axios.get(`/CommonMethod/GetAccountTypeForSignup`)
+        .then(response => {
+            context.commit('setAccountTypes', response.data.data)
         }).catch(error => {
             this.$toast.error(error).goAway(3500)
         })
@@ -64,5 +77,11 @@ export const getters = {
     },
     allLgas(state){
         return state.lgas
+    },
+    allAccountTypes(state){
+        return state.accountTypes
+    },
+    defaultImage(state){
+        return state.defaultImage
     }
 }

@@ -56,7 +56,8 @@ export default {
     '@nuxtjs/pwa',
     '@nuxtjs/proxy',
     '@nuxtjs/style-resources',
-    '@nuxtjs/toast'
+    '@nuxtjs/toast',
+    '@nuxtjs/auth'
   ],
 
   toast: {
@@ -75,9 +76,9 @@ export default {
   auth: {
     redirect: {
       login: '/Account/Login',
-      logout: '​/Account​/LogOut',
+      // logout: '​/Account​/LogOut',
       callback: '/Account/Login',
-      home: false
+      home: '/'
     },
     strategies: {
       local: {
@@ -87,6 +88,7 @@ export default {
             method: 'post',
             propertyName: 'LoginToken'
           },
+          user: false,
           logout: { 
             url: '​/Account​/LogOut', 
             method: 'post' 

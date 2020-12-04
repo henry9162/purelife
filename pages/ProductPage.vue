@@ -15,16 +15,16 @@
                 <!-- Image Side Views section -->
                 <v-col class="px-0" md="1">
                     <div>
-                        <v-card @click="selectImage(selectedProduct.image_front)" tile flat max-width="100" color="white">
-                            <v-img :aspect-ratio="16/16" :src="selectedProduct.image_front"></v-img>
+                        <v-card @click="selectImage(selectedProduct.productImage)" tile flat max-width="100" color="white">
+                            <v-img :aspect-ratio="16/16" :src="selectedProduct.productImage"></v-img>
                         </v-card>
 
-                        <v-card @click="selectImage(selectedProduct.image_back)" tile flat class="my-4" max-width="100" color="white">
-                            <v-img :aspect-ratio="16/16" :src="selectedProduct.image_back"></v-img>
+                        <v-card @click="selectImage(selectedProduct.productImage)" tile flat class="my-4" max-width="100" color="white">
+                            <v-img :aspect-ratio="16/16" :src="selectedProduct.productImage"></v-img>
                         </v-card>
 
-                        <v-card @click="selectImage(selectedProduct.image_side)" tile flat max-width="100" color="white">
-                            <v-img :aspect-ratio="16/16" :src="selectedProduct.image_side"></v-img>
+                        <v-card @click="selectImage(selectedProduct.productImage)" tile flat max-width="100" color="white">
+                            <v-img :aspect-ratio="16/16" :src="selectedProduct.productImage"></v-img>
                         </v-card>
                     </div>
                 </v-col>
@@ -67,7 +67,7 @@
                         <v-tabs-items v-model="tab">
                             <v-tab-item value="tab-1">
                                 <v-card flat>
-                                    <v-card-text>{{ selectedProduct.description }}</v-card-text>
+                                    <v-card-text>{{ selectedProduct.productName }}</v-card-text>
                                 </v-card>
                             </v-tab-item>
 
@@ -88,13 +88,13 @@
                     <v-card class="mt-8" flat>
                         <div class="d-flex justify-between">
                             <v-card-text class="caption">
-                                <div><span class="subtitle-2 font-weight-bold">Quantity: </span> <span class="font-weight-bold" :class="selectedProduct.inventory > 0 ? 'green--text' : 'red--text'">{{ selectedProduct.inventory > 0 ? selectedProduct.inventory : 'Out Of Stock' }}</span></div>
-                                <div><span class="subtitle-2 font-weight-bold">Brand: </span> <span class="blue--text"></span></div>
+                                <div><span class="subtitle-2 font-weight-bold">Quantity: </span> <span class="font-weight-bold" :class="selectedProduct.quantity > 0 ? 'green--text' : 'red--text'">{{ selectedProduct.quantity > 0 ? selectedProduct.quantity : 'Out Of Stock' }}</span></div>
+                                <div><span class="subtitle-2 font-weight-bold">Brand: </span> <span class="blue--text" v-text="selectedProduct.productBrandName"></span></div>
                                 <div>
-                                    <span class="subtitle-2 font-weight-bold">Available Type:</span> 
+                                    <span class="subtitle-2 font-weight-bold">Serial Number:</span> 
                                     <span>
                                         <v-chip x-small class="ma-2" color="#ED0000" label text-color="white">
-                                            <v-icon x-small left>mdi-label</v-icon> Example type
+                                            <v-icon x-small left>mdi-label</v-icon> {{ selectedProduct.serialNumber }}
                                         </v-chip>
                                     </span>
                                     <!-- <span>
@@ -125,7 +125,16 @@
                         </div>
 
                         <div>
-                            <v-btn @click="addToCart({ productId: selectedProduct.id, quantity: quantity })" tile class="ml-6 mt-1" depressed color="success" dark>
+                            <v-btn 
+                                @click="addToCart({ 
+                                    productId: selectedProduct.productId,
+                                    productName:  selectedProduct.productName,
+                                    inventory: selectedProduct.quantity,
+                                    quantity: quantity,
+                                    price: selectedProduct.price * quantity 
+                                })" 
+                                tile class="ml-6 mt-1" depressed color="success" dark>
+
                                 <v-icon left>mdi-cart-arrow-down</v-icon> Add to Cart
                             </v-btn>
 
@@ -133,10 +142,6 @@
                                 <v-icon left>mdi-currency-ngn</v-icon> Buy Now
                             </v-btn>
                         </div>
-                
-                        
-
-                        
                     </div>
                 </v-col>
             </v-row>
@@ -145,7 +150,7 @@
 </template>
 
 <script>
-import productList from '../plugins/products.js'
+// import productList from '../plugins/products.js'
 import zoom from '../components/home/zoomOnHover'
 import titleParalax from '../components/TitleParalax'
 import { mapGetters, mapActions } from 'vuex'
@@ -159,14 +164,9 @@ export default {
         selectedProduct: {},
         items: [
             {
-                text: 'Dashboard',
+                text: 'Shop & Order',
                 disabled: false,
-                href: 'breadcrumbs_dashboard',
-            },
-            {
-                text: 'Link 1',
-                disabled: false,
-                href: 'breadcrumbs_link_1',
+                href: '/',
             },
             {
                 text: 'Link 2',
@@ -179,28 +179,39 @@ export default {
 
     computed: {
         ...mapGetters({
-            quantity: 'products/quantity'
+            quantity: 'productss/quantity',
+            productList: 'productss/allProducts'
         })
+    },
+
+    watch: {
+        productList(products){
+            this.initialise(products)
+        }
     },
 
     methods: {
         ...mapActions({
-            updateQuantity: 'products/updateQuantity',
-            addToCart: 'products/addToCart'
+            updateQuantity: 'productss/updateQuantity',
+            addToCart: 'productss/addToCart'
         }),
         selectImage(image){
             this.imageSelected = image;
         },
         productDetails(event) {
             this.product = event.params.product;
-            this.imageSelected = event.params.product.image_front
+            this.imageSelected = event.params.product.productImage
         },
+        async initialise(products){
+            let allProducts = await products.filter(product => product.productId == this.$route.query.productId);
+            allProducts.forEach(product => this.selectedProduct = product)
+            this.imageSelected = this.selectedProduct.productImage
+            this.items[1].text = this.selectedProduct.productName
+        }
     },
 
     mounted() {
-        let products = productList.filter(product => product.id == this.$route.query.productId);
-        products.forEach(product => this.selectedProduct = product)
-        this.imageSelected = this.selectedProduct.image_front
+        //set loader to wait for the watch handler
     }
 }
 </script>

@@ -1,10 +1,10 @@
-import { categories } from '../plugins/productRelatedTables'
+// import { categories } from '../plugins/productRelatedTables'
 import { filterProducts } from "../plugins/productFilters";
 import { buildFilters } from '../plugins/buildFilters';
 //import brands from '../plugins/brands'
 //import colors from '../plugins/colors'
 import subcategories from '../plugins/subcategories'
-import productss from '../plugins/products'
+//import productss from '../plugins/products'
 
 export const state = () => ({
     categories: [],
@@ -18,7 +18,8 @@ export const state = () => ({
         material: [],
         style: []
     },
-    filteredProducts: []
+    filteredProducts: [],
+    products: []
 })
 
 export const mutations = {
@@ -26,6 +27,9 @@ export const mutations = {
         if (payload.type == 'sizes') state.filters.size.push(payload.name)
         if (payload.type == 'materials') state.filters.material.push(payload.name)
         if (payload.type == 'Styles') state.filters.style.push(payload.name)
+    },
+    setProducts(state, data){
+        state.products = data
     },
     removeFromFilter(state, payload){
         if (payload.type == 'sizes') state.filters.size = state.filters.size.filter(size => size != payload.name)
@@ -40,21 +44,6 @@ export const mutations = {
     },
     setCategories(state, payload){
         state.categories = payload;
-    },
-    setStyles(state, payload) {
-        state.styles = payload;
-    },
-    setMaterials(state, payload) {
-        state.materials = payload;
-    },
-    setColors(state, payload) {
-        state.colors = payload;
-    },
-    setBrands(state, payload) {
-        state.brands = payload;
-    },
-    setSizes(state, payload) {
-        state.sizes = payload;
     }
 }
 
@@ -64,29 +53,41 @@ export const actions = {
     removeFromFilter(context, payload) { context.commit('removeFromFilter', payload) },
 
     displayBaseFilter(context, payload) {
-        if (payload.type == 'subcategory'){
-            let subcategory = subcategories.find(subcategory => subcategory.id == payload.id);
-            subcategory ? context.commit('setFilteredProduct', subcategory.products)  : '';
+        if (payload.type == 'category'){
+            let categories = context.state.categories
+            categories.find(category => category.id == payload.id);
+            categories ? context.commit('setFilteredProduct', categories.productList)  : '';
         } 
-        else if (payload.type == 'brand') {
-            let brand = brands.find(brand => brand.name == payload.name);
-            brand ? context.commit('setFilteredProduct', brand.products)  : '';
-        } 
-        else if (payload.type == 'color') {
-            let color = colors.find(color => color.name == payload.name);
-            color ? context.commit('setFilteredProduct', color.products)  : '';
-        }
+        // else if (payload.type == 'brand') {
+        //     let brand = brands.find(brand => brand.name == payload.name);
+        //     brand ? context.commit('setFilteredProduct', brand.products)  : '';
+        // } 
+        // else if (payload.type == 'color') {
+        //     let color = colors.find(color => color.name == payload.name);
+        //     color ? context.commit('setFilteredProduct', color.products)  : '';
+        // }
     },
     categoryProducts(context, categoryName) {
-        let categoryProducts = categories.find(category => category.name == categoryName);
-        categoryProducts ? context.commit('setFilteredProduct', categoryProducts.products) : '';
+        let categories = context.state.categories
+        let categoryProducts = categories.find(category => category.productCategyName == categoryName);
+        categoryProducts ? context.commit('setFilteredProduct', categoryProducts.productList) : '';
     },
-    getAllCategories(context) { context.commit('setCategories', categories) },
-    // getAllStyles(context) { context.commit('setStyles', styles) },
-    // getAllMaterials(context) { context.commit('setMaterials', materials) },
-    // getAllColors(context) { context.commit('setColors', colors) },
-    // getAllBrands(context) { context.commit('setBrands', brands) },
-    // getAllSizes(context) { context.commit('setSizes', sizes) }
+    getAllCategories(context) { 
+        this.$axios.get('/ProductCategory/GetAllProductCategory')
+            .then(response => {
+                context.commit('setCategories', response.data.data) 
+            }).catch(error => {
+                console.log(error)
+            }) 
+    },
+    getAllProducts(context){
+        this.$axios.get('/Products/GetAllProducts').then(response => {
+            context.commit('setProducts', response.data.data)
+        })
+        .catch(error => {
+            console.log(error)
+        })
+    }
 }
 
 export const getters = {
@@ -94,18 +95,16 @@ export const getters = {
         let products = [];
         let filters = buildFilters(state.filters)
         if (state.filteredProducts.length < 1) {
-            //debugger
-            products = filterProducts(productss, filters);
-            //products = filterProducts(getters.products, filters);
+            products = filterProducts(state.products, filters);
         } else {
             products = filterProducts(state.filteredProducts, filters);
         }
         return products;
     },
     getCategories(state){ return state.categories },
-    getStyles(state){ return state.styles },
-    getMaterials(state) { return state.materials },
-    getColors(state) { return state.colors },
-    getBrands(state) { return state.brands },
-    getSizes(state) { return state.sizes }
+    // getStyles(state){ return state.styles },
+    // getMaterials(state) { return state.materials },
+    // getColors(state) { return state.colors },
+    // getBrands(state) { return state.brands },
+    // getSizes(state) { return state.sizes }
 }

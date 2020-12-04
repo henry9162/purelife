@@ -1,78 +1,127 @@
 <template>
 <div>
     <v-card class="mx-10 mt-14" color="#22A64E">
-        <v-data-table :headers="headers" :items="users" sort-by="name" class="px-6">
+        <modal
+            name="users-modal" :min-width="700"
+            :max-width="700" :adaptive="true"
+            :scrollable="true" height="auto"
+            transition="fade-transition" :clickToClose="false">
+
+            <v-card>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="red" text @click="close">
+                        <v-icon>mdi-window-close</v-icon>
+                    </v-btn>
+                </v-card-actions>
+
+                <div class="text-center">
+                    <span class="headline list-color custom-style">{{ formTitle }}</span>
+                </div>
+
+                <v-card-text>
+                    <v-container>
+                        <v-row class="px-8">
+                            <v-col cols="12" md="6" class="py-0 px-0">
+                                <v-text-field v-model="editedItem.firstName" label="First Name"></v-text-field>
+                                <v-text-field v-model="editedItem.email" label="Email"></v-text-field>
+                                <v-select
+                                    v-model="editedItem.statedId"
+                                    :items="states"
+                                    item-text="stateName"
+                                    item-value="stateId"
+                                    label="State"
+                                    chips dense>
+                                </v-select>
+                                <v-menu
+                                    ref="menu" v-model="menu" :close-on-content-click="false" :return-value.sync="date"
+                                    transition="scale-transition" offset-y min-width="290px">
+
+                                    <template v-slot:activator="{ on, attrs }">
+                                    <v-text-field
+                                        v-model="date"
+                                        label="Picker in menu"
+                                        prepend-icon="mdi-calendar"
+                                        readonly
+                                        v-bind="attrs"
+                                        v-on="on"
+                                    ></v-text-field>
+                                    </template>
+
+                                    <v-date-picker v-model="date" no-title scrollable>
+                                        <v-spacer></v-spacer>
+
+                                        <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
+                                        <v-btn text color="primary" @click="$refs.menu.save(date)">OK</v-btn>
+                                    </v-date-picker>
+                                </v-menu>
+                            
+                                <!-- <v-text-field v-model="editedItem.roleId" label="Roles"></v-text-field> -->
+                            </v-col>
+                            <v-col cols="12" md="6" class="py-0 pl-5">
+                                <v-text-field v-model="editedItem.lastName" label="Last Name"></v-text-field>
+                                <v-text-field v-model="editedItem.phoneNumber" label="Phone"></v-text-field>
+                                <!-- <v-text-field v-model="editedItem.dob" label="Date Of Birth"></v-text-field> -->
+                                
+
+                                <v-select
+                                    v-model="editedItem.accountType"
+                                    :items="accountTypes"
+                                    item-text="accountypeName"
+                                    item-value="acountTypeId"
+                                    label="Account Type"
+                                    chips dense>
+                                </v-select>
+                                <v-text-field v-model="editedItem.city" label="City"></v-text-field>
+                                <!-- <v-text-field v-model="editedItem.accountType" label="Account Type"></v-text-field> -->
+                            </v-col>
+
+                            <v-col cols="12">
+                                <v-select
+                                    v-model="editedItem.lgaid"
+                                    :items="lgas"
+                                    item-text="lganame"
+                                    item-value="lgaid"
+                                    label="LGA"
+                                    chips dense>
+                                </v-select>
+                            </v-col>
+                           
+                            <v-btn block @click="save" depressed large prepend-inner-icon="mdi-map-marker" clearable
+                                class="white--text rounded-0 mt-6 mb-10 px-8 py-5 text-capitalize"
+                                color="#009933" :loading="loading" :disabled="loading" v-text="btnText">
+                                <v-icon right>mdi-send</v-icon>
+                                <template v-slot:loader>
+                                    <span class="custom-loader">
+                                        <v-icon light>mdi-cached</v-icon>
+                                    </span>
+                                </template>
+                            </v-btn>
+
+                        </v-row>
+                    </v-container>
+                </v-card-text>
+
+            </v-card>
+        </modal>
+
+
+        <v-data-table :headers="headers" :items="users" sort-by="calories" class="px-8 py-4">
             <template v-slot:top>
-                <v-toolbar flat color="white" class="pt-6">
-                    <v-toolbar-title class="list-color post-caption">All Users</v-toolbar-title>
+                <v-toolbar flat color="white">
+                    <v-toolbar-title class="list-color custom-style">All Users</v-toolbar-title>
                     <v-divider class="mx-4" inset vertical></v-divider>
                     <v-spacer></v-spacer>
-                    <v-dialog v-model="dialog" persistent scrollable max-width="500px">
-                        <template v-slot:activator="{ on, attrs }">
-                            <v-btn depressed color="#22A64E" dark class="rounded-0 post-caption" v-bind="attrs" v-on="on">
-                                <v-icon left>mdi-plus-circle-outline</v-icon> Add User
-                            </v-btn>
-                        </template>
-                        <v-card>
-                            <v-card-actions>
-                                <v-spacer></v-spacer>
-                                <v-btn color="red" text @click="close">
-                                    <v-icon>mdi-window-close</v-icon>
-                                </v-btn>
-                            </v-card-actions>
 
-                            <div class="text-center">
-                                <span class="headline list-color custom-style">{{ formTitle }}</span>
-                            </div>
-
-                            <v-card-text>
-                                <v-container>
-                                    <v-row class="px-8">
-                                        <v-col cols="12" class="py-0 px-0">
-                                            <v-text-field v-model="editedItem.firstName" label="First Name"></v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" class="py-0 px-0">
-                                            <v-text-field v-model="editedItem.lastName" label="Last Name"></v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" class="py-0 px-0">
-                                            <v-text-field v-model="editedItem.username" label="Username"></v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" class="py-0 px-0">
-                                            <v-text-field v-model="editedItem.email" label="Email"></v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" class="py-0 px-0">
-                                            <v-text-field v-model="editedItem.phone" label="Phone"></v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" class="py-0 px-0">
-                                            <v-text-field v-model="editedItem.password" label="Password"></v-text-field>
-                                        </v-col>
-                                        
-                                        <v-btn block @click="save" depressed large prepend-inner-icon="mdi-map-marker" clearable 
-                                            class="white--text rounded-0 mt-6 mb-10 px-8 py-5 text-capitalize" 
-                                            color="#009933" :loading="loading" :disabled="loading">Submit 
-                                            <v-icon right>mdi-send</v-icon>
-                                            <template v-slot:loader>
-                                                <span class="custom-loader">
-                                                    <v-icon light>mdi-cached</v-icon>
-                                                </span>
-                                            </template>
-                                        </v-btn>
-                            
-                                    </v-row>
-                                </v-container>
-                            </v-card-text>
-
-                        </v-card>
-                    </v-dialog>
+                    <v-btn @click="$modal.show('users-modal')" depressed large color="#22A64E" dark class="rounded-0 post-caption">
+                        <v-icon left>mdi-plus-circle-outline</v-icon> Add User
+                    </v-btn>
                 </v-toolbar>
             </template>
 
             <template v-slot:item.actions="{ item }">
-                <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
-                <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
-            </template>
-            <template v-slot:no-data>
-                <v-btn color="primary" @click="initialize">Reset</v-btn>
+                <v-icon small class="mr-2 green--text" @click="editItem(item)">mdi-pencil</v-icon>
+                <v-icon small class="red--text" @click="deleteItem(item)">mdi-delete</v-icon>
             </template>
         </v-data-table>
     </v-card>
@@ -84,7 +133,11 @@ export default {
     layout: 'admin',
 
     data: () => ({
-        dialog: false,
+        dialog: true,
+        loading: false,
+        btnText: 'Submit',
+        date: new Date().toISOString().substr(0, 10),
+        menu: false,
         headers: [
             {
                 text: 'First Name',
@@ -93,140 +146,160 @@ export default {
                 value: 'firstName',
             },
             { text: 'Last Name', value: 'lastName' },
-            { text: 'Username', value: 'username' },
             { text: 'Email', value: 'email' },
-            { text: 'Phone', value: 'phone' },
-            { text: 'Password', value: 'password' },
+            { text: 'Phone', value: 'phoneNumber' },
+            { text: 'D.O.B', value: 'dob' },
+            //{ text: 'Role', value: 'roleId' },
+            { text: 'State', value: 'statedId' },
+            { text: 'LGA', value: 'lgaid' },
+            { text: 'City', value: 'city' },
+            { text: 'Account Type', value: 'accountType' },
+            { text: 'Created On', value: 'createdOn' },
             { text: 'Actions', value: 'actions', sortable: false },
         ],
         editedIndex: -1,
         editedItem: {
+            userId: '',
             firstName: '',
             lastName: '',
-            username: '',
             email: '',
-            phone: '',
-            password: ''
+            phoneNumber: '',
+            dob: '',
+            //roleId: '',
+            statedId: '',
+            lgaid: '',
+            city: '',
+            password: '',
+            accountType: ''
         },
         defaultItem: {
+            userId: '',
             firstName: '',
             lastName: '',
-            username: '',
             email: '',
-            phone: '',
-            password: ''
+            phoneNumber: '',
+            dob: '',
+            //roleId: '',
+            statedId: '',
+            lgaid: '',
+            city: '',
+            password: '',
+            accountType: '',
         },
-        users: [],
-        loading: false
     }),
 
     watch: {
         dialog (val) {
             val || this.close()
+        },
+        'editedItem.statedId': function (val, oldVal) {
+          if(oldVal != '' || val != ''){
+            this.$store.dispatch('getLga', val)
+          }
         }
     },
 
     computed: {
+        users(){
+            return this.$store.getters["users/allUsers"];
+        },
+        states(){
+          return this.$store.getters["allStates"];
+        },
+        lgas(){
+          return this.$store.getters["allLgas"];
+        },
+        accountTypes(){
+            return this.$store.getters["allAccountTypes"];
+        },
         formTitle () {
-            return this.editedIndex === -1 ? 'Add User' : 'Edit User'
+            return this.editedIndex === -1 ? 'Add User' : 'Edit User';
         }
     },
 
     methods: {
-        initialize () {
-            this.users = [
-                {
-                    firstName: 'Henry',
-                    lastName: 'Ekwonwa',
-                    username: 'CreativeH',
-                    email: 'henimastic@gmail.com',
-                    phone: '08125234436',
-                    password: 'password'
-                },
-                {
-                    firstName: 'Deborah',
-                    lastName: 'Okubadejo',
-                    username: 'Angel',
-                    email: 'deborah@gmail.com',
-                    phone: '08125234431',
-                    password: 'password'   
-                },
-                {
-                    firstName: 'Chris',
-                    lastName: 'Ekwonwa',
-                    username: 'Chris',
-                    email: 'chris@gmail.com',
-                    phone: '08125234432',
-                    password: 'password'
-                },
-                {
-                    firstName: 'Felix',
-                    lastName: 'Ekwonwa',
-                    username: 'felix',
-                    email: 'felix@gmail.com',
-                    phone: '08125234434',
-                    password: 'password'
-                },
-                {
-                    firstName: 'Beatrice',
-                    lastName: 'Ekwonwa',
-                    username: 'Beatrice',
-                    email: 'beatrice@gmail.com',
-                    phone: '08125234435',
-                    password: 'password'
-                }
-            ]
-        },
-
-        addUser(){
-            this.loading = true
-
-            setTimeout(() => {
-                this.loading = false
-                this.$toast.success('Successfully added user').goAway(3500)
-                this.dialog = false
-            }, 3000);
-        },
-
         editItem (item) {
             this.editedIndex = this.users.indexOf(item)
             this.editedItem = Object.assign({}, item)
-            this.dialog = true
+            this.btnText = 'Update';
+            this.$modal.show('users-modal')
         },
-
+        addUser(){
+            this.loading = true
+            let data = {
+                firstName: this.editedItem.firstName,
+                lastName: this.editedItem.lastName,
+                email: this.editedItem.lastName,
+                phoneNumber: this.editedItem.phoneNumber,
+                dob: this.editedItem.dob,
+                //roleId: this.editedItem.roleId,
+                statedId: this.editedItem.statedId,
+                lgaid: this.editedItem.lgaid,
+                city: this.editedItem.city,
+                accountType: this.editedItem.accountType,
+                password: this.editedItem.password,
+                createdOn: new Date()
+            }
+            this.$store.dispatch('users/addUser', data).then(response => {
+                this.loading = false
+                this.refreshTable()
+                this.close();
+            })
+        },
+        updateUser(){
+            this.loading = true
+            let data = {
+                userId: this.users[this.editedIndex].userId,
+                firstName: this.editedItem.firstName,
+                lastName: this.editedItem.lastName,
+                email: this.editedItem.lastName,
+                phoneNumber: this.editedItem.phoneNumber,
+                dob: this.editedItem.dob,
+                //roleId: this.editedItem.roleId,
+                statedId: this.editedItem.statedId,
+                lgaid: this.editedItem.lgaid,
+                password: this.users[this.editedIndex].password,
+                city: this.editedItem.city,
+                accountType: this.editedItem.accountType,
+                modifiedOn: this.users[this.editedIndex].modifiedOn,
+                isDeprecated: this.users[this.editedIndex].isDeprecated
+            }
+            
+            this.$store.dispatch('users/updateUser', data).then(response => {
+                this.loading = false
+                this.refreshTable();
+                this.close();
+            })
+        },
         deleteItem (item) {
-            const index = this.users.indexOf(item)
-            confirm('Are you sure you want to delete this user?') && this.users.splice(index, 1)
+            confirm('Are you sure you want to delete this user?') && this.deleteUser(item)
         },
-
+        deleteUser(item){
+            let index = this.users.indexOf(item)
+            this.$store.dispatch('users/deleteUser', this.users[index].userId).then(response => {
+                this.refreshTable()
+            })
+        },
+        refreshTable(){
+            this.$store.dispatch('users/getAllUsers');
+        },
         close () {
-            this.dialog = false
             this.$nextTick(() => {
                 this.editedItem = Object.assign({}, this.defaultItem)
                 this.editedIndex = -1
+                this.loading = false
             })
+            this.$modal.hide('users-modal');
         },
 
         save () {
-            this.loading = true
-
-            setTimeout(() => {
-                this.loading = false
-                this.$toast.success('Successfully added user').goAway(3500)
-                if (this.editedIndex > -1) {
-                    Object.assign(this.users[this.editedIndex], this.editedItem)
-                } else {
-                    this.users.push(this.editedItem)
-                }
-                this.dialog = false
-            }, 3000);
+            if (this.editedIndex > -1) {
+                this.updateUser();
+            } else {
+                this.addUser();
+            }
         },
-    },
-
-    mounted(){
-        this.initialize()
     }
-
 }
 </script>
 

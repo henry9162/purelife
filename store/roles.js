@@ -1,25 +1,26 @@
 export const state = () => ({
-    diseases: [],
+    roles: [],
 })
 
 export const mutations = {
-    setDiseases(state, data){
-        state.diseases = data
+    setRoles(state, data){
+        state.roles = data
     }
 }
 
 export const actions = {
-    getAllDiseases(context){
-        this.$axios.get('/Disease/GetAllDisease')
+    getAllRoles(context){
+        //context.commit('setLoader', { state: true }, {root: true})
+        this.$axios.get('/ManageRole/GetAllRoles')
             .then(response => {
-                context.commit('setDiseases', response.data.data)
+                context.commit('setRoles', response.data.data)
             }).catch(error => {
                 context.dispatch('processError', error)
             })
     },
-    addDisease(context, data){
+    addRole(context, data){
         return new Promise((resolve, reject) => {
-            this.$axios.post('/Disease', data).then(response => {
+            this.$axios.post('/ManageRole', data).then(response => {
                 context.dispatch('processResponse', response)
                 resolve(response)
             })
@@ -29,21 +30,9 @@ export const actions = {
             })
         })
     },
-    addDiseaseToPatient(context, data){
+    updateRole(context, data){
         return new Promise((resolve, reject) => {
-            this.$axios.post('/Disease/AddDiseaseToPatient', data).then(response => {
-                context.dispatch('processResponse', response)
-                resolve(response)
-            })
-            .catch(error => {
-                context.dispatch('processError', error)
-                reject(error)
-            })
-        })
-    },
-    updateDisease(context, data){
-        return new Promise((resolve, reject) => {
-            this.$axios.put(`/Disease/${data.diseaseId}`, data).then(response => {
+            this.$axios.put(`/ManageRole/${data.roleId}`, data).then(response => {
                 context.dispatch('processResponse', response)
                 resolve(response)
             })
@@ -53,9 +42,9 @@ export const actions = {
             })
         })
     },
-    deleteDisease(context, id){
+    deleteRole(context, id){
         return new Promise((resolve, reject) => {
-            this.$axios.delete(`/Disease/${id}`).then(response => {
+            this.$axios.delete(`/ManageRole/${id}`).then(response => {
                 context.dispatch('processResponse', response)
                 resolve(response)
             })
@@ -74,7 +63,7 @@ export const actions = {
 }
 
 export const getters = {
-    allDiseases(state){
-        return state.diseases;
+    allRoles(state){
+        return state.roles;
     }
 }

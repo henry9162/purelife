@@ -120,7 +120,7 @@
                             <v-avatar class="mr-4" size="36">
                                 <img :src="$auth.user.image ? url+$auth.user.image.image : defaultImage" :alt="$auth.user.firstName">
                             </v-avatar>
-                            <span class="white--text" v-text="userName"></span> <v-icon>mdi-chevron-down</v-icon>
+                            <span class="grey--text text--darken-2" v-text="userName"></span> <v-icon>mdi-chevron-down</v-icon>
                         </v-btn>
                     </template>
 
@@ -249,6 +249,7 @@ export default {
             this.$store.dispatch('users/getAllUsers');
             this.$store.dispatch('prescriptions/getAllPrescriptions');
             this.$store.dispatch('diseases/getAllDiseases');
+            this.$store.dispatch('roles/getAllRoles');
         },
         navEvent(){
             if(this.imgSrc.state == false){
@@ -261,11 +262,15 @@ export default {
             console.log('You just hovered over ma')
         },
         async logout(){
-            await this.$auth.logout();
+            await this.$store.dispatch('auths/logout');
+        },
+        async setUser(){
+            await this.$store.dispatch('auths/setUser');
         }
     },
     mounted(){
         this.getAll()
+        this.setUser()
     }
 }
 </script>

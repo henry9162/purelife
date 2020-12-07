@@ -48,6 +48,69 @@
             </v-card>
         </modal>
 
+          <modal
+            name="addDisease-modal" :min-width="500"
+            :max-width="700" :adaptive="true"
+            :scrollable="true" height="auto"
+            transition="fade-transition" :clickToClose="false">
+
+            <v-card>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="red" text @click="close">
+                        <v-icon>mdi-window-close</v-icon>
+                    </v-btn>
+                </v-card-actions>
+
+                <div class="text-center">
+                    <span class="headline list-color custom-style">Add disease to patient</span>
+                </div>
+
+                <v-card-text>
+                    <v-container>
+                        <v-row class="px-8">
+                            <v-col cols="12" class="py-0 px-0">
+                                <v-select
+                                    v-model="editedItem.userId"
+                                    :items="users"
+                                    item-text="firstName"
+                                    item-value="userId"
+                                    label="Patient"
+                                    chips dense>
+                                </v-select>
+
+                                <v-select
+                                    v-model="editedItem.addDiseaseId"
+                                    :items="diseases"
+                                    item-text="diseaseName"
+                                    item-value="diseaseId"
+                                    label="Disease"
+                                    chips dense>
+                                </v-select>
+
+                                 <v-textarea v-model="editedItem.comments" class="post-caption" 
+                                    filled auto-grow label="Comments" rows="4" row-height="40" shaped>
+                                </v-textarea>
+                            </v-col>
+
+                            <v-btn block @click="AddDiseaseToPatient" depressed large prepend-inner-icon="mdi-map-marker" clearable
+                                class="white--text rounded-0 mt-6 mb-10 px-8 py-5 text-capitalize"
+                                color="#009933" :loading="loading" :disabled="loading"> Submit
+                                <v-icon right>mdi-send</v-icon>
+                                <template v-slot:loader>
+                                    <span class="custom-loader">
+                                        <v-icon light>mdi-cached</v-icon>
+                                    </span>
+                                </template>
+                            </v-btn>
+
+                        </v-row>
+                    </v-container>
+                </v-card-text>
+
+            </v-card>
+        </modal>
+
 
         <v-data-table :headers="headers" :items="diseases" sort-by="calories" class="px-8 py-4">
             <template v-slot:top>
@@ -58,6 +121,10 @@
 
                     <v-btn @click="$modal.show('diseases-modal')" depressed large color="#22A64E" dark class="rounded-0 post-caption">
                         <v-icon left>mdi-plus-circle-outline</v-icon> Add Disease
+                    </v-btn>
+
+                    <v-btn @click="$modal.show('addDisease-modal')" depressed large color="#22A64E" dark class="rounded-0 ml-4 post-caption">
+                        <v-icon left>mdi-plus-circle-outline</v-icon> Add Disease To Patient
                     </v-btn>
                 </v-toolbar>
             </template>
@@ -92,11 +159,17 @@ export default {
         ],
         editedIndex: -1,
         editedItem: {
+            userId: '',
+            addDiseaseId: '',
+            comments: '',
             diseaseName: '',
             severity: '',
             createdOn: '',
         },
         defaultItem: {
+            userId: '',
+            addDiseaseId: '',
+            comments: '',
             diseaseName: '',
             severity: '',
             createdOn: '',
@@ -113,6 +186,9 @@ export default {
     computed: {
         diseases(){
             return this.$store.getters["diseases/allDiseases"];
+        },
+        users(){
+            return this.$store.getters["users/allUsers"];
         },
         formTitle () {
             return this.editedIndex === -1 ? 'Add Disease' : 'Edit Disease';
@@ -139,7 +215,22 @@ export default {
                 this.close();
             })
         },
+        AddDiseaseToPatient(){
+             this.loading = true
+                let data = {
+                    userId: this.editedItem.userId,
+                    diseaseId: this.editedItem.addDiseaseId,
+                    comments: this.editedItem.comments,
+                    //createdOn: new Date()
+                }
+                this.$store.dispatch('diseases/addDiseaseToPatient', data).then(response => {
+                    this.loading = false
+                    this.refreshTable()
+                    this.close();
+                })
+        },
         updateDisease(){
+            this.loading = true
             let data = {
                 diseaseId: this.diseases[this.editedIndex].diseaseId,
                 diseaseName: this.editedItem.diseaseName,
@@ -150,6 +241,7 @@ export default {
             }
         
             this.$store.dispatch('diseases/updateDisease', data).then(response => {
+                this.loading = false
                 this.refreshTable();
                 this.close();
             })
@@ -173,6 +265,7 @@ export default {
                 this.loading = false
             })
             this.$modal.hide('diseases-modal');
+            this.$modal.hide('addDisease-modal');
         },
 
         save () {

@@ -125,7 +125,7 @@
                     Log In
             </v-btn>
 
-            <v-btn v-if="!$auth.loggedIn" href="/" large text 
+            <v-btn v-if="!$auth.loggedIn" href="/auth" large text 
                 class="custom-red post-caption text-capitalize px-3 mr-2 d-none d-sm-flex">
                     Create Account
             </v-btn>
@@ -263,6 +263,7 @@ export default {
         defaultImage: 'https://via.placeholder.com/150',
         loading: false,
         menu2: false,
+        userMenu: false,
         items: [],
         categories: [ { title: 'MEN' }, { title: 'WOMEN'}, { title: 'KIDS'} ],
         categories2: [ { title: 'ACCESORIES' }, { title: 'BAGS'}, { title: 'MORE'} ],
@@ -347,37 +348,44 @@ export default {
         deactivateSnackbar(){
             this.$store.dispatch('deactivateSnackbar')
         },
-        async logout() {
-            await this.$auth.logout();
+        initialise(){
+            //this.getAll()
+            //this.deactivateSnackbar();
+            this.$store.dispatch('products/getAllProducts');
+            this.$store.dispatch('products/persistCart');
+            this.$store.dispatch('categories/getAllCategories');
+            this.$store.dispatch('filters/getAllProducts');
+            
+            this.$store.dispatch('brands/getAllBrands');
+            this.$store.dispatch('classifications/getAllClassifications');
+            this.$store.dispatch('packages/getAllPackages');
+            this.$store.dispatch('groups/getAllProductGroups');
+            this.$store.dispatch('branches/getAllBranches');
+            this.$store.dispatch('productss/getAllProducts');
+            this.$store.dispatch('getAllStates');
+            this.$store.dispatch('getAccountTypes');
+            this.$store.dispatch('users/getAllUsers');
+            this.$store.dispatch('prescriptions/getAllPrescriptions');
+            this.$store.dispatch('diseases/getAllDiseases');
+            this.$store.dispatch('filters/getAllCategories');
+            
+            // this.$store.dispatch('filters/getAllStyles');
+            // this.$store.dispatch('filters/getAllMaterials');
+            // this.$store.dispatch('filters/getAllColors');
+            // this.$store.dispatch('filters/getAllBrands');
+            // this.$store.dispatch('filters/getAllSizes');
         },
+        async logout() {
+            await this.$store.dispatch('auths/logout');
+        },
+        async setUser(){
+            await this.$store.dispatch('auths/setUser');
+        }
     },    
 
     mounted(){
-        //this.getAll()
-        //this.deactivateSnackbar();
-        this.$store.dispatch('products/getAllProducts');
-        this.$store.dispatch('products/persistCart');
-        this.$store.dispatch('categories/getAllCategories');
-        this.$store.dispatch('filters/getAllProducts');
-        
-        this.$store.dispatch('brands/getAllBrands');
-        this.$store.dispatch('classifications/getAllClassifications');
-        this.$store.dispatch('packages/getAllPackages');
-        this.$store.dispatch('groups/getAllProductGroups');
-        this.$store.dispatch('branches/getAllBranches');
-        this.$store.dispatch('productss/getAllProducts');
-        this.$store.dispatch('getAllStates');
-        this.$store.dispatch('getAccountTypes');
-        this.$store.dispatch('users/getAllUsers');
-        this.$store.dispatch('prescriptions/getAllPrescriptions');
-        this.$store.dispatch('diseases/getAllDiseases');
-        this.$store.dispatch('filters/getAllCategories');
-        
-        // this.$store.dispatch('filters/getAllStyles');
-        // this.$store.dispatch('filters/getAllMaterials');
-        // this.$store.dispatch('filters/getAllColors');
-        // this.$store.dispatch('filters/getAllBrands');
-        // this.$store.dispatch('filters/getAllSizes');
+        this.initialise()
+        this.setUser()
     }
 }
 </script>

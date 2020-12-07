@@ -10,7 +10,15 @@
 
 <script>
 export default {
+    methods: {
+        async setUser(){
+            await this.$store.dispatch('auths/setUser');
+        }
+    },
 
+    mounted(){
+        this.setUser();
+    }
 }
 </script>
 

@@ -65,9 +65,6 @@
                 <v-icon small class="mr-2 green--text" @click="editItem(item)">mdi-pencil</v-icon>
                 <v-icon small class="red--text" @click="deleteItem(item)">mdi-delete</v-icon>
             </template>
-            <template v-slot:no-data>
-                <v-btn color="primary">Reset</v-btn>
-            </template>
         </v-data-table>
     </v-card>
 </div>
@@ -143,6 +140,7 @@ export default {
             })
         },
         updateBrand(){
+            this.loading = true
             let data = { 
                 productBrandId: this.brands[this.editedIndex].productBrandId,
                 productBrandName: this.editedItem.productBrandName,
@@ -152,6 +150,7 @@ export default {
                 isDeprecated: this.brands[this.editedIndex].isDeprecated
             }
             this.$store.dispatch('brands/updateBrand', data).then(response => {
+                this.loading = false
                 this.refreshTable();
                 this.close();
             })

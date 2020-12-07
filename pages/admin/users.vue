@@ -26,7 +26,7 @@
                                 <v-text-field v-model="editedItem.firstName" label="First Name"></v-text-field>
                                 <v-text-field v-model="editedItem.email" label="Email"></v-text-field>
                                 <v-select
-                                    v-model="editedItem.statedId"
+                                    v-model="editedItem.stateId"
                                     :items="states"
                                     item-text="stateName"
                                     item-value="stateId"
@@ -34,29 +34,36 @@
                                     chips dense>
                                 </v-select>
                                 <v-menu
-                                    ref="menu" v-model="menu" :close-on-content-click="false" :return-value.sync="date"
+                                    ref="menu" v-model="menu" :close-on-content-click="false" :return-value.sync="editedItem.dob"
                                     transition="scale-transition" offset-y min-width="290px">
 
                                     <template v-slot:activator="{ on, attrs }">
                                     <v-text-field
-                                        v-model="date"
-                                        label="Picker in menu"
-                                        prepend-icon="mdi-calendar"
+                                        v-model="editedItem.dob"
+                                        label="Date Of Birth"
+                                       
                                         readonly
                                         v-bind="attrs"
                                         v-on="on"
                                     ></v-text-field>
                                     </template>
 
-                                    <v-date-picker v-model="date" no-title scrollable>
+                                    <v-date-picker v-model="editedItem.dob" no-title scrollable>
                                         <v-spacer></v-spacer>
 
                                         <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
-                                        <v-btn text color="primary" @click="$refs.menu.save(date)">OK</v-btn>
+                                        <v-btn text color="primary" @click="$refs.menu.save(editedItem.dob)">OK</v-btn>
                                     </v-date-picker>
                                 </v-menu>
-                            
-                                <!-- <v-text-field v-model="editedItem.roleId" label="Roles"></v-text-field> -->
+
+                                <v-select
+                                    v-model="editedItem.lgaid"
+                                    :items="lgas"
+                                    item-text="lganame"
+                                    item-value="lgaid"
+                                    label="LGA"
+                                    chips dense>
+                                </v-select>
                             </v-col>
                             <v-col cols="12" md="6" class="py-0 pl-5">
                                 <v-text-field v-model="editedItem.lastName" label="Last Name"></v-text-field>
@@ -73,19 +80,24 @@
                                     chips dense>
                                 </v-select>
                                 <v-text-field v-model="editedItem.city" label="City"></v-text-field>
-                                <!-- <v-text-field v-model="editedItem.accountType" label="Account Type"></v-text-field> -->
-                            </v-col>
-
-                            <v-col cols="12">
                                 <v-select
-                                    v-model="editedItem.lgaid"
-                                    :items="lgas"
-                                    item-text="lganame"
-                                    item-value="lgaid"
-                                    label="LGA"
+                                    v-model="editedItem.roleId"
+                                    :items="roles"
+                                    item-text="name"
+                                    item-value="roleId"
+                                    label="Role"
                                     chips dense>
                                 </v-select>
                             </v-col>
+
+                            <!-- <v-col cols="12" class="pl-0">
+                                <v-text-field 
+                                    v-model="password" :rules="passwordRules"  dense 
+                                    label="Password" required hint="At least 8 characters" counter
+                                    :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" @click:append="show1 = !show1"
+                                    :type="show1 ? 'text' : 'password'">
+                                </v-text-field>
+                            </v-col> -->
                            
                             <v-btn block @click="save" depressed large prepend-inner-icon="mdi-map-marker" clearable
                                 class="white--text rounded-0 mt-6 mb-10 px-8 py-5 text-capitalize"
@@ -106,7 +118,7 @@
         </modal>
 
 
-        <v-data-table :headers="headers" :items="users" sort-by="calories" class="px-8 py-4">
+        <v-data-table :headers="headers" :items="users" sort-by="" class="px-8 py-4">
             <template v-slot:top>
                 <v-toolbar flat color="white">
                     <v-toolbar-title class="list-color custom-style">All Users</v-toolbar-title>
@@ -149,7 +161,7 @@ export default {
             { text: 'Email', value: 'email' },
             { text: 'Phone', value: 'phoneNumber' },
             { text: 'D.O.B', value: 'dob' },
-            //{ text: 'Role', value: 'roleId' },
+            { text: 'Role', value: 'roleName' },
             { text: 'State', value: 'statedId' },
             { text: 'LGA', value: 'lgaid' },
             { text: 'City', value: 'city' },
@@ -157,6 +169,12 @@ export default {
             { text: 'Created On', value: 'createdOn' },
             { text: 'Actions', value: 'actions', sortable: false },
         ],
+        passwordRules: [
+            v => !!v || 'Password is required',
+            v => (v && v.length >= 6) || 'Password must not be less than 6 characters',
+        ],
+        show1: false,
+        valid: true,
         editedIndex: -1,
         editedItem: {
             userId: '',
@@ -164,9 +182,9 @@ export default {
             lastName: '',
             email: '',
             phoneNumber: '',
-            dob: '',
-            //roleId: '',
-            statedId: '',
+            dob: new Date().toISOString().substr(0, 10),
+            roleId: '',
+            stateId: '',
             lgaid: '',
             city: '',
             password: '',
@@ -178,9 +196,9 @@ export default {
             lastName: '',
             email: '',
             phoneNumber: '',
-            dob: '',
-            //roleId: '',
-            statedId: '',
+            dob: new Date().toISOString().substr(0, 10),
+            roleId: '',
+            stateId: '',
             lgaid: '',
             city: '',
             password: '',
@@ -192,7 +210,7 @@ export default {
         dialog (val) {
             val || this.close()
         },
-        'editedItem.statedId': function (val, oldVal) {
+        'editedItem.stateId': function (val, oldVal) {
           if(oldVal != '' || val != ''){
             this.$store.dispatch('getLga', val)
           }
@@ -211,6 +229,9 @@ export default {
         },
         accountTypes(){
             return this.$store.getters["allAccountTypes"];
+        },
+        roles(){
+            return this.$store.getters["roles/allRoles"];
         },
         formTitle () {
             return this.editedIndex === -1 ? 'Add User' : 'Edit User';
@@ -232,14 +253,16 @@ export default {
                 email: this.editedItem.lastName,
                 phoneNumber: this.editedItem.phoneNumber,
                 dob: this.editedItem.dob,
-                //roleId: this.editedItem.roleId,
-                statedId: this.editedItem.statedId,
+                roleId: this.editedItem.roleId,
+                statedId: this.editedItem.stateId,
                 lgaid: this.editedItem.lgaid,
                 city: this.editedItem.city,
                 accountType: this.editedItem.accountType,
                 password: this.editedItem.password,
-                createdOn: new Date()
+                createdOn: new Date(),
+                createdBy: this.$auth.user.userId
             }
+            //console.log(this.$auth.user);
             this.$store.dispatch('users/addUser', data).then(response => {
                 this.loading = false
                 this.refreshTable()
@@ -255,8 +278,8 @@ export default {
                 email: this.editedItem.lastName,
                 phoneNumber: this.editedItem.phoneNumber,
                 dob: this.editedItem.dob,
-                //roleId: this.editedItem.roleId,
-                statedId: this.editedItem.statedId,
+                roleId: this.editedItem.roleId,
+                statedId: this.editedItem.stateId,
                 lgaid: this.editedItem.lgaid,
                 password: this.users[this.editedIndex].password,
                 city: this.editedItem.city,

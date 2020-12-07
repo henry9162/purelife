@@ -28,12 +28,33 @@ export const actions = {
         return new Promise((resolve, reject) => {
             this.$auth.loginWith('local', {data: data})
             .then(response => {
+                if(process.client){
+                    let user = response.data.data
+                    localStorage.setItem('signedInUser', JSON.stringify(user));
+                }
                 resolve(response)
             }).catch (error => { 
                 context.dispatch('processError', error);
                 reject(error)   
             })
         })
+    },
+    setUser(context){
+        if(process.client){
+            let user = localStorage.getItem('signedInUser')
+            if(user){
+                this.$auth.setUser(JSON.parse(user));
+            }
+        }
+    },
+    logout(context){
+        if(process.client){
+            let user = localStorage.getItem('signedInUser');
+            if (user){
+                localStorage.removeItem('signedInUser')
+                this.$auth.logout();
+            }
+        }
     },
     processError(context, error){
         this.$toast.error(error).goAway(4000)

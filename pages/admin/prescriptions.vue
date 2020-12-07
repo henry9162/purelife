@@ -161,6 +161,7 @@ export default {
             })
         },
         updatePrescription(){
+            this.loading = true
             let data = {
                 prescriptionId: this.prescriptions[this.editedIndex].prescriptionId,
                 prescriptionDescription: this.editedItem.prescriptionDescription,
@@ -171,6 +172,7 @@ export default {
                 isDeprecated: this.prescriptions[this.editedIndex].isDeprecated
             }
             this.$store.dispatch('prescriptions/updatePrescription', data).then(response => {
+                this.loading = false
                 this.refreshTable();
                 this.close();
             })

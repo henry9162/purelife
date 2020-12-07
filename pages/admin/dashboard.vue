@@ -339,7 +339,7 @@
                                                             <v-text-field type="number" v-model="editedItem.quantity" label="Quantity"></v-text-field>
                                                         </v-col>
                                                         
-                                                        <v-btn block @click="addDrug" depressed large prepend-inner-icon="mdi-map-marker" clearable 
+                                                        <v-btn block depressed large prepend-inner-icon="mdi-map-marker" clearable 
                                                             class="white--text rounded-0 mt-6 mb-10 px-8 py-5 text-capitalize" 
                                                             color="#009933" :loading="loading" :disabled="loading">Submit 
                                                             <v-icon right>mdi-send</v-icon>
@@ -467,12 +467,12 @@
 <script>
 export default {
     //middleware: 'auth',
-    components: { },
 
     data: () => ({
         drawer: false,
         miniVariant: true,
         loading: false,
+        userMenu: false,
         adminList: [
             { name: 'Product Categories', icon: 'mdi-shape', url: '/admin/categories' },
             { name: 'Product Brands', icon: 'mdi-grain', url: '/admin/brands' },
@@ -497,8 +497,7 @@ export default {
             { name: 'Users', icon: 'mdi-account', url: '/admin/categories' },
         ],
         settings: [
-            { name: 'Roles', icon: 'mdi-post', url: '/admin/roles' },
-            { name: 'Branches', icon: 'mdi-account', url: '/admin/branches' },
+            { name: 'Roles', icon: 'mdi-post', url: '/admin/roles' }
         ],
         defaultImage: 'https://via.placeholder.com/150',
         options: {
@@ -691,12 +690,7 @@ export default {
 
     methods: {
         getAll(){
-            // this.$store.dispatch('categories/getCategories');
-            // this.$store.dispatch('threads/getThreads');
-            // this.$store.dispatch('contacts/getContacts');
-            // this.$store.dispatch('users/getUsers');
-            // this.$store.dispatch('podcasts/getPodcasts');
-            // this.$store.dispatch('threads/getThreadsByUserId', this.$auth.user.id);
+
         },
         navEvent(){
             console.log('You just hovered over ma')
@@ -798,7 +792,6 @@ export default {
                 this.editedIndex = -1
             })
         },
-
         save () {
             if (this.editedIndex > -1) {
                 Object.assign(this.drugs[this.editedIndex], this.editedItem)
@@ -807,14 +800,17 @@ export default {
             }
             this.close()
         },
-
         async logout(){
-            await this.$auth.logout();
+            await this.$store.dispatch('auths/logout');
+        },
+        async setUser(){
+            await this.$store.dispatch('auths/setUser');
         }
     },
     mounted(){
         //this.getAll()
         this.initialize()
+        this.setUser()
     }
 }
 </script>

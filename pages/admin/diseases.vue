@@ -26,7 +26,6 @@
                                 <v-text-field v-model="editedItem.diseaseName" label="Disease Name"></v-text-field>
                             </v-col>
                             <v-col cols="12" class="py-0 px-0">
-                                <!-- <v-text-field v-model="editedItem.severity" label="Severity"></v-text-field> -->
                                 <v-select v-model="editedItem.severity" :items="severities" label="Severity"></v-select>
                             </v-col>
 
@@ -111,6 +110,46 @@
             </v-card>
         </modal>
 
+        <modal
+            name="disease-patients-modal" :min-width="800"
+            :max-width="700" :adaptive="true"
+            :scrollable="true" height="auto"
+            transition="fade-transition" :clickToClose="false">
+
+            <v-card>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="red" text @click="closes">
+                        <v-icon>mdi-window-close</v-icon>
+                    </v-btn>
+                </v-card-actions>
+
+                <v-card-text>
+                    <v-container>
+                        <v-row class="">
+                            <v-col cols="12" class="py-0 px-0">
+                                <v-data-table :headers="headers" :items="diseases" sort-by="calories" class="px-8">
+                                    <template v-slot:top>
+                                        <v-toolbar flat color="white">
+                                            <v-toolbar-title class="list-color custom-style">Patients</v-toolbar-title>
+                                            <v-divider class="mx-4" inset vertical></v-divider>
+                                            <v-spacer></v-spacer>
+                                        </v-toolbar>
+                                    </template>
+
+                                    <template v-slot:item.actions="{ item }">
+                                        <v-icon small class="mr-2 green--text" @click="editItem(item)">mdi-pencil</v-icon>
+                                        <v-icon small class="red--text" @click="deleteItem(item)">mdi-delete</v-icon>
+                                    </template>
+                                </v-data-table>
+                            </v-col>
+                        </v-row>
+                    </v-container>
+                </v-card-text>
+
+            </v-card>
+        </modal>
+
 
         <v-data-table :headers="headers" :items="diseases" sort-by="calories" class="px-8 py-4">
             <template v-slot:top>
@@ -131,6 +170,14 @@
 
             <template v-slot:item.actions="{ item }">
                 <v-icon small class="mr-2 green--text" @click="editItem(item)">mdi-pencil</v-icon>
+
+                <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-icon @click="viewPatients(item)" v-bind="attrs" v-on="on" class="blue--text custom-red pr-2">mdi-account</v-icon>
+                    </template>
+                    <span>View patients</span>
+                </v-tooltip>
+
                 <v-icon small class="red--text" @click="deleteItem(item)">mdi-delete</v-icon>
             </template>
         </v-data-table>
@@ -165,6 +212,7 @@ export default {
             diseaseName: '',
             severity: '',
             createdOn: '',
+            craedtedby: ''
         },
         defaultItem: {
             userId: '',
@@ -173,6 +221,7 @@ export default {
             diseaseName: '',
             severity: '',
             createdOn: '',
+            createdby: ''
         },
         severities: ['Low', 'Moderate', 'High', 'Very High', 'Extremely High']
     }),
@@ -201,6 +250,9 @@ export default {
             this.editedItem = Object.assign({}, item)
             this.btnText = 'Update';
             this.$modal.show('diseases-modal')
+        },
+        viewPatients(item){
+            this.$modal.show('disease-patients-modal')
         },
         addDisease(){
             this.loading = true
@@ -235,9 +287,7 @@ export default {
                 diseaseId: this.diseases[this.editedIndex].diseaseId,
                 diseaseName: this.editedItem.diseaseName,
                 severity: this.editedItem.severity,
-                createdOn: this.diseases[this.editedIndex].createdOn,
-                modifiedOn: new Date(),
-                isDeprecated: this.diseases[this.editedIndex].isDeprecated
+                createdby: this.diseases[this.editedIndex].createdby
             }
         
             this.$store.dispatch('diseases/updateDisease', data).then(response => {
@@ -266,6 +316,10 @@ export default {
             })
             this.$modal.hide('diseases-modal');
             this.$modal.hide('addDisease-modal');
+        },
+
+        closes(){
+            this.$modal.hide('disease-patients-modal');
         },
 
         save () {

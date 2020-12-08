@@ -9,8 +9,8 @@
                     </v-list-item-avatar>
 
                     <v-list-item-content>
-                        <v-list-item-title class="post-caption list-color">Henry Ekwonwa</v-list-item-title>
-                        <v-list-item-subtitle>henimastic@gmail.com</v-list-item-subtitle>
+                        <v-list-item-title class="post-caption list-color" v-text="authName"></v-list-item-title>
+                        <v-list-item-subtitle v-text="authEmail"></v-list-item-subtitle>
                         <!-- <img @click="$router.push({path: '/'})" :src="require(`~/assets/logos/${imgSrc.src}`)" weight="30px" height="43px"> -->
                     </v-list-item-content>
                 </v-list-item>
@@ -30,7 +30,7 @@
                     <v-list-item-title class="list-color">Dashboard</v-list-item-title>
                 </v-list-item>
 
-                <v-list-group class="post-caption list-color" no-action prepend-icon="mdi-shape">
+                <v-list-group class="post-caption list-color" no-action prepend-icon="mdi-source-branch">
                     <template v-slot:activator>
                         <v-list-item-title class="list-color">Branch Management</v-list-item-title>
                     </template>
@@ -60,7 +60,7 @@
                     </v-list-item>
                 </v-list-group>
 
-                <v-list-group color="#22A64E" class="post-caption list-color" no-action prepend-icon="mdi-post-outline">
+                <v-list-group color="#22A64E" class="post-caption list-color" no-action prepend-icon="mdi-pill">
                     <template v-slot:activator>
                         <v-list-item-title class="list-color">Prescription Management</v-list-item-title>
                     </template>
@@ -103,10 +103,39 @@
             </v-list>
         </v-navigation-drawer>
 
-        <v-app-bar color="#fff" height="80px" fixed app>
+        <v-app-bar color="#fff" height="82px" fixed app>
             <v-toolbar-title class="custom-h4 navLink" @click="$router.push({path: '/'})">
-                <img src="~assets/logos/newLogo.png" height="60px">
+                <img src="~assets/logos/newLogo.png" height="50px">
             </v-toolbar-title>
+
+            <v-spacer />
+
+            <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                    <v-btn icon class="" v-bind="attrs" v-on="on">
+                        <v-badge class="title" overlap color="red">
+                            <template class="cart-notification" v-slot:badge>
+                                <span dark>0</span>
+                            </template>
+                            <v-icon class="custom-red pt-2">mdi-atom</v-icon>
+                        </v-badge>
+                    </v-btn>
+                </template>
+                <span>Items to expire</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                    <v-btn icon class="" v-bind="attrs" v-on="on">
+                        <v-badge class="title" overlap color="red">
+                            <template class="cart-notification" v-slot:badge>
+                                <span dark>0</span>
+                            </template>
+                            <v-icon class="custom-red pt-2">mdi-atom-variant</v-icon>
+                        </v-badge>
+                    </v-btn>
+                </template>
+                <span>Items to expire in a month</span>
+            </v-tooltip>
 
             <v-spacer />
 
@@ -232,6 +261,18 @@ export default {
         userImage(){
             let url = this.$store.state.productionUrl
             return this.$auth.user.image ? url+this.$auth.user.image.image : this.defaultImage;
+        },
+        authName(){
+            var firstName = ''
+            var lastName = ''
+            if(this.$auth.user != null){
+                firstName = this.$auth.user.firstName
+                lastName = this.$auth.user.lastName
+            }   
+            return firstName + ' ' + lastName
+        },
+        authEmail(){
+            return this.$auth.user.email
         }
     },
 

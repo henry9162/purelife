@@ -99,8 +99,10 @@ export default {
                 sortable: false,
                 value: 'prescriptionDescription',
             },
-            { text: 'Complaints', value: 'complaints' },
-            { text: 'Patient', value: 'patientId' },
+            { text: 'Complaints', value: 'complaint' },
+            { text: 'Patient', value: 'firstName' },
+            { text: 'Email', value: 'email'},
+            { text: 'Phone', value: 'phoneNumber'},
             { text: 'Created On', value: 'createdOn' },
             { text: 'Actions', value: 'actions', sortable: false },
         ],
@@ -141,7 +143,7 @@ export default {
 
     methods: {
         editItem (item) {
-            this.editedIndex = this.categories.indexOf(item)
+            this.editedIndex = this.prescriptions.indexOf(item)
             this.editedItem = Object.assign({}, item)
             this.btnText = 'Update';
             this.$modal.show('prescriptions-modal')

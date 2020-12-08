@@ -368,12 +368,6 @@ export default {
             this.$store.dispatch('prescriptions/getAllPrescriptions');
             this.$store.dispatch('diseases/getAllDiseases');
             this.$store.dispatch('filters/getAllCategories');
-            
-            // this.$store.dispatch('filters/getAllStyles');
-            // this.$store.dispatch('filters/getAllMaterials');
-            // this.$store.dispatch('filters/getAllColors');
-            // this.$store.dispatch('filters/getAllBrands');
-            // this.$store.dispatch('filters/getAllSizes');
         },
         async logout() {
             await this.$store.dispatch('auths/logout');

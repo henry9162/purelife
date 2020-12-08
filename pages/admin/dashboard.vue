@@ -8,8 +8,8 @@
                     </v-list-item-avatar>
 
                     <v-list-item-content>
-                        <v-list-item-title class="post-caption list-color">Henry Ekwonwa</v-list-item-title>
-                        <v-list-item-subtitle class="">henimastic@gmail.com</v-list-item-subtitle>
+                        <v-list-item-title class="post-caption list-color" v-text="authName"></v-list-item-title>
+                        <v-list-item-subtitle class="" v-text="authEmail"></v-list-item-subtitle>
                     </v-list-item-content>
                 </v-list-item>
             </v-list>
@@ -24,7 +24,7 @@
                     <v-list-item-title class="list-color">Dashboard</v-list-item-title>
                 </v-list-item>
 
-                <v-list-group color="#22A64E" class="post-caption list-color" no-action prepend-icon="mdi-shape">
+                <v-list-group color="#22A64E" class="post-caption list-color" no-action prepend-icon="mdi-source-branch">
                     <template v-slot:activator>
                         <v-list-item-title class="list-color">Branch Management</v-list-item-title>
                     </template>
@@ -54,7 +54,7 @@
                     </v-list-item>
                 </v-list-group>
 
-                <v-list-group color="#22A64E" class="post-caption list-color" no-action prepend-icon="mdi-post-outline">
+                <v-list-group color="#22A64E" class="post-caption list-color" no-action prepend-icon="mdi-pill">
                     <template v-slot:activator>
                         <v-list-item-title class="list-color">Prescription Management</v-list-item-title>
                     </template>
@@ -98,13 +98,45 @@
         </v-navigation-drawer>
 
         <v-card flat color="#F4F0EC" height="400px" tile>
-            <v-toolbar color="#fff" extended extension-height="10">
+            <v-toolbar color="#fff" extended extension-height="6">
                 <v-toolbar-title class="custom-h4 navLink" @click="$router.push({path: '/'})">
                     <div class="mt-2 rounded">
-                        <img src="~assets/logos/newLogo.png" height="60px">
+                        <img src="~assets/logos/newLogo.png" height="50px">
                     </div>   
                 </v-toolbar-title>
+
                 <v-spacer />
+
+                <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn icon class="" v-bind="attrs" v-on="on">
+                            <v-badge class="title" overlap color="red">
+                                <template class="cart-notification" v-slot:badge>
+                                    <span dark>0</span>
+                                </template>
+                                <v-icon class="custom-red pt-2">mdi-atom</v-icon>
+                            </v-badge>
+                        </v-btn>
+                    </template>
+                    <span>Items to expire</span>
+                </v-tooltip>
+
+                 <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn icon class="" v-bind="attrs" v-on="on">
+                            <v-badge class="title" overlap color="red">
+                                <template class="cart-notification" v-slot:badge>
+                                    <span dark>0</span>
+                                </template>
+                                <v-icon class="custom-red pt-2">mdi-atom-variant</v-icon>
+                            </v-badge>
+                        </v-btn>
+                    </template>
+                    <span>Items to expire in a month</span>
+                </v-tooltip>
+
+                <v-spacer />
+
                 <div v-if="$auth.loggedIn">
                     <v-menu v-model="userMenu" close-delay="200" 
                         max-width="200" :close-on-content-click="false" 
@@ -178,19 +210,21 @@
                                     <div>
                                         <v-btn height="80" color="#F72628" 
                                             :elevation="hover ? 20 : 0" large class="rounded-o white--text mt-n6">
-                                            <v-icon large>mdi-chart-bar</v-icon>
+                                            <v-icon large>mdi-calendar-today</v-icon>
                                         </v-btn>
                                     </div>
                                     <div class="content mt-3">
-                                        <div class="text-uppercase d-flex justify-end grey--text text--lighten-1 subtitle-2">Traffic</div>
-                                        <div class="green--text d-flex justify-end text-h5">350,897</div>
+                                        <div class="text-uppercase d-flex justify-end grey--text text--lighten-1 subtitle-2">Today Sales</div>
+                                        <div class="green--text d-flex justify-end text-h5">
+                                            <v-icon class="green--text">mdi-currency-ngn</v-icon> <span>0</span>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="baseline px-4 mt-7">
                                     <div class="d-flex mr-4">
                                         <v-icon color="green">mdi-arrow-up</v-icon>
-                                        <div class="green--text subtitle-1 mt-1 mr-4">3.48%</div>
-                                        <div class="grey--text text--darken-1 post-caption mt-2">Since last month</div>
+                                        <div class="green--text subtitle-1 mt-1 mr-4">0%</div>
+                                        <div class="grey--text text--darken-1 post-caption mt-2">Since today</div>
                                     </div>
                                 </div>
                             </v-card>
@@ -204,19 +238,21 @@
                                     <div>
                                         <v-btn height="80" color="#ED0000" 
                                             :elevation="hover ? 20 : 0" large class="rounded-o white--text mt-n6">
-                                            <v-icon large>mdi-chart-pie</v-icon>
+                                            <v-icon large>mdi-view-week</v-icon>
                                         </v-btn>
                                     </div>
                                     <div class="content mt-3">
-                                        <div class="text-uppercase d-flex justify-end grey--text text--lighten-1 subtitle-2">New Users</div>
-                                        <div class="green--text d-flex justify-end text-h5">2,356</div>
+                                        <div class="text-uppercase d-flex justify-end grey--text text--lighten-1 subtitle-2">Week Sales</div>
+                                        <div class="green--text d-flex justify-end text-h5">
+                                            <v-icon class="green--text">mdi-currency-ngn</v-icon> <span>0</span>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="baseline px-4 mt-7">
                                     <div class="d-flex mr-4">
                                         <v-icon color="red">mdi-arrow-down</v-icon>
-                                        <div class="red--text subtitle-1 mt-1 mr-4">3.48%</div>
-                                        <div class="grey--text text--darken-1 post-caption mt-2">Since last week</div>
+                                        <div class="red--text subtitle-1 mt-1 mr-4">0%</div>
+                                        <div class="grey--text text--darken-1 post-caption mt-2">Since this week</div>
                                     </div>
                                 </div>
                             </v-card>
@@ -230,19 +266,21 @@
                                     <div>
                                         <v-btn height="80" color="#ED0000" 
                                             :elevation="hover ? 20 : 0" large class="rounded-o white--text mt-n6">
-                                            <v-icon large>mdi-account-group</v-icon>
+                                            <v-icon large>mdi-calendar-month-outline</v-icon>
                                         </v-btn>
                                     </div>
                                     <div class="content mt-3">
-                                        <div class="text-uppercase d-flex justify-end grey--text text--lighten-1 subtitle-2">Sales</div>
-                                        <div class="green--text text-h5">924</div>
+                                        <div class="text-uppercase d-flex justify-end grey--text text--lighten-1 subtitle-2">Month Sales</div>
+                                        <div class="green--text text-h5">
+                                            <v-icon class="green--text">mdi-currency-ngn</v-icon> <span>0</span>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="baseline px-4 mt-7">
                                     <div class="d-flex mr-4">
                                         <v-icon color="red">mdi-arrow-down</v-icon>
-                                        <div class="red--text subtitle-1 mt-1 mr-4">3.48%</div>
-                                        <div class="grey--text text--darken-1 post-caption mt-2">Since yesterday</div>
+                                        <div class="red--text subtitle-1 mt-1 mr-4">0%</div>
+                                        <div class="grey--text text--darken-1 post-caption mt-2">Since this month</div>
                                     </div>
                                 </div>
                             </v-card>
@@ -256,19 +294,21 @@
                                     <div>
                                         <v-btn height="80" color="#ED0000" 
                                             :elevation="hover ? 20 : 0" large class="rounded-o white--text mt-n6">
-                                            <v-icon large>mdi-percent-outline</v-icon>
+                                            <v-icon large>mdi-bullseye-arrow</v-icon>
                                         </v-btn>
                                     </div>
                                     <div class="content mt-3">
-                                        <div class="text-uppercase d-flex justify-end grey--text text--lighten-1 subtitle-2">Performance</div>
-                                        <div class="green--text d-flex justify-end text-h5">49,65</div>
+                                        <div class="text-uppercase d-flex justify-end grey--text text--lighten-1 subtitle-2">Year Sales</div>
+                                        <div class="green--text d-flex justify-end text-h5">
+                                            <v-icon class="green--text">mdi-currency-ngn</v-icon> <span>0</span>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="baseline px-4 mt-7">
                                     <div class="d-flex mr-4">
                                         <v-icon color="green">mdi-arrow-up</v-icon>
-                                        <div class="green--text subtitle-1 mt-1 mr-4">3.48%</div>
-                                        <div class="grey--text text--darken-1 post-caption mt-2">Since last month</div>
+                                        <div class="green--text subtitle-1 mt-1 mr-4">0%</div>
+                                        <div class="grey--text text--darken-1 post-caption mt-2">Since this year</div>
                                     </div>
                                 </div>
                             </v-card>
@@ -279,187 +319,88 @@
         </v-card>
 
         <div class="mx-12 charts">
-            <v-row>
-                <v-col cols="12" md="8">
+            <v-row class="mb-6">
+                <v-col cols="12" md="6">
+                    <div class="selling-product">
+                        <v-data-table :headers="headers" :items="drugs" sort-by="" class="elevation-1">
+                            <template v-slot:top>
+                                <v-toolbar flat color="white">
+                                    <v-toolbar-title class="custom-style list-color">Top selling Products</v-toolbar-title>
+                                    <v-spacer></v-spacer>
+                                </v-toolbar>
+                            </template>
+                        </v-data-table>
+                    </div>
+
+                    <div class="selling-categories mt-6">
+                        <v-data-table :headers="headers" :items="drugs" sort-by="" class="elevation-1">
+                            <template v-slot:top>
+                                <v-toolbar flat color="white">
+                                    <v-toolbar-title class="custom-style list-color">Top selling Categories</v-toolbar-title>
+                                    <v-spacer></v-spacer>
+                                </v-toolbar>
+                            </template>
+                        </v-data-table>
+                    </div>
+
+                    <div class="top-diseases mt-6">
+                        <v-data-table :headers="headers" :items="drugs" sort-by="" class="elevation-1">
+                            <template v-slot:top>
+                                <v-toolbar flat color="white">
+                                    <v-toolbar-title class="custom-style list-color">Top diseases by patients</v-toolbar-title>
+                                    <v-spacer></v-spacer>
+                                </v-toolbar>
+                            </template>
+                        </v-data-table>
+                    </div>
+                </v-col>
+
+                <v-col cols="12" md="6">
+                    <div class="selling-branch">
+                        <v-data-table :headers="headers" :items="drugs" sort-by="" class="elevation-1">
+                            <template v-slot:top>
+                                <v-toolbar flat color="white">
+                                    <v-toolbar-title class="custom-style list-color">Top selling Branches</v-toolbar-title>
+                                    <v-spacer></v-spacer>
+                                </v-toolbar>
+                            </template>
+                        </v-data-table>
+                    </div>
+
+                    <div class="selling-brands mt-6">
+                       <v-data-table :headers="headers" :items="drugs" sort-by="" class="elevation-1">
+                            <template v-slot:top>
+                                <v-toolbar flat color="white">
+                                    <v-toolbar-title class="custom-style list-color">Top selling Brands</v-toolbar-title>
+                                    <v-spacer></v-spacer>
+                                </v-toolbar>
+                            </template>
+                        </v-data-table>
+                    </div>  
+
+                    <div class="top-sales-alltime mt-6">
+                       <v-data-table :headers="headers" :items="drugs" sort-by="" class="elevation-1">
+                            <template v-slot:top>
+                                <v-toolbar flat color="white">
+                                    <v-toolbar-title class="custom-style list-color">Top sales of all time</v-toolbar-title>
+                                    <v-spacer></v-spacer>
+                                </v-toolbar>
+                            </template>
+                        </v-data-table>
+                    </div>  
+                </v-col>
+            </v-row>
+
+            <!-- <v-row>
+                <v-col cols="12">
                     <v-card color="#fff">
                         <div style="color: #ED0000" class="text-center py-4 text-h6 custom-style">Sales Chart</div>
                         <div class="px-4 pb-4">
                             <line-chart :data="chartdata" :options="options"></line-chart>
                         </div>    
                     </v-card>
-
-                     <v-card class="mt-6">
-                        <v-data-table :headers="headers" :items="drugs" sort-by="calories" class="elevation-1 px-4 py-4">
-                            <template v-slot:top>
-                                <v-toolbar flat color="white">
-                                    <v-toolbar-title class="custom-style list-color">All Products</v-toolbar-title>
-                                    <v-divider class="mx-4" inset vertical></v-divider>
-                                    <v-spacer></v-spacer>
-                                    <v-dialog v-model="dialog" max-width="500px">
-                                        <template v-slot:activator="{ on, attrs }">
-                                            <v-btn color="#22A64E" dark class="mb-2 rounded-0" v-bind="attrs" v-on="on">
-                                                <v-icon left>mdi-plus-circle-outline</v-icon> Add Product
-                                            </v-btn>
-                                        </template>
-                                        <v-card>
-                                            <v-card-actions>
-                                                <v-spacer></v-spacer>
-                                                <v-btn color="red" text @click="close">
-                                                    <v-icon>mdi-window-close</v-icon>
-                                                </v-btn>
-                                            </v-card-actions>
-
-                                            <div class="text-center">
-                                                <span class="headline list-color custom-style">{{ formTitle }}</span>
-                                            </div>
-
-                                            <v-card-text>
-                                                <v-container>
-                                                    <v-row class="px-8">
-                                                         <v-col cols="12" class="py-0 px-0">
-                                                            <v-text-field v-model="editedItem.name" label="Name"></v-text-field>
-                                                        </v-col>
-                                                        <v-col cols="12" class="py-0 px-0">
-                                                            <v-select v-model="editedItem.category" :items="categories" label="Category"
-                                                                item-text="name"
-                                                                item-value="id">
-                                                            </v-select>
-                                                        </v-col>
-                                                        <!-- <v-col cols="12" class="py-0 px-0">
-                                                            <v-text-field v-model="editedItem.category" label="Category"></v-text-field>
-                                                        </v-col> -->
-                                                        <v-select v-model="editedItem.tags" :items="tags" label="Tags" multiple chips
-                                                            item-text="name"
-                                                            item-value="id"
-                                                        ></v-select>
-                                                        <v-col cols="12" class="py-0 px-0">
-                                                            <v-text-field v-model="editedItem.price" label="Price"></v-text-field>
-                                                        </v-col>
-                                                        <v-col cols="12" class="py-0 px-0">
-                                                            <v-text-field type="number" v-model="editedItem.quantity" label="Quantity"></v-text-field>
-                                                        </v-col>
-                                                        
-                                                        <v-btn block depressed large prepend-inner-icon="mdi-map-marker" clearable 
-                                                            class="white--text rounded-0 mt-6 mb-10 px-8 py-5 text-capitalize" 
-                                                            color="#009933" :loading="loading" :disabled="loading">Submit 
-                                                            <v-icon right>mdi-send</v-icon>
-                                                            <template v-slot:loader>
-                                                                <span class="custom-loader">
-                                                                    <v-icon light>mdi-cached</v-icon>
-                                                                </span>
-                                                            </template>
-                                                        </v-btn>
-                                                    </v-row>
-                                                </v-container>
-                                            </v-card-text>
-
-                                            <!-- <v-card-actions>
-                                                <v-spacer></v-spacer>
-                                                <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-                                                <v-btn color="blue darken-1" text @click="save">Save</v-btn>
-                                            </v-card-actions> -->
-                                        </v-card>
-                                    </v-dialog>
-                                </v-toolbar>
-                            </template>
-
-                            <template v-slot:item.actions="{ item }">
-                                <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
-                                <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
-                            </template>
-                            <template v-slot:no-data>
-                                <v-btn color="primary" @click="initialize">Reset</v-btn>
-                            </template>
-                        </v-data-table>
-                    </v-card>
                 </v-col>
-
-                <v-col cols="12" md="4">
-                    <v-card max-width="450" class="mx-auto">
-                        <v-toolbar flat color="#22A64E" dark>
-                            <v-toolbar-title class="custom-style">Top Selling Product</v-toolbar-title>
-                        </v-toolbar>
-
-                        <v-list two-line>
-                            <template v-for="(item, index) in items">
-                                <v-subheader v-if="item.header" :key="item.header" v-text="item.header"></v-subheader>
-
-                                <v-divider v-else-if="item.divider" :key="index" :inset="item.inset"></v-divider>
-
-                                <v-list-item v-else :key="item.title" @click="">
-                                    <v-list-item-avatar>
-                                        <v-img :src="item.avatar"></v-img>
-                                    </v-list-item-avatar>
-
-                                    <v-list-item-content>
-                                        <v-list-item-title v-html="item.title"></v-list-item-title>
-                                        <v-list-item-subtitle v-html="item.subtitle"></v-list-item-subtitle>
-                                    </v-list-item-content>
-                                </v-list-item>
-                            </template>
-                        </v-list>
-                    </v-card>
-
-                    <v-card max-width="450" class="mx-auto mt-5">
-                        <v-toolbar flat color="#ED0000" dark>
-                            <v-toolbar-title class="custom-style">Top Branches</v-toolbar-title>
-                        </v-toolbar>
-
-                        <v-list>
-                            <template v-for="(item, index) in branches">
-                                <v-subheader v-if="item.header" :key="item.header" v-text="item.header"></v-subheader>
-
-                                <v-divider v-else-if="item.divider" :key="index" :inset="item.inset"></v-divider>
-
-                                <v-list-item v-else :key="item.title" @click="">
-                                    <!-- <v-list-item-avatar>
-                                        <v-img :src="item.avatar"></v-img>
-                                    </v-list-item-avatar> -->
-
-                                    <v-list-item-content>
-                                        <v-list-item-title v-html="item.title"></v-list-item-title>
-                                        <!-- <v-list-item-subtitle v-html="item.subtitle"></v-list-item-subtitle> -->
-                                    </v-list-item-content>
-                                </v-list-item>
-                            </template>
-                        </v-list>
-                    </v-card>
-
-                    <v-card max-width="450" class="mx-auto mt-5">
-                        <v-toolbar flat color="#22A64E" dark>
-                            <v-toolbar-title class="custom-style">Top sales of all time</v-toolbar-title>
-                        </v-toolbar>
-
-                        <v-list two-line>
-                            <template v-for="(item, index) in items">
-                                <v-subheader v-if="item.header" :key="item.header" v-text="item.header"></v-subheader>
-
-                                <v-divider v-else-if="item.divider" :key="index" :inset="item.inset"></v-divider>
-
-                                <v-list-item v-else :key="item.title" @click="">
-                                    <v-list-item-avatar>
-                                        <v-img :src="item.avatar"></v-img>
-                                    </v-list-item-avatar>
-
-                                    <v-list-item-content>
-                                        <v-list-item-title v-html="item.title"></v-list-item-title>
-                                        <v-list-item-subtitle v-html="item.subtitle"></v-list-item-subtitle>
-                                    </v-list-item-content>
-                                </v-list-item>
-                            </template>
-                        </v-list>
-                    </v-card>
-                </v-col>
-
-                <!-- <v-col cols="12" md="4">
-                    <v-card>
-                        <div style="color: #22A64E" class="text-center py-4 text-h6 custom-style">Bar Chart</div>
-                        <div class="px-4 pb-4">
-                            <bar-chart :data="chartdata1" :options="options"></bar-chart>
-                        </div>    
-                    </v-card>
-                </v-col> -->
-            </v-row>
+            </v-row> -->
         </div>
     </v-app>      
 </template>
@@ -536,7 +477,7 @@ export default {
             { text: 'Tags', value: 'tags[0].name' },
             { text: 'Price', value: 'price' },
             { text: 'Quantity', value: 'quantity' },
-            { text: 'Actions', value: 'actions', sortable: false },
+            //{ text: 'Actions', value: 'actions', sortable: false },
         ],
         editedIndex: -1,
         editedItem: {
@@ -553,96 +494,7 @@ export default {
             price: '',
             quantity: ''
         },
-        items: [
-            {
-                avatar: 'https://www.fidson.com/wp-content/uploads/2019/11/Astyfer-300x300.jpg',
-                title: 'Astyfer',
-                subtitle: "<span class='text--primary'>Sold 10 times</span>",
-            },
-            { divider: true, inset: true },
-            {
-                avatar: 'https://c8.alamy.com/comp/H2CDXT/stock-photo-of-a-box-of-amoxicillin-penicillin-antibiotic-capsules-H2CDXT.jpg',
-                title: 'Amoxil',
-                subtitle: "<span class='text--primary'>Sold 9 times</span>",
-            },
-            { divider: true, inset: true },
-            {
-                avatar: 'https://i.pinimg.com/originals/30/27/ab/3027ab566834e36ccc25d247a28ba898.jpg',
-                title: 'Paracetamol',
-                subtitle: "<span class='text--primary'>Sold 8 times</span>",
-            },
-            { divider: true, inset: true },
-            {
-                avatar: 'https://www.dclabs.com/images/product-images/ctot-30-zoom.jpg',
-                title: 'vitamin C',
-                subtitle: "<span class='text--primary'>Sold 7 times</span>",
-            },
-            { divider: true, inset: true },
-            {
-                avatar: 'https://www.wahooas.org/web-ooas/sites/default/files/PHOTO%20ARTICLES/MALARIA%20NEWS/Softgel.png',
-                title: 'Artesunate',
-                subtitle: "<span class='text--primary'>Sold 6 times</span>",
-            },
-        ],
-        branches: [
-            {
-                avatar: 'https://www.fidson.com/wp-content/uploads/2019/11/Astyfer-300x300.jpg',
-                title: 'Victoria Island',
-                subtitle: "<span class='text--primary'>Sold 10 times</span>",
-            },
-            { divider: true, inset: true },
-            {
-                avatar: 'https://c8.alamy.com/comp/H2CDXT/stock-photo-of-a-box-of-amoxicillin-penicillin-antibiotic-capsules-H2CDXT.jpg',
-                title: 'Lekki',
-                subtitle: "<span class='text--primary'>Sold 9 times</span>",
-            },
-            { divider: true, inset: true },
-            {
-                avatar: 'https://i.pinimg.com/originals/30/27/ab/3027ab566834e36ccc25d247a28ba898.jpg',
-                title: 'Ikeja',
-                subtitle: "<span class='text--primary'>Sold 8 times</span>",
-            },
-            { divider: true, inset: true },
-            {
-                avatar: 'https://www.dclabs.com/images/product-images/ctot-30-zoom.jpg',
-                title: 'Magodo',
-                subtitle: "<span class='text--primary'>Sold 7 times</span>",
-            },
-            { divider: true, inset: true },
-            {
-                avatar: 'https://www.wahooas.org/web-ooas/sites/default/files/PHOTO%20ARTICLES/MALARIA%20NEWS/Softgel.png',
-                title: 'Surulere',
-                subtitle: "<span class='text--primary'>Sold 6 times</span>",
-            },
-        ],
         drugs: [],
-        categories: [
-            {
-                id: 1,
-                name: 'Sedatives',
-                color: 'red'
-            },
-            {
-                id: 2,
-                name: 'Inhalants',
-                color: 'blue'
-            },
-            {
-                id: 3,
-                name: 'Cannabis',
-                color: 'brown',
-            },
-            {
-                id: 4,
-                name: 'Narcotic Analgesics',
-                color: 'pink',
-            },
-            {
-                id: 5,
-                name: 'Hallucinogens',
-                color: 'yellow',
-            }
-        ],
         tags: [
             {
                 id: 1,
@@ -683,9 +535,29 @@ export default {
             let url = this.$store.state.productionUrl
             return this.$auth.user.image ? url+this.$auth.user.image.image : this.defaultImage;
         },
-        formTitle () {
-            return this.editedIndex === -1 ? 'Add Product' : 'Edit Product'
-        }
+        authName(){
+            let firstName = this.$auth.user.firstName
+            let lastName = this.$auth.user.lastName
+            return firstName + ' ' + lastName
+        },
+        authEmail(){
+            return this.$auth.user.email
+        },
+        topProducts(){
+            return this.$store.getters['topProducts']
+        },
+        topBrands(){
+            return this.$store.getters['topBrands']
+        },
+        topBranches(){
+            return this.$store.getters['topBranches']
+        },
+        topDiseases(){
+            return this.$store.getters['topDiseases']
+        },
+        topSales(){
+            return this.$store.getters['topSales']
+        },
     },
 
     methods: {
@@ -701,76 +573,76 @@ export default {
         },
         initialize () {
             this.drugs = [
-                {
-                    name: 'Penicillin',
-                    category: {
-                        id: 2,
-                        name: 'Inhalants',
-                        color: 'blue'
-                    },
-                    tags: [
-                        {id: 1, name: 'Sedatives'},
-                        {id: 2, name: 'Inhalants'},
-                    ],
-                    price: '100.00',
-                    quantity: 10
-                },
-                {
-                    name: 'Insulin',
-                    category: {
-                        id: 2,
-                        name: 'Inhalants',
-                        color: 'blue'
-                    },
-                    tags: [
-                        {id: 5, name: 'Hallucinogens'},
-                        {id: 4, name: 'Narcotic Analgesics'},
-                    ],
-                    price: '20.00',
-                    quantity: 8    
-                },
-                {
-                    name: 'Polio Vaccine',
-                    category: {
-                        id: 1,
-                        name: 'Sedatives',
-                        color: 'red'
-                    },
-                    tags: [
-                        {id: 3, name: 'Cannabis'},
-                        {id: 2, name: 'Inhalants'},
-                    ],
-                    price: '30.00',
-                    quantity: 15
-                },
-                {
-                    name: 'Morphine',
-                    category: {
-                        id: 4,
-                        name: 'Narcotic Analgesics',
-                        color: 'pink',
-                    },
-                    tags: [
-                        {id: 3, name: 'Cannabis'},
-                        {id: 2, name: 'Inhalants'},
-                    ],
-                    price: '50.00',
-                    quantity: 30
-                },
-                {
-                    name: 'Aspirin',
-                    category: {
-                        id: 5,
-                        name: 'Hallucinogens',
-                        color: 'yellow',
-                    },
-                    tags: [
-                        {id: 5, name: 'Hallucinogens'},
-                        {id: 4, name: 'Narcotic Analgesics'},
-                    ],
-                    price: '100.00',
-                    quantity: 10
-                }
+                // {
+                //     name: 'Penicillin',
+                //     category: {
+                //         id: 2,
+                //         name: 'Inhalants',
+                //         color: 'blue'
+                //     },
+                //     tags: [
+                //         {id: 1, name: 'Sedatives'},
+                //         {id: 2, name: 'Inhalants'},
+                //     ],
+                //     price: '100.00',
+                //     quantity: 10
+                // },
+                // {
+                //     name: 'Insulin',
+                //     category: {
+                //         id: 2,
+                //         name: 'Inhalants',
+                //         color: 'blue'
+                //     },
+                //     tags: [
+                //         {id: 5, name: 'Hallucinogens'},
+                //         {id: 4, name: 'Narcotic Analgesics'},
+                //     ],
+                //     price: '20.00',
+                //     quantity: 8    
+                // },
+                // {
+                //     name: 'Polio Vaccine',
+                //     category: {
+                //         id: 1,
+                //         name: 'Sedatives',
+                //         color: 'red'
+                //     },
+                //     tags: [
+                //         {id: 3, name: 'Cannabis'},
+                //         {id: 2, name: 'Inhalants'},
+                //     ],
+                //     price: '30.00',
+                //     quantity: 15
+                // },
+                // {
+                //     name: 'Morphine',
+                //     category: {
+                //         id: 4,
+                //         name: 'Narcotic Analgesics',
+                //         color: 'pink',
+                //     },
+                //     tags: [
+                //         {id: 3, name: 'Cannabis'},
+                //         {id: 2, name: 'Inhalants'},
+                //     ],
+                //     price: '50.00',
+                //     quantity: 30
+                // },
+                // {
+                //     name: 'Aspirin',
+                //     category: {
+                //         id: 5,
+                //         name: 'Hallucinogens',
+                //         color: 'yellow',
+                //     },
+                //     tags: [
+                //         {id: 5, name: 'Hallucinogens'},
+                //         {id: 4, name: 'Narcotic Analgesics'},
+                //     ],
+                //     price: '100.00',
+                //     quantity: 10
+                // }
             ]
         },
 
@@ -805,11 +677,16 @@ export default {
         },
         async setUser(){
             await this.$store.dispatch('auths/setUser');
+        },
+        async getDashboard(){
+            await this.$store.dispatch('getDashboard', this.$auth.user.userId)
         }
     },
     mounted(){
-        //this.getAll()
+        this.getDashboard()
         this.initialize()
+    },
+    created(){
         this.setUser()
     }
 }

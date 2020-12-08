@@ -77,7 +77,7 @@
                                             </v-list-item-title>
                                         </v-list-item-content>
                                     </template>
-                                    <v-list-item v-for="(category, i) in categories" :key="i" @click="">
+                                    <v-list-item class="pl-10" v-for="(category, i) in categories" :key="i" @click="">
                                         <v-list-item-title @click="$store.dispatch('filters/displayBaseFilter', { name: category.productCategyName, id: category.productCategyId, type: 'category' });" v-text="category.productCategyName"></v-list-item-title>
                                     </v-list-item>
                                     <!-- <v-list-item class="pl-0 pb-0" @click="">

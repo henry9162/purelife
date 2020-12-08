@@ -6,7 +6,7 @@
         </div>
 
         <!-- Product title parallax -->
-        <title-paralax>{{ selectedProduct.title }}</title-paralax>
+        <title-paralax>{{ selectedProduct.productName }}</title-paralax>
 
         <!-- Product Details -->
         <v-container class="pt-3 my-5">

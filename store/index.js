@@ -6,7 +6,8 @@ export const state = () => ({
     states: [],
     lgas: [],
     accountTypes: [],
-    defaultImage: 'https://via.placeholder.com/150'
+    defaultImage: 'https://via.placeholder.com/150',
+    dashboard: {}
 })
 
 export const mutations = {
@@ -29,6 +30,9 @@ export const mutations = {
     },
     setAccountTypes(state, data){
         state.accountTypes = data
+    },
+    setDashboard(state, data){
+        state.dashboard = data
     }
 }
 
@@ -53,6 +57,14 @@ export const actions = {
         this.$axios.get(`/CommonMethod/GetAccountTypeForSignup`)
         .then(response => {
             context.commit('setAccountTypes', response.data.data)
+        }).catch(error => {
+            this.$toast.error(error).goAway(3500)
+        })
+    },
+    getDashboard(context, data){
+        this.$axios.get(`/Dashboard/Get?UserID=${data}`)
+        .then(response => {
+            context.commit('setDashboard', response.data.data)
         }).catch(error => {
             this.$toast.error(error).goAway(3500)
         })
@@ -83,5 +95,23 @@ export const getters = {
     },
     defaultImage(state){
         return state.defaultImage
+    },
+    topProducts(state){
+        return state.dashboard.top5SellingProducts
+    },
+    topBrands(state){
+        return state.dashboard.top5SellingProductBrands
+    },
+    topCategories(state){
+        return state.dashboard.top5SellingProductCategories
+    },
+    topDiseases(state){
+        return state.dashboard.top5DiseasesByPatients
+    },
+    topBranches(state){
+        return state.dashboard.top5BranchesbyPerformance
+    },
+    topSales(state){
+        return state.dashboard.top5SalesfortheWeek
     }
 }

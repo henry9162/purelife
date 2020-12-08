@@ -70,7 +70,7 @@ export default {
             v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
         ],
         password: '',
-         passwordRules: [
+        passwordRules: [
             v => !!v || 'Password is required',
             v => (v && v.length >= 6) || 'Password must not be less than 6 characters',
         ],
@@ -87,7 +87,7 @@ export default {
             this.loading = true
             if (this.$refs.form.validate()) {
                 let data = {
-                    email: this.email,
+                    emailOrPhone: this.email,
                     password: this.password
                 }
 

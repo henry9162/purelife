@@ -42,7 +42,7 @@ export const actions = {
     setUser(context){
         if(process.client){
             let user = localStorage.getItem('signedInUser')
-            if(user){
+            if(user != null){
                 this.$auth.setUser(JSON.parse(user));
             }
         }

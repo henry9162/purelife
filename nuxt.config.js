@@ -92,7 +92,7 @@ export default {
           logout: { 
             url: '​/Account​/LogOut', 
             method: 'post' 
-          },
+          }
           // user: { 
           //   url: '/userDetail', 
           //   method: 'post', 

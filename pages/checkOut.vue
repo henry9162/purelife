@@ -126,7 +126,7 @@ export default {
             },
         ],
         amount: 760,
-        PUBLIC_KEY: process.env.TEST_PUBLIC_KEY
+        PUBLIC_KEY: pk_test_c19414215f1bee0bd8d754fc85c30e216b2b5ae9
     }),
     methods: {
         ...mapActions({

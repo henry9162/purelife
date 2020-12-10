@@ -65,8 +65,8 @@
                 <v-icon small class="mr-2 green--text" @click="editItem(item)">mdi-pencil</v-icon>
                 <v-icon small class="red--text" @click="deleteItem(item)">mdi-delete</v-icon>
             </template>
-            <template v-slot:no-data>
-                <v-btn color="primary">Reset</v-btn>
+           <template v-slot:item.createdOn="{ item }">
+                <span v-text="$moment(item.createdOn).format('DD/MM/YYYY')"></span>
             </template>
         </v-data-table>
     </v-card>
@@ -80,17 +80,17 @@ export default {
     data: () => ({
         dialog: true,
         loading: false,
-        btnText: 'Submit',
         headers: [
             {
                 text: 'Name',
                 align: 'start',
                 sortable: false,
                 value: 'productClassificationName',
+                class: ['text-button', 'grey--text text--darken-3']
             },
-            { text: 'Description', value: 'productClassificationDescription' },
-            { text: 'Created On', value: 'createdOn' },
-            { text: 'Actions', value: 'actions', sortable: false },
+            { text: 'Description', value: 'productClassificationDescription', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Created On', value: 'createdOn', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Actions', value: 'actions', sortable: false, class: ['text-button', 'grey--text text--darken-3'] },
         ],
         editedIndex: -1,
         editedItem: {
@@ -119,6 +119,9 @@ export default {
         },
         formTitle () {
             return this.editedIndex === -1 ? 'Add Classification' : 'Edit Classification';
+        },
+        btnText(){
+            return this.editedIndex === -1 ? 'Submit' : 'Update';
         }
     },
 
@@ -126,7 +129,6 @@ export default {
         editItem (item) {
             this.editedIndex = this.classifications.indexOf(item)
             this.editedItem = Object.assign({}, item)
-            this.btnText = 'Update';
             this.$modal.show('classifications-modal')
         },
         addClassification(){
@@ -143,7 +145,6 @@ export default {
             })
         },
         updateClassification(){
-            this.btnText = 'Update'
             this.loading = true
             let data = {
                 productGroupClassificationId: this.classifications[this.editedIndex].productGroupClassificationId,

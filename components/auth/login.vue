@@ -96,8 +96,6 @@ export default {
                         this.$auth.setUser(response.data.data)
                         this.loading = false
                         this.$toast.success(response.data.message).goAway(3000)
-                        //this.$refs.form.resetValidation()
-                        //this.$refs.form.reset()
                         this.$router.push({path: '/'})
                     } 
                 })

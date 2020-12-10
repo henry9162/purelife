@@ -118,7 +118,7 @@
         </modal>
 
 
-        <v-data-table :headers="headers" :items="users" sort-by="" class="px-8 py-4">
+        <v-data-table :headers="headers" :items="users" sort-by="" class="mx-4 py-4">
             <template v-slot:top>
                 <v-toolbar flat color="white">
                     <v-toolbar-title class="list-color custom-style">All Users</v-toolbar-title>
@@ -135,6 +135,9 @@
                 <v-icon small class="mr-2 green--text" @click="editItem(item)">mdi-pencil</v-icon>
                 <v-icon small class="red--text" @click="deleteItem(item)">mdi-delete</v-icon>
             </template>
+            <template v-slot:item.createdOn="{ item }">
+                <span v-text="$moment(item.createdOn).format('DD/MM/YYYY')"></span>
+            </template>
         </v-data-table>
     </v-card>
 </div>
@@ -147,7 +150,6 @@ export default {
     data: () => ({
         dialog: true,
         loading: false,
-        btnText: 'Submit',
         date: new Date().toISOString().substr(0, 10),
         menu: false,
         headers: [
@@ -156,18 +158,19 @@ export default {
                 align: 'start',
                 sortable: false,
                 value: 'firstName',
+                class: ['text-button', 'grey--text text--darken-3']
             },
-            { text: 'Last Name', value: 'lastName' },
-            { text: 'Email', value: 'email' },
-            { text: 'Phone', value: 'phoneNumber' },
-            { text: 'D.O.B', value: 'dob' },
-            { text: 'Role', value: 'roleName' },
-            { text: 'State', value: 'statedId' },
-            { text: 'LGA', value: 'lgaid' },
-            { text: 'City', value: 'city' },
-            { text: 'Account Type', value: 'accountType' },
-            { text: 'Created On', value: 'createdOn' },
-            { text: 'Actions', value: 'actions', sortable: false },
+            { text: 'Last Name', value: 'lastName', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Email', value: 'email', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Phone', value: 'phoneNumber', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'D.O.B', value: 'dob', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Role', value: 'roleName', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'State', value: 'statedId', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'LGA', value: 'lgaid', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'City', value: 'city', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Account Type', value: 'accountType', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Created On', value: 'createdOn', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Actions', value: 'actions', sortable: false, class: ['text-button', 'grey--text text--darken-3'] },
         ],
         passwordRules: [
             v => !!v || 'Password is required',
@@ -211,9 +214,7 @@ export default {
             val || this.close()
         },
         'editedItem.stateId': function (val, oldVal) {
-          if(oldVal != '' || val != ''){
-            this.$store.dispatch('getLga', val)
-          }
+            this.getLga(val)
         }
     },
 
@@ -235,6 +236,9 @@ export default {
         },
         formTitle () {
             return this.editedIndex === -1 ? 'Add User' : 'Edit User';
+        },
+        btnText(){
+            return this.editedIndex === -1 ? 'Submit' : 'Update';
         }
     },
 
@@ -242,7 +246,6 @@ export default {
         editItem (item) {
             this.editedIndex = this.users.indexOf(item)
             this.editedItem = Object.assign({}, item)
-            this.btnText = 'Update';
             this.$modal.show('users-modal')
         },
         addUser(){
@@ -302,6 +305,9 @@ export default {
             this.$store.dispatch('users/deleteUser', this.users[index].userId).then(response => {
                 this.refreshTable()
             })
+        },
+        getLga(val){
+            val === "" || val === undefined  ? '' : this.$store.dispatch('getLga', val)
         },
         refreshTable(){
             this.$store.dispatch('users/getAllUsers');

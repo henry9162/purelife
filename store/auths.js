@@ -1,10 +1,14 @@
 export const state = () => ({
     view: 'login',
+    authUser: {}
 })
 
 export const mutations = {
     setView(state, view){
         view == 'login' ? state.view = 'login' : state.view = 'register'
+    },
+    setAuthData(state, user){
+        state.authUser = user
     }
 }
 
@@ -40,10 +44,13 @@ export const actions = {
         })
     },
     setUser(context){
-        if(process.client){
-            let user = localStorage.getItem('signedInUser')
-            if(user != null){
-                this.$auth.setUser(JSON.parse(user));
+        if(this.$auth.loggedIn){
+            if(process.client){
+                let user = localStorage.getItem('signedInUser')
+                if(user != null){
+                    this.$auth.setUser(JSON.parse(user));
+                    context.commit('setAuthData', JSON.parse(user))
+                }
             }
         }
     },
@@ -65,5 +72,10 @@ export const actions = {
 }
 
 export const getters = {
-    
+    authName(state){
+        return state.authUser.firstName + ' ' + state.authUser.lastName 
+    },
+    authEmail(state){
+        return state.authUser.email
+    }
 }

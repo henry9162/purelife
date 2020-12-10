@@ -147,7 +147,7 @@
                     <v-card>
                         <v-list nav dense>
                             <v-list-item-group color="primary">
-                                <div>
+                                <div v-if="$auth.user.roleName == 'Admin'">
                                     <v-list-item v-for="(item, i) in itemsss" :key="i" :to="item.url">
                                         <v-list-item-icon class="mr-4">
                                             <v-icon v-text="item.icon"></v-icon>

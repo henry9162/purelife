@@ -134,6 +134,9 @@
                 <v-icon small class="mr-2 green--text" @click="editItem(item)">mdi-pencil</v-icon>
                 <v-icon small class="red--text" @click="deleteItem(item)">mdi-delete</v-icon>
             </template>
+            <template v-slot:item.createdOn="{ item }">
+                <span v-text="$moment(item.createdOn).format('DD/MM/YYYY')"></span>
+            </template>
         </v-data-table>
     </v-card>
 </div>
@@ -146,23 +149,23 @@ export default {
     data: () => ({
         dialog: true,
         loading: false,
-        btnText: 'Submit',
         headers: [
             {
                 text: 'Name',
                 align: 'start',
                 sortable: false,
                 value: 'productName',
+                class: ['text-button', 'grey--text text--darken-3']
             },
-            { text: 'Quantity', value: 'quantity' },
-            { text: 'Price', value: 'price' },
-            { text: 'Packaging', value: 'productPackageName'},
-            { text: 'Expiry', value: 'expiryDate' },
-            { text: 'Serial Number', value: 'serialNumber' },
-            { text: 'Branch', value: 'productBrandName' },
-            { text: 'Group', value: 'productGroupName' },
-            { text: 'Created On', value: 'createdOn' },
-            { text: 'Actions', value: 'actions', sortable: false },
+            { text: 'Quantity', value: 'quantity', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Price', value: 'price', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Packaging', value: 'productPackageName', class: ['text-button', 'grey--text text--darken-3']},
+            { text: 'Expiry', value: 'expiryDate', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Serial Number', value: 'serialNumber', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Branch', value: 'productBrandName', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Group', value: 'productGroupName', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Created On', value: 'createdOn', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Actions', value: 'actions', sortable: false, class: ['text-button', 'grey--text text--darken-3'] },
         ],
         menu: false,
         editedIndex: -1,
@@ -184,7 +187,7 @@ export default {
             quantity: '',
             price: '',
             serialNumber: '',
-            expiryDate: '',
+            expiryDate: new Date().toISOString().substr(0, 10),
             productBranchId: '',
             productGroupId: '',
             productImage: '',
@@ -217,6 +220,9 @@ export default {
         },
         formTitle () {
             return this.editedIndex === -1 ? 'Add Product' : 'Edit Product';
+        },
+        btnText(){
+            return this.editedIndex === -1 ? 'Submit' : 'Update';
         }
     },
 
@@ -238,7 +244,6 @@ export default {
         editItem (item) {
             this.editedIndex = this.products.indexOf(item);
             this.editedItem = Object.assign({}, item);
-            this.btnText = 'Update';
             this.threadImage = item.productImage;
             this.$modal.show('products-modal')
         },

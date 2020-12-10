@@ -74,7 +74,6 @@
                     </v-list-item>
                 </v-list-group>
 
-
                 <v-list-group color="#22A64E" class="post-caption list-color" no-action prepend-icon="mdi-account">
                     <template v-slot:activator>
                         <v-list-item-title class="list-color">User Management</v-list-item-title>
@@ -82,16 +81,6 @@
 
                     <v-list-item @click="$router.push({path: user.url})" v-for="(user, i) in userList" :key="i" link class="post-caption">
                         <v-list-item-title class="list-color" v-text="user.name"></v-list-item-title>
-                    </v-list-item>
-                </v-list-group>
-
-                <v-list-group color="#22A64E" class="post-caption list-color" no-action prepend-icon="mdi-hammer-screwdriver">
-                    <template v-slot:activator>
-                        <v-list-item-title class="list-color">Settings</v-list-item-title>
-                    </template>
-
-                    <v-list-item @click="$router.push({path: setting.url})" v-for="(setting, i) in settings" :key="i" link class="post-caption">
-                        <v-list-item-title class="list-color" v-text="setting.name"></v-list-item-title>
                     </v-list-item>
                 </v-list-group>
             </v-list>
@@ -208,7 +197,7 @@
                             <v-card :elevation="hover ? 20 : 8"  flat height="140">
                                 <div class="d-flex justify-space-between px-4"> 
                                     <div>
-                                        <v-btn height="80" color="#F72628" 
+                                        <v-btn height="80" color="green" 
                                             :elevation="hover ? 20 : 0" large class="rounded-o white--text mt-n6">
                                             <v-icon large>mdi-calendar-today</v-icon>
                                         </v-btn>
@@ -236,7 +225,7 @@
                             <v-card :elevation="hover ? 20 : 8" flat height="140">
                                 <div class="d-flex justify-space-between px-4"> 
                                     <div>
-                                        <v-btn height="80" color="#ED0000" 
+                                        <v-btn height="80" color="#F72628" 
                                             :elevation="hover ? 20 : 0" large class="rounded-o white--text mt-n6">
                                             <v-icon large>mdi-view-week</v-icon>
                                         </v-btn>
@@ -264,7 +253,7 @@
                             <v-card :elevation="hover ? 20 : 8" flat height="140">
                                 <div class="d-flex justify-space-between px-4"> 
                                     <div>
-                                        <v-btn height="80" color="#ED0000" 
+                                        <v-btn height="80" color="green" 
                                             :elevation="hover ? 20 : 0" large class="rounded-o white--text mt-n6">
                                             <v-icon large>mdi-calendar-month-outline</v-icon>
                                         </v-btn>
@@ -292,7 +281,7 @@
                             <v-card :elevation="hover ? 20 : 8"  flat height="140">
                                 <div class="d-flex justify-space-between px-4"> 
                                     <div>
-                                        <v-btn height="80" color="#ED0000" 
+                                        <v-btn height="80" color="#F72628" 
                                             :elevation="hover ? 20 : 0" large class="rounded-o white--text mt-n6">
                                             <v-icon large>mdi-bullseye-arrow</v-icon>
                                         </v-btn>
@@ -332,19 +321,8 @@
                         </v-data-table>
                     </div>
 
-                    <div class="selling-categories mt-6">
-                        <v-data-table :headers="headers" :items="drugs" sort-by="" class="elevation-1">
-                            <template v-slot:top>
-                                <v-toolbar flat color="white">
-                                    <v-toolbar-title class="custom-style list-color">Top selling Categories</v-toolbar-title>
-                                    <v-spacer></v-spacer>
-                                </v-toolbar>
-                            </template>
-                        </v-data-table>
-                    </div>
-
                     <div class="top-diseases mt-6">
-                        <v-data-table :headers="headers" :items="drugs" sort-by="" class="elevation-1">
+                        <v-data-table :headers="diseaseHeaders" :items="drugs" sort-by="" class="elevation-1">
                             <template v-slot:top>
                                 <v-toolbar flat color="white">
                                     <v-toolbar-title class="custom-style list-color">Top diseases by patients</v-toolbar-title>
@@ -356,7 +334,17 @@
                 </v-col>
 
                 <v-col cols="12" md="6">
-                    <div class="selling-branch">
+                    <div class="selling-categories">
+                        <v-data-table :headers="categoryHeaders" :items="drugs" sort-by="" class="elevation-1">
+                            <template v-slot:top>
+                                <v-toolbar flat color="white">
+                                    <v-toolbar-title class="custom-style list-color">Top selling Categories</v-toolbar-title>
+                                    <v-spacer></v-spacer>
+                                </v-toolbar>
+                            </template>
+                        </v-data-table>
+                    </div>
+                    <!-- <div class="selling-branch">
                         <v-data-table :headers="headers" :items="drugs" sort-by="" class="elevation-1">
                             <template v-slot:top>
                                 <v-toolbar flat color="white">
@@ -365,10 +353,10 @@
                                 </v-toolbar>
                             </template>
                         </v-data-table>
-                    </div>
+                    </div> -->
 
                     <div class="selling-brands mt-6">
-                       <v-data-table :headers="headers" :items="drugs" sort-by="" class="elevation-1">
+                       <v-data-table :headers="brandHeaders" :items="drugs" sort-by="" class="elevation-1">
                             <template v-slot:top>
                                 <v-toolbar flat color="white">
                                     <v-toolbar-title class="custom-style list-color">Top selling Brands</v-toolbar-title>
@@ -378,7 +366,7 @@
                         </v-data-table>
                     </div>  
 
-                    <div class="top-sales-alltime mt-6">
+                    <!-- <div class="top-sales-alltime mt-6">
                        <v-data-table :headers="headers" :items="drugs" sort-by="" class="elevation-1">
                             <template v-slot:top>
                                 <v-toolbar flat color="white">
@@ -387,7 +375,7 @@
                                 </v-toolbar>
                             </template>
                         </v-data-table>
-                    </div>  
+                    </div>   -->
                 </v-col>
             </v-row>
 
@@ -406,40 +394,14 @@
 </template>
 
 <script>
-export default {
-    //middleware: 'auth',
+import adminSideBar from '~/plugins/mixins/adminSideBar'
 
+export default {
+    mixins: [ adminSideBar ],
     data: () => ({
         drawer: false,
         miniVariant: true,
-        loading: false,
         userMenu: false,
-        adminList: [
-            { name: 'Product Categories', icon: 'mdi-shape', url: '/admin/categories' },
-            { name: 'Product Brands', icon: 'mdi-grain', url: '/admin/brands' },
-            { name: 'Product Classifications', icon: 'mdi-shape', url: '/admin/classifications' },
-            { name: 'Product Packages', icon: 'mdi-account-supervisor', url: '/admin/packages' },
-            { name: 'Product Groups', icon: 'mdi-shape', url: '/admin/groups' },
-            { name: 'Products', icon: 'mdi-post-outline', url: '/admin/products' },
-        ],
-        branchList: [
-            { name: 'Pharmacy Branch', icon: 'mdi-shape', url: '/admin/branches' },
-        ],
-        diseaseList: [
-            { name: 'Diseases', icon: 'mdi-grain', url: '/admin/diseases' },
-        ],
-        prescriptionList: [
-            { name: 'Prescriptions', icon: 'mdi-supervisor', url: '/admin/prescriptions' },
-        ],
-        loyaltyList: [
-            { name: 'Loyalties', icon: 'mdi-shape', url: '/admin/loyalties' },
-        ],
-        userList: [
-            { name: 'Users', icon: 'mdi-account', url: '/admin/categories' },
-        ],
-        settings: [
-            { name: 'Roles', icon: 'mdi-post', url: '/admin/roles' }
-        ],
         defaultImage: 'https://via.placeholder.com/150',
         options: {
             responsive: true,
@@ -465,70 +427,45 @@ export default {
                 }
             ]
         },
-        dialog: false,
         headers: [
             {
                 text: 'Name',
                 align: 'start',
                 sortable: false,
-                value: 'name',
+                value: 'productName',
             },
-            { text: 'Category', value: 'category.name' },
-            { text: 'Tags', value: 'tags[0].name' },
             { text: 'Price', value: 'price' },
-            { text: 'Quantity', value: 'quantity' },
-            //{ text: 'Actions', value: 'actions', sortable: false },
+            { text: 'Inventory', value: 'quantity' },
         ],
-        editedIndex: -1,
-        editedItem: {
-            name: '',
-            category: '',
-            tags: [],
-            price: '',
-            quantity: ''
-        },
-        defaultItem: {
-            name: '',
-            category: '',
-            tags: [],
-            price: '',
-            quantity: ''
-        },
-        drugs: [],
-        tags: [
+        brandHeaders: [
             {
-                id: 1,
-                name: 'Sedatives',
-                color: 'red'
+                text: 'Name',
+                align: 'start',
+                sortable: false,
+                value: 'productBrandName',
             },
-            {
-                id: 2,
-                name: 'Inhalants',
-                color: 'blue'
-            },
-            {
-                id: 3,
-                name: 'Cannabis',
-                color: 'brown',
-            },
-            {
-                id: 4,
-                name: 'Narcotic Analgesics',
-                color: 'pink',
-            },
-            {
-                id: 5,
-                name: 'Hallucinogens',
-                color: 'yellow',
-            }
+            { text: 'Code', value: 'productBrandCode' }
         ],
+        categoryHeaders: [
+            {
+                text: 'Name',
+                align: 'start',
+                sortable: false,
+                value: 'productCategyName',
+            },
+            { text: 'Description', value: 'description', }
+        ],
+        diseaseHeaders: [
+            {
+                text: 'Name',
+                align: 'start',
+                sortable: false,
+                value: 'diseaseName',
+                class: ['text-button', 'grey--text text--darken-1']
+            },
+            { text: 'Severity', value: 'severity' },
+        ]
     }),
-
-    watch: {
-        dialog (val) {
-            val || this.close()
-        }
-    },
 
     computed: {
         userImage(){
@@ -536,12 +473,10 @@ export default {
             return this.$auth.user.image ? url+this.$auth.user.image.image : this.defaultImage;
         },
         authName(){
-            let firstName = this.$auth.user.firstName
-            let lastName = this.$auth.user.lastName
-            return firstName + ' ' + lastName
+            return this.$store.getters['auths/authName']
         },
         authEmail(){
-            return this.$auth.user.email
+            return this.$store.getters['auths/authEmail']
         },
         topProducts(){
             return this.$store.getters['topProducts']
@@ -561,116 +496,8 @@ export default {
     },
 
     methods: {
-        getAll(){
-
-        },
         navEvent(){
             console.log('You just hovered over ma')
-        },
-        logout(){
-            //this.$auth.logout();
-            this.$router.push({path: '/'})
-        },
-        initialize () {
-            this.drugs = [
-                // {
-                //     name: 'Penicillin',
-                //     category: {
-                //         id: 2,
-                //         name: 'Inhalants',
-                //         color: 'blue'
-                //     },
-                //     tags: [
-                //         {id: 1, name: 'Sedatives'},
-                //         {id: 2, name: 'Inhalants'},
-                //     ],
-                //     price: '100.00',
-                //     quantity: 10
-                // },
-                // {
-                //     name: 'Insulin',
-                //     category: {
-                //         id: 2,
-                //         name: 'Inhalants',
-                //         color: 'blue'
-                //     },
-                //     tags: [
-                //         {id: 5, name: 'Hallucinogens'},
-                //         {id: 4, name: 'Narcotic Analgesics'},
-                //     ],
-                //     price: '20.00',
-                //     quantity: 8    
-                // },
-                // {
-                //     name: 'Polio Vaccine',
-                //     category: {
-                //         id: 1,
-                //         name: 'Sedatives',
-                //         color: 'red'
-                //     },
-                //     tags: [
-                //         {id: 3, name: 'Cannabis'},
-                //         {id: 2, name: 'Inhalants'},
-                //     ],
-                //     price: '30.00',
-                //     quantity: 15
-                // },
-                // {
-                //     name: 'Morphine',
-                //     category: {
-                //         id: 4,
-                //         name: 'Narcotic Analgesics',
-                //         color: 'pink',
-                //     },
-                //     tags: [
-                //         {id: 3, name: 'Cannabis'},
-                //         {id: 2, name: 'Inhalants'},
-                //     ],
-                //     price: '50.00',
-                //     quantity: 30
-                // },
-                // {
-                //     name: 'Aspirin',
-                //     category: {
-                //         id: 5,
-                //         name: 'Hallucinogens',
-                //         color: 'yellow',
-                //     },
-                //     tags: [
-                //         {id: 5, name: 'Hallucinogens'},
-                //         {id: 4, name: 'Narcotic Analgesics'},
-                //     ],
-                //     price: '100.00',
-                //     quantity: 10
-                // }
-            ]
-        },
-
-        editItem (item) {
-            this.editedIndex = this.drugs.indexOf(item)
-            this.editedItem = Object.assign({}, item)
-            this.dialog = true
-        },
-
-        deleteItem (item) {
-            const index = this.drugs.indexOf(item)
-            confirm('Are you sure you want to delete this product?') && this.drugs.splice(index, 1)
-        },
-
-        close () {
-            this.dialog = false
-            this.$nextTick(() => {
-                this.editedItem = Object.assign({}, this.defaultItem)
-                this.editedIndex = -1
-            })
-        },
-        save () {
-            if (this.editedIndex > -1) {
-                Object.assign(this.drugs[this.editedIndex], this.editedItem)
-            } else {
-                this.drugs.push(this.editedItem)
-            }
-            this.close()
         },
         async logout(){
             await this.$store.dispatch('auths/logout');
@@ -683,11 +510,8 @@ export default {
         }
     },
     mounted(){
-        this.getDashboard()
-        this.initialize()
-    },
-    created(){
         this.setUser()
+        this.getDashboard()
     }
 }
 </script>

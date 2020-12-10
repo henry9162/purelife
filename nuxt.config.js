@@ -45,7 +45,7 @@ export default {
   // Modules for dev and build (recommended) (https://go.nuxtjs.dev/config-modules)
   buildModules: [
     // https://go.nuxtjs.dev/vuetify
-    '@nuxtjs/vuetify',
+    '@nuxtjs/vuetify'
   ],
 
   // Modules (https://go.nuxtjs.dev/config-modules)
@@ -57,7 +57,8 @@ export default {
     '@nuxtjs/proxy',
     '@nuxtjs/style-resources',
     '@nuxtjs/toast',
-    '@nuxtjs/auth'
+    '@nuxtjs/auth',
+    '@nuxtjs/moment'
   ],
 
   toast: {
@@ -86,7 +87,7 @@ export default {
           login: {
             url: '/Account/Login',
             method: 'post',
-            propertyName: 'LoginToken'
+            propertyName: 'loginToken'
           },
           user: false,
           logout: { 

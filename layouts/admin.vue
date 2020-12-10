@@ -90,16 +90,6 @@
                         <v-list-item-title class="list-color" v-text="user.name"></v-list-item-title>
                     </v-list-item>
                 </v-list-group>
-
-                <v-list-group color="#22A64E" class="post-caption list-color" no-action prepend-icon="mdi-hammer-screwdriver">
-                    <template v-slot:activator>
-                        <v-list-item-title class="list-color">Settings</v-list-item-title>
-                    </template>
-
-                    <v-list-item @click="$router.push({path: setting.url})" v-for="(setting, i) in settings" :key="i" link class="post-caption">
-                        <v-list-item-title class="list-color" v-text="setting.name"></v-list-item-title>
-                    </v-list-item>
-                </v-list-group>
             </v-list>
         </v-navigation-drawer>
 
@@ -211,9 +201,11 @@
 </template>
 
 <script>
+import adminSideBar from '~/plugins/mixins/adminSideBar'
+
 export default {
     components: { },
-
+    mixins: [ adminSideBar ],
     data: () => ({
         drawer: false,
         miniVariant: true,
@@ -224,32 +216,6 @@ export default {
         },
         itemsss: [
             { text: 'Dashboard', icon: 'mdi-view-dashboard-outline', url: '/admin/dashboard' },
-        ],
-        adminList: [
-            { name: 'Product Categories', icon: 'mdi-shape', url: '/admin/categories' },
-            { name: 'Product Brands', icon: 'mdi-grain', url: '/admin/brands' },
-            { name: 'Product Classifications', icon: 'mdi-shape', url: '/admin/classifications' },
-            { name: 'Product Packages', icon: 'mdi-account-supervisor', url: '/admin/packages' },
-            { name: 'Product Groups', icon: 'mdi-shape', url: '/admin/groups' },
-            { name: 'Products', icon: 'mdi-post-outline', url: '/admin/products' },
-        ],
-        branchList: [
-            { name: 'Pharmacy Branch', icon: 'mdi-shape', url: '/admin/branches' },
-        ],
-        diseaseList: [
-            { name: 'Diseases', icon: 'mdi-grain', url: '/admin/diseases' },
-        ],
-        prescriptionList: [
-            { name: 'Prescriptions', icon: 'mdi-supervisor', url: '/admin/prescriptions' },
-        ],
-        loyaltyList: [
-            { name: 'Loyalties', icon: 'mdi-shape', url: '/admin/loyalties' },
-        ],
-        userList: [
-            { name: 'Users', icon: 'mdi-account', url: '/admin/users' },
-        ],
-        settings: [
-            { name: 'Roles', icon: 'mdi-post', url: '/admin/roles' },
         ],
         defaultImage: 'https://via.placeholder.com/150',
     }),
@@ -263,16 +229,10 @@ export default {
             return this.$auth.user.image ? url+this.$auth.user.image.image : this.defaultImage;
         },
         authName(){
-            var firstName = ''
-            var lastName = ''
-            if(this.$auth.user != null){
-                firstName = this.$auth.user.firstName
-                lastName = this.$auth.user.lastName
-            }   
-            return firstName + ' ' + lastName
+           return this.$store.getters['auths/authName']
         },
         authEmail(){
-            return this.$auth.user.email
+            return this.$store.getters['auths/authEmail']
         }
     },
 
@@ -291,6 +251,7 @@ export default {
             this.$store.dispatch('prescriptions/getAllPrescriptions');
             this.$store.dispatch('diseases/getAllDiseases');
             this.$store.dispatch('roles/getAllRoles');
+            this.$store.dispatch('loyalties/getLoyaltySetUp');
         },
         navEvent(){
             if(this.imgSrc.state == false){

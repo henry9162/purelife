@@ -79,6 +79,13 @@
                 <v-icon small class="mr-2 green--text" @click="editItem(item)">mdi-pencil</v-icon>
                 <v-icon small class="red--text" @click="deleteItem(item)">mdi-delete</v-icon>
             </template>
+            <template v-slot:item.firstName="{ item }">
+                <span v-text="item.firstName"></span>
+                <span v-text="item.lastName"></span>
+            </template>
+            <template v-slot:item.createdOn="{ item }">
+                <span v-text="$moment(item.createdOn).format('DD/MM/YYYY')"></span>
+            </template>
         </v-data-table>
     </v-card>
 </div>
@@ -98,13 +105,14 @@ export default {
                 align: 'start',
                 sortable: false,
                 value: 'prescriptionDescription',
+                class: ['text-button', 'grey--text text--darken-3']
             },
-            { text: 'Complaints', value: 'complaint' },
-            { text: 'Patient', value: 'firstName' },
-            { text: 'Email', value: 'email'},
-            { text: 'Phone', value: 'phoneNumber'},
-            { text: 'Created On', value: 'createdOn' },
-            { text: 'Actions', value: 'actions', sortable: false },
+            { text: 'Complaints', value: 'complaint', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Patient', value: 'firstName', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Email', value: 'email', class: ['text-button', 'grey--text text--darken-3']},
+            { text: 'Phone', value: 'phoneNumber', class: ['text-button', 'grey--text text--darken-3']},
+            { text: 'Created On', value: 'createdOn', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Actions', value: 'actions', sortable: false, class: ['text-button', 'grey--text text--darken-3'] },
         ],
         editedIndex: -1,
         editedItem: {

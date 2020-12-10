@@ -23,7 +23,7 @@
                     <v-container>
                         <v-row class="px-8">
                             <v-col cols="12" class="py-0 px-0">
-                                <v-text-field v-model="editedItem.pharmacyBranchName" label="Category Name"></v-text-field>
+                                <v-text-field v-model="editedItem.pharmacyBranchName" label="Branch Name"></v-text-field>
                             </v-col>
                             <v-col cols="12" class="py-0 px-0">
                                 <v-text-field v-model="editedItem.address" label="Description"></v-text-field>
@@ -70,7 +70,7 @@
         </modal>
 
 
-        <v-data-table :headers="headers" :items="branches" sort-by="calories" class="px-8 py-4">
+        <v-data-table :headers="headers" :items="branches" sort-by="calories" class="mx-4 py-4">
             <template v-slot:top>
                 <v-toolbar flat color="white">
                     <v-toolbar-title class="list-color custom-style">All Branches</v-toolbar-title>
@@ -87,6 +87,9 @@
                 <v-icon small class="mr-2 green--text" @click="editItem(item)">mdi-pencil</v-icon>
                 <v-icon small class="red--text" @click="deleteItem(item)">mdi-delete</v-icon>
             </template>
+            <template v-slot:item.createdOn="{ item }">
+                <span v-text="$moment(item.createdOn).format('DD/MM/YYYY')"></span>
+            </template>
         </v-data-table>
     </v-card>
 </div>
@@ -99,19 +102,19 @@ export default {
     data: () => ({
         dialog: true,
         loading: false,
-        btnText: 'Submit',
         headers: [
             {
                 text: 'Name',
                 align: 'start',
                 sortable: false,
                 value: 'pharmacyBranchName',
+                class: ['text-button', 'grey--text text--darken-3']
             },
-            { text: 'Address', value: 'address' },
-            { text: 'State', value: 'stateName' },
-            { text: 'LGA', value: 'lgaName' },
-            { text: 'Created On', value: 'createdOn' },
-            { text: 'Actions', value: 'actions', sortable: false },
+            { text: 'Address', value: 'address', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'State', value: 'stateName', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'LGA', value: 'lgaName', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Created On', value: 'createdOn', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Actions', value: 'actions', sortable: false, class: ['text-button', 'grey--text text--darken-3'] },
         ],
         editedIndex: -1,
         editedItem: {
@@ -141,9 +144,7 @@ export default {
             val || this.close()
         },
         'editedItem.stateId': function (val, oldVal) {
-          if(oldVal != '' || val != ''){
-            this.$store.dispatch('getLga', val)
-          }
+            this.getLga(val)
         }
     },
 
@@ -159,6 +160,9 @@ export default {
         },
         formTitle () {
             return this.editedIndex === -1 ? 'Add Branch' : 'Edit Branch';
+        },
+        btnText(){
+            return this.editedIndex === -1 ? 'Submit' : 'Update';
         }
     },
 
@@ -166,7 +170,6 @@ export default {
         editItem (item) {
             this.editedIndex = this.branches.indexOf(item)
             this.editedItem = Object.assign({}, item)
-            this.btnText = 'Update';
             this.$modal.show('branches-modal')
         },
         addBranch(){
@@ -185,6 +188,7 @@ export default {
             })
         },
         updateBranch(){
+            this.loading = true
             let data = {
                 pharmacyBranchId: this.branches[this.editedIndex].pharmacyBranchId,
                 pharmacyBranchName: this.editedItem.pharmacyBranchName,
@@ -196,9 +200,13 @@ export default {
             }
 
             this.$store.dispatch('branches/updateBranch', data).then(response => {
+                this.loading = false
                 this.refreshTable();
                 this.close();
             })
+        },
+        getLga(val){
+            val === "" ? '' : this.$store.dispatch('getLga', val)
         },
         deleteItem (item) {
             confirm('Are you sure you want to delete this branch?') && this.deleteBranch(item)
@@ -236,8 +244,8 @@ export default {
     .list-color { color: #22A64E !important}
 
     .post-caption {
-        font-family: light-font(family);
-        font-weight: 100;
+        font-family: light-font(family) !important;
+        font-weight: 100 !important;
     }
 
     .custom-style {

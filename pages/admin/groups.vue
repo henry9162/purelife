@@ -89,7 +89,7 @@
         </modal>
 
 
-        <v-data-table :headers="headers" :items="productGroups" sort-by="calories" class="px-8 py-4">
+        <v-data-table :headers="headers" :items="productGroups" sort-by="calories" class="py-4 mx-4">
             <template v-slot:top>
                 <v-toolbar flat color="white">
                     <v-toolbar-title class="list-color custom-style">All Groups</v-toolbar-title>
@@ -106,6 +106,9 @@
                 <v-icon small class="mr-2 green--text" @click="editItem(item)">mdi-pencil</v-icon>
                 <v-icon small class="red--text" @click="deleteItem(item)">mdi-delete</v-icon>
             </template>
+            <template v-slot:item.createdOn="{ item }">
+                <span v-text="$moment(item.createdOn).format('DD/MM/YYYY')"></span>
+            </template>
         </v-data-table>
     </v-card>
 </div>
@@ -117,22 +120,22 @@ export default {
 
     data: () => ({
         loading: false,
-        btnText: 'Submit',
         headers: [
             {
                 text: 'Name',
                 align: 'start',
                 sortable: false,
                 value: 'productGroupName',
+                class: ['text-button', 'grey--text text--darken-3']
             },
-            { text: 'Category', value: 'productCategyName' },
-            { text: 'Brand', value: 'productBrandName' },
-            { text: 'Package', value: 'productPackagingId' },
-            { text: 'Description', value: 'description' },
-            { text: 'Size', value: 'size' },
-            { text: 'Lower Measurement', value: 'lowerMeasurement' },
-            { text: 'Created On', value: 'createdOn' },
-            { text: 'Actions', value: 'actions', sortable: false },
+            { text: 'Category', value: 'productCategyName', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Brand', value: 'productBrandName', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Package', value: 'productPackageName', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Description', value: 'description', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Size', value: 'size', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Lower Measurement', value: 'lowerMeasurement', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Created On', value: 'createdOn', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Actions', value: 'actions', sortable: false, class: ['text-button', 'grey--text text--darken-3'] },
         ],
         editedIndex: -1,
         editedItem: {
@@ -179,6 +182,9 @@ export default {
         },
         formTitle () {
             return this.editedIndex === -1 ? 'Add group' : 'Edit Group';
+        },
+        btnText(){
+            return this.editedIndex === -1 ? 'Submit' : 'Update';
         }
     },
 
@@ -186,7 +192,6 @@ export default {
         editItem (item) {
             this.editedIndex = this.productGroups.indexOf(item)
             this.editedItem = Object.assign({}, item)
-            this.btnText = 'Update';
             this.$modal.show('productGroups-modal')
         },
         addProductGroup(){
@@ -274,5 +279,9 @@ export default {
 
     .custom-style {
         font-family: font(family) !important;
+    }
+
+    .v-data-table { 
+        overflow-x: auto !important;
     }
 </style>

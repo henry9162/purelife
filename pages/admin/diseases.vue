@@ -128,18 +128,13 @@
                     <v-container>
                         <v-row class="">
                             <v-col cols="12" class="py-0 px-0">
-                                <v-data-table :headers="headers" :items="diseases" sort-by="calories" class="px-8">
+                                <v-data-table :headers="patientHeaders" :items="patients" sort-by="calories" class="px-8">
                                     <template v-slot:top>
                                         <v-toolbar flat color="white">
                                             <v-toolbar-title class="list-color custom-style">Patients</v-toolbar-title>
                                             <v-divider class="mx-4" inset vertical></v-divider>
                                             <v-spacer></v-spacer>
                                         </v-toolbar>
-                                    </template>
-
-                                    <template v-slot:item.actions="{ item }">
-                                        <v-icon small class="mr-2 green--text" @click="editItem(item)">mdi-pencil</v-icon>
-                                        <v-icon small class="red--text" @click="deleteItem(item)">mdi-delete</v-icon>
                                     </template>
                                 </v-data-table>
                             </v-col>
@@ -151,7 +146,7 @@
         </modal>
 
 
-        <v-data-table :headers="headers" :items="diseases" sort-by="calories" class="px-8 py-4">
+        <v-data-table :headers="headers" :items="diseases" sort-by="calories" class="mx-4 py-4">
             <template v-slot:top>
                 <v-toolbar flat color="white">
                     <v-toolbar-title class="list-color custom-style">All Diseases</v-toolbar-title>
@@ -173,12 +168,15 @@
 
                 <v-tooltip bottom>
                     <template v-slot:activator="{ on, attrs }">
-                        <v-icon @click="viewPatients(item)" v-bind="attrs" v-on="on" class="blue--text custom-red pr-2">mdi-account</v-icon>
+                        <v-icon @click="viewPatients(item)" small v-bind="attrs" v-on="on" class="green--text custom-red pr-2">mdi-account</v-icon>
                     </template>
                     <span>View patients</span>
                 </v-tooltip>
 
                 <v-icon small class="red--text" @click="deleteItem(item)">mdi-delete</v-icon>
+            </template>
+            <template v-slot:item.createdOn="{ item }">
+                <span v-text="$moment(item.createdOn).format('DD/MM/YYYY')"></span>
             </template>
         </v-data-table>
     </v-card>
@@ -199,10 +197,22 @@ export default {
                 align: 'start',
                 sortable: false,
                 value: 'diseaseName',
+                class: ['text-button', 'grey--text text--darken-3']
             },
-            { text: 'Severity', value: 'severity' },
-            { text: 'Created On', value: 'createdOn' },
-            { text: 'Actions', value: 'actions', sortable: false },
+            { text: 'Severity', value: 'severity', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Created On', value: 'createdOn', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Actions', value: 'actions', sortable: false, class: ['text-button', 'grey--text text--darken-3'] },
+        ],
+        patientHeaders: [
+            {
+                text: 'Name',
+                align: 'start',
+                sortable: false,
+                value: 'firstName',
+                class: ['text-button', 'grey--text text--darken-3']
+            },
+            { text: 'Email', value: 'email', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Phone', value: 'phoneNumber', class: ['text-button', 'grey--text text--darken-3'] },
         ],
         editedIndex: -1,
         editedItem: {
@@ -241,6 +251,9 @@ export default {
         },
         formTitle () {
             return this.editedIndex === -1 ? 'Add Disease' : 'Edit Disease';
+        },
+        patients(){
+            return this.$store.getters["diseases/patients"];
         }
     },
 
@@ -251,7 +264,8 @@ export default {
             this.btnText = 'Update';
             this.$modal.show('diseases-modal')
         },
-        viewPatients(item){
+        async viewPatients(item){
+            await this.$store.dispatch("diseases/getPatients", item.diseaseId)
             this.$modal.show('disease-patients-modal')
         },
         addDisease(){

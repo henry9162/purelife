@@ -48,7 +48,7 @@
         </modal>
 
 
-        <v-data-table :headers="headers" :items="categories" sort-by="calories" class="px-8 py-4">
+        <v-data-table :headers="headers" :items="categories" sort-by="calories" class="mx-4 py-4">
             <template v-slot:top>
                 <v-toolbar flat color="white">
                     <v-toolbar-title class="list-color custom-style">All Categories</v-toolbar-title>
@@ -65,8 +65,8 @@
                 <v-icon small class="mr-2 green--text" @click="editItem(item)">mdi-pencil</v-icon>
                 <v-icon small class="red--text" @click="deleteItem(item)">mdi-delete</v-icon>
             </template>
-            <template v-slot:no-data>
-                <v-btn color="primary">Reset</v-btn>
+            <template v-slot:item.createdOn="{ item }">
+                <span v-text="$moment(item.createdOn).format('DD/MM/YYYY')"></span>
             </template>
         </v-data-table>
     </v-card>
@@ -80,17 +80,17 @@ export default {
     data: () => ({
         dialog: true,
         loading: false,
-        btnText: 'Submit',
         headers: [
             {
                 text: 'Name',
                 align: 'start',
                 sortable: false,
                 value: 'productCategyName',
+                class: ['text-button', 'grey--text text--darken-3']
             },
-            { text: 'Description', value: 'description' },
-            { text: 'Created On', value: 'createdOn' },
-            { text: 'Actions', value: 'actions', sortable: false },
+            { text: 'Description', value: 'description', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Created On', value: 'createdOn', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Actions', value: 'actions', sortable: false, class: ['text-button', 'grey--text text--darken-3'] },
         ],
         editedIndex: -1,
         editedItem: {
@@ -117,8 +117,11 @@ export default {
         categories(){
             return this.$store.getters["categories/allCategories"];
         },
-        formTitle () {
+        formTitle() {
             return this.editedIndex === -1 ? 'Add Category' : 'Edit Category';
+        },
+        btnText() {
+            return this.editedIndex === -1 ? 'Submit' : 'Update';
         }
     },
 
@@ -126,7 +129,6 @@ export default {
         editItem (item) {
             this.editedIndex = this.categories.indexOf(item)
             this.editedItem = Object.assign({}, item)
-            this.btnText = 'Update';
             this.$modal.show('categories-modal')
         },
         addCategory(){
@@ -143,6 +145,7 @@ export default {
             })
         },
         updateCategory(){
+            this.loading = true
             let data = {
                 productCategyId: this.categories[this.editedIndex].productCategyId,
                 productCategyName: this.editedItem.productCategyName,
@@ -152,6 +155,7 @@ export default {
                 isDeprecated: this.categories[this.editedIndex].isDeprecated
             }
             this.$store.dispatch('categories/updateCategory', data).then(response => {
+                this.loading = false
                 this.refreshTable();
                 this.close();
             })

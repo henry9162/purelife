@@ -1,10 +1,14 @@
 export const state = () => ({
     diseases: [],
+    patients: []
 })
 
 export const mutations = {
     setDiseases(state, data){
         state.diseases = data
+    },
+    setPatients(state, data){
+        state.patients = data
     }
 }
 
@@ -53,6 +57,15 @@ export const actions = {
             })
         })
     },
+    getPatients(context, id){
+        this.$axios.get(`/Disease/GetPatientsPerDisease?id=${id}`).then(response => {
+            context.commit("setPatients", response.data.data)
+            context.dispatch('processResponse', response)
+        })
+        .catch(error => {
+            context.dispatch('processError', error)
+        })
+    },
     deleteDisease(context, id){
         return new Promise((resolve, reject) => {
             this.$axios.delete(`/Disease/${id}`).then(response => {
@@ -76,5 +89,8 @@ export const actions = {
 export const getters = {
     allDiseases(state){
         return state.diseases;
+    },
+    patients(state){
+        return state.patients
     }
 }

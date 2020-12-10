@@ -93,7 +93,7 @@ export default {
 
                 await this.$store.dispatch("auths/login", data).then(response => {
                     if(response) {
-                        this.$auth.setUser(response.data.data)
+                        if(response.data.data) this.$auth.setUser(response.data.data)
                         this.loading = false
                         this.$toast.success(response.data.message).goAway(3000)
                         this.$router.push({path: '/'})

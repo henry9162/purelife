@@ -147,7 +147,7 @@
                     <v-card>
                         <v-list nav dense>
                             <v-list-item-group color="primary">
-                                <div v-if="$auth.user.roleName == 'Admin'">
+                                <div>
                                     <v-list-item v-for="(item, i) in itemsss" :key="i" :to="item.url">
                                         <v-list-item-icon class="mr-4">
                                             <v-icon v-text="item.icon"></v-icon>
@@ -340,10 +340,6 @@ export default {
         },
         getAll(){
            
-        },
-        logout(){
-            //this.$auth.logout();
-            this.$router.push({path: '/auth'})
         },
         deactivateSnackbar(){
             this.$store.dispatch('deactivateSnackbar')

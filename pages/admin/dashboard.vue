@@ -311,7 +311,7 @@
             <v-row class="mb-6">
                 <v-col cols="12" md="6">
                     <div class="selling-product">
-                        <v-data-table :headers="headers" :items="drugs" sort-by="" class="elevation-1">
+                        <v-data-table :headers="headers" :items="topProducts" sort-by="" class="elevation-1">
                             <template v-slot:top>
                                 <v-toolbar flat color="white">
                                     <v-toolbar-title class="custom-style list-color">Top selling Products</v-toolbar-title>
@@ -322,7 +322,7 @@
                     </div>
 
                     <div class="top-diseases mt-6">
-                        <v-data-table :headers="diseaseHeaders" :items="drugs" sort-by="" class="elevation-1">
+                        <v-data-table :headers="diseaseHeaders" :items="topDiseases" sort-by="" class="elevation-1">
                             <template v-slot:top>
                                 <v-toolbar flat color="white">
                                     <v-toolbar-title class="custom-style list-color">Top diseases by patients</v-toolbar-title>
@@ -335,7 +335,7 @@
 
                 <v-col cols="12" md="6">
                     <div class="selling-categories">
-                        <v-data-table :headers="categoryHeaders" :items="drugs" sort-by="" class="elevation-1">
+                        <v-data-table :headers="categoryHeaders" :items="topCategories" sort-by="" class="elevation-1">
                             <template v-slot:top>
                                 <v-toolbar flat color="white">
                                     <v-toolbar-title class="custom-style list-color">Top selling Categories</v-toolbar-title>
@@ -356,7 +356,7 @@
                     </div> -->
 
                     <div class="selling-brands mt-6">
-                       <v-data-table :headers="brandHeaders" :items="drugs" sort-by="" class="elevation-1">
+                       <v-data-table :headers="brandHeaders" :items="topBrands" sort-by="" class="elevation-1">
                             <template v-slot:top>
                                 <v-toolbar flat color="white">
                                     <v-toolbar-title class="custom-style list-color">Top selling Brands</v-toolbar-title>
@@ -480,6 +480,9 @@ export default {
         },
         topProducts(){
             return this.$store.getters['topProducts']
+        },
+        topCategories(){
+            return this.$store.getters['topCategories']
         },
         topBrands(){
             return this.$store.getters['topBrands']

@@ -109,7 +109,7 @@ export default {
     //proxy: true,
     //baseURL: 'https://api.cbforum.org/api'
     //baseURL: 'https://localhost:5001/api/v1',
-    baseURL: 'https://purelifeapi.nologysolutionsng.com/api/v1'
+    baseURL: 'http://purelifeapi.nologysolutionsng.com/api/v1'
     //baseURL: 'https://api.cbforum.org/api'
   },
 

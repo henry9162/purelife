@@ -1,10 +1,6 @@
-// import { categories } from '../plugins/productRelatedTables'
+
 import { filterProducts } from "../plugins/productFilters";
 import { buildFilters } from '../plugins/buildFilters';
-//import brands from '../plugins/brands'
-//import colors from '../plugins/colors'
-import subcategories from '../plugins/subcategories'
-//import productss from '../plugins/products'
 
 export const state = () => ({
     categories: [],
@@ -37,7 +33,7 @@ export const mutations = {
         if (payload.type == 'styles') state.filters.style = state.filters.style.filter(style => style != payload.name)
     },
     setFilteredProduct(state, payload) {
-        state.filteredProducts = payload;
+        state.filteredProducts = payload.productList;
     },
     emptyFilteredProduct(state) {
         state.filteredProducts = []
@@ -54,24 +50,29 @@ export const actions = {
 
     displayBaseFilter(context, payload) {
         if (payload.type == 'category'){
-            let categories = context.state.categories
-            categories.find(category => category.id == payload.id);
-            categories ? context.commit('setFilteredProduct', categories.productList)  : '';
+            let categories = context.rootState.categories.categories
+            let category = categories.find(category => category.productCategyId == payload.id);
+            context.dispatch('getCategoryById', category.productCategyId)
         } 
         // else if (payload.type == 'brand') {
         //     let brand = brands.find(brand => brand.name == payload.name);
         //     brand ? context.commit('setFilteredProduct', brand.products)  : '';
         // } 
-        // else if (payload.type == 'color') {
-        //     let color = colors.find(color => color.name == payload.name);
-        //     color ? context.commit('setFilteredProduct', color.products)  : '';
-        // }
     },
-    categoryProducts(context, categoryName) {
-        let categories = context.state.categories
-        let categoryProducts = categories.find(category => category.productCategyName == categoryName);
-        categoryProducts ? context.commit('setFilteredProduct', categoryProducts.productList) : '';
+    getCategoryById(context, id){
+        this.$axios.get(`/ProductCategory/GetProductCategoryById/${id}`)
+            .then(response => {
+                context.commit('setFilteredProduct', response.data.data) 
+                //context.commit('setFilteredProduct', categories.productList) 
+            }).catch(error => {
+                console.log(error)
+            }) 
     },
+    // categoryProducts(context, categoryName) {
+    //     let categories = context.state.categories
+    //     let categoryProducts = categories.find(category => category.productCategyName == categoryName);
+    //     categoryProducts ? context.commit('setFilteredProduct', categoryProducts.productList) : '';
+    // },
     getAllCategories(context) { 
         this.$axios.get('/ProductCategory/GetAllProductCategory')
             .then(response => {
@@ -102,9 +103,4 @@ export const getters = {
         return products;
     },
     getCategories(state){ return state.categories },
-    // getStyles(state){ return state.styles },
-    // getMaterials(state) { return state.materials },
-    // getColors(state) { return state.colors },
-    // getBrands(state) { return state.brands },
-    // getSizes(state) { return state.sizes }
 }

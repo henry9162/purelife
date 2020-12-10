@@ -10,6 +10,11 @@ export default {
     leaveActiveClass: 'animated animate__flipOutY'
   },
   
+  // env: {
+  //   TEST_SECRET_KEY: process.env.TEST_SECRET_KEY,
+  //   TEST_PUBLIC_KEY: process.env.TEST_PUBLIC_KEY
+  // },
+
   head: {
     titleTemplate: '%s - pure-life-pharmacy',
     title: 'pure-life-pharmacy',

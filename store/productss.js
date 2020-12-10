@@ -27,6 +27,9 @@ export const mutations = {
         const cartItem = state.cart.find(item => item.productId === id);
         state.cart.splice(state.cart.indexOf(cartItem), 1);
     },
+    removeAllItems (state) {
+        state.cart = [];
+    },
     increaseCartItemQuantity(state, data) {
         data.cartItem.quantity += data.quantity;
         state.quantity = 1;
@@ -67,6 +70,9 @@ export const actions = {
     },
     removeCartItem(context, cartId) {
         context.commit('removeItem', cartId);
+    },
+    removeAllCartItems(context){
+        context.commit('removeAllItems');
     },
     activateSnackbar(context, info = null){
         context.commit('displayAlert', {

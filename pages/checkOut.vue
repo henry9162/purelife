@@ -58,6 +58,21 @@
                                     <v-hover v-slot:default="{ hover }">
                                         <v-card :elevation="hover ? 10 : ''" flat style="width: 100%">
                                             <v-card-title class="font-weight-bold text--grey text--darken-2 title orange--text pb-4 pt-6">PAYMENT METHOD</v-card-title>
+
+                                            <v-card-actions>
+                                                <v-btn tile depressed x-large color="orange" dark>CASH</v-btn>
+                                                <paystack
+                                                    style="margin:auto;"
+                                                    class="v-btn v-btn--contained theme--light v-size--large green white--text"
+                                                    :amount="amount * 100"
+                                                    email="folake@gmail.com"
+                                                    :paystackkey="PUBLIC_KEY"
+                                                    :callback="processPayment"
+                                                    :reference="genRef()"
+                                                    :close="close"
+                                                    :embed="false"
+                                                >PAYSTACK (PAY NGN {{amount}})</paystack>
+                                            </v-card-actions>
                                         </v-card>
                                     </v-hover>
                                 </v-row>
@@ -80,11 +95,15 @@ import billingform from '../components/checkout/BillingForm'
 import shippingform from '../components/checkout/ShippingForm'
 import orderReview from '../components/checkout/OrderReview'
 import titleParalax from '../components/TitleParalax'
+import paystack from "vue-paystack";
 
+import { mapActions } from 'vuex';
+
+import uniqid from 'uniqid';
 
 export default {
     layout: 'home',
-    components: { billingform, shippingform, orderReview, titleParalax },
+    components: { billingform, shippingform, orderReview, titleParalax, paystack },
 
     data: () => ({
         checkbox: true,
@@ -105,8 +124,26 @@ export default {
                 disabled: true,
                 href: 'breadcrumbs_link_2',
             },
-        ]
-    })
+        ],
+        amount: 760,
+        PUBLIC_KEY: process.env.TEST_PUBLIC_KEY
+    }),
+    methods: {
+        ...mapActions({
+            clearCart: 'productss/removeAllCartItems'
+        }),
+        close() {
+            this.$toast.warning("User cancelled payment").goAway(3000);
+        },
+        genRef() {
+            return uniqid("pstk-");
+        },
+        processPayment() {
+            this.$toast.success("User successfully made payment").goAway(4000);
+            this.$router.push({ path: '/' });
+            this.clearCart();
+        }
+    }
 }
 </script>
 

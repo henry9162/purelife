@@ -253,7 +253,7 @@
 </template>
 
 <script>
-import newsletterFooter from '../components/Footer'
+import newsletterFooter from '../components/footer.vue'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {

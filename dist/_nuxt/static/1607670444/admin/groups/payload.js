@@ -1,0 +1,1 @@
+__NUXT_JSONP__("/admin/groups", {data:[{}],fetch:[],mutations:[]});

@@ -1,0 +1,1 @@
+__NUXT_JSONP__("/admin/packages", {data:[{}],fetch:[],mutations:[]});

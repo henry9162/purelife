@@ -60,7 +60,7 @@ typings/
 .env
 
 # dist
-dist
+#dist
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache

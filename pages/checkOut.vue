@@ -126,7 +126,7 @@ export default {
             },
         ],
         amount: 760,
-        PUBLIC_KEY: pk_test_c19414215f1bee0bd8d754fc85c30e216b2b5ae9
+        PUBLIC_KEY: 'pk_test_c19414215f1bee0bd8d754fc85c30e216b2b5ae9'
     }),
     methods: {
         ...mapActions({
@@ -138,7 +138,8 @@ export default {
         genRef() {
             return uniqid("pstk-");
         },
-        processPayment() {
+        processPayment(data) {
+            debugger
             this.$toast.success("User successfully made payment").goAway(4000);
             this.$router.push({ path: '/' });
             this.clearCart();

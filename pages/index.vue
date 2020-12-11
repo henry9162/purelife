@@ -6,14 +6,14 @@
         </div>
 
         <!-- Product title parallax -->
-        <titleParalax>{{ $route.query.name ? $route.query.name : 'All-Product' }}</titleParalax>
+        <titleParalax class="post-caption">{{ $route.query.name ? $route.query.name : 'All-Product' }}</titleParalax>
 
         <v-container class="white px-0 pt-0 pb-0" fluid>
             <v-row class="white mx-0 px-0 pb-0">
                 <transition enter-active-class="animated pulse" mode="out-in">
                     <v-col v-if="visible" class="px-0" md="3" style="border-right: 1px solid lightgrey">
                         <div class="px-4 pt-2">
-                            <div class="title font-weight-bold text-uppercase">Filters</div>
+                            <div class="post-caption font-weight-bold text-uppercase">Filters</div>
                             <v-divider class="mt-2"></v-divider>
                         </div>
                         <!-- Price -->
@@ -23,7 +23,7 @@
                                     <template v-slot:activator>
                                         <v-list-item-content>
                                             <v-list-item-title>
-                                                <div class="grey--text text--darken-2 font-weight-bold">Price</div>
+                                                <div class="grey--text text--darken-2 post-caption font-weight-bold">Price</div>
                                             </v-list-item-title>
                                         </v-list-item-content>
                                     </template>
@@ -73,11 +73,11 @@
                                     <template v-slot:activator>
                                         <v-list-item-content>
                                             <v-list-item-title>
-                                                <div class="grey--text text--darken-2 font-weight-bold">Categories</div>
+                                                <div class="grey--text text--darken-2 post-caption font-weight-bold">Categories</div>
                                             </v-list-item-title>
                                         </v-list-item-content>
                                     </template>
-                                    <v-list-item class="pl-10" v-for="(category, i) in categories" :key="i" @click="">
+                                    <v-list-item class="pl-10 post-caption" v-for="(category, i) in categories" :key="i" @click="">
                                         <v-list-item-title @click="$store.dispatch('filters/displayBaseFilter', { name: category.productCategyName, id: category.productCategyId, type: 'category' });" v-text="category.productCategyName"></v-list-item-title>
                                     </v-list-item>
                                     <!-- <v-list-item class="pl-0 pb-0" @click="">
@@ -246,3 +246,10 @@ export default {
 }
 
 </script>
+
+<style lang="scss">
+    .post-caption {
+        font-family: light-font(family);
+        font-weight: 100 !important;
+    }
+</style>

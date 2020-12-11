@@ -2,7 +2,7 @@
     <div>
         <v-container class="pt-0" fluid>
             <v-row>
-                <v-col class="px-3 py-4" v-for="product in products" :key="product.productId" :md="gridValue == 3 ? '4' : gridValue == 4 ? '3' : '3'">
+                <v-col class="px-3 py-4" v-for="product in products" :key="product.productId" :md="gridValue == 3 ? '4' : gridValue == 4 ? '3' : '4'">
                     <v-hover v-slot:default="{ hover }">
                         <v-card color="white" max-width="400" :elevation="hover ? 20 : '4'">
                             <v-img :aspect-ratio="16/12" :src="product.productImage">
@@ -52,12 +52,12 @@
                             
                             <div class="d-flex pb-2 justify-space-between">
                                 <div class="d-flex pt-4 pl-4">
-                                    <v-btn @click="$router.push({ name: 'checkout' })" class="px-0 mr-2" x-small text>
+                                    <v-btn @click="checkOut(product)" class="px-0 mr-2" x-small text>
                                         <v-icon small color="green darken-1" class="mr-1">mdi-currency-ngn</v-icon> Buy Now
                                     </v-btn>
-                                    <v-btn class="px-0" x-small text color="purple">
+                                    <!-- <v-btn class="px-0" x-small text color="purple">
                                         <v-icon small>mdi-email-outline</v-icon> Ask Question
-                                    </v-btn>
+                                    </v-btn> -->
                                 </div>
 
                                 <!-- <div class="flex-grow-1"></div> -->
@@ -106,6 +106,18 @@ export default {
             // activateSnackbar: 'activateSnackbar',
             addToCart: 'productss/addToCart',
         }),
+
+        async checkOut(product){
+            let cart = {
+                productId: product.productId, 
+                productName: product.productName,
+                quantity: this.quantity, 
+                inventory: product.quantity,
+                price: product.price * this.quantity 
+            }
+            await this.$store.dispatch("productss/addToCart", cart);
+            this.$router.push({ path: '/checkOut' })
+        }
     }
 
 }

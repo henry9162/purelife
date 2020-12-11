@@ -15,7 +15,8 @@ export const state = () => ({
         style: []
     },
     filteredProducts: [],
-    products: []
+    products: [],
+    isClicked: false
 })
 
 export const mutations = {
@@ -34,6 +35,7 @@ export const mutations = {
     },
     setFilteredProduct(state, payload) {
         state.filteredProducts = payload.productList;
+        state.isClicked = true
     },
     emptyFilteredProduct(state) {
         state.filteredProducts = []
@@ -62,6 +64,7 @@ export const actions = {
     getCategoryById(context, id){
         this.$axios.get(`/ProductCategory/GetProductCategoryById/${id}`)
             .then(response => {
+                console.log(response.data.data);
                 context.commit('setFilteredProduct', response.data.data) 
                 //context.commit('setFilteredProduct', categories.productList) 
             }).catch(error => {
@@ -95,12 +98,23 @@ export const getters = {
     filteredProducts(state, getters) {
         let products = [];
         let filters = buildFilters(state.filters)
-        if (state.filteredProducts.length < 1) {
+        if(state.filteredProducts.length < 1 && state.isClicked == false){
             products = filterProducts(state.products, filters);
+        } else if(state.filteredProducts.length < 1 && state.isClicked == true) {
+            products = [];
         } else {
-            products = filterProducts(state.filteredProducts, filters);
+            products = filterProducts(state.filteredProducts, filters)
         }
         return products;
+
+        // if(state.isClicked == false){
+        //     products = state.products
+        // } else if(state.isClicked == true && state.filteredProducts.length < 1){
+        //     products = filterProducts(state.products, filters);
+        // } else if(state.isClicked == true && state.filteredProducts.length > 0){
+        //     products = filterProducts(state.filteredProducts, filters);
+        // }
+        // return products;
     },
     getCategories(state){ return state.categories },
 }

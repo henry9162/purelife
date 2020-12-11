@@ -11,9 +11,9 @@
         <div class="mt-4">
             <v-container>
                 
-                    <div class="d-flex justify-center">
-                        <div class="mx-2">
-                            <div class="mx-2">
+                    <div v-if="cartProducts" class="d-flex justify-center">
+                        <div class="mx-15" style="width: 80%">
+                            <div class="">
                             <v-simple-table fixed-header>
                                 <template v-slot:default>
                                     <thead>
@@ -70,7 +70,7 @@
                         <div class="mt-2">
                             <v-container fluid>
                                 <v-row>
-                                    <v-col md="8">
+                                    <v-col class="pl-0" md="8">
                                         <div style="border: 20px solid #b6bbc6">
                                             <v-expansion-panels flat focusable>
                                                 <!-- <v-expansion-panel>
@@ -87,13 +87,13 @@
                                                 </v-expansion-panel> -->
 
                                                 <v-expansion-panel>
-                                                    <v-expansion-panel-header>Use Loyalty Card</v-expansion-panel-header>
+                                                    <v-expansion-panel-header>Use Loyalty Point</v-expansion-panel-header>
                                                     <v-expansion-panel-content>
                                                         <div class="d-flex justify-space-between pt-8">
-                                                            <div>Enter your Loyalty code here</div>
+                                                            <div>Enter your Loyalty point here</div>
                                                             <div class="ml-4 d-flex">
                                                                 <v-text-field label="Enter Gift Code" clearable outlined dense></v-text-field>
-                                                                <v-btn class="ml-2" tile depressed color="primary" dark>Apply Loyalty Code</v-btn>
+                                                                <v-btn class="ml-2" tile depressed color="primary" dark>Apply Loyalty Point</v-btn>
                                                             </div>
                                                         </div> 
                                                     </v-expansion-panel-content>
@@ -102,7 +102,7 @@
                                         </div>
                                     </v-col>
 
-                                    <v-col md="4">
+                                    <v-col md="4" class="pr-0">
                                         <div style="border: 20px solid #b6bbc6">
                                             <v-simple-table fixed-header>
                                                 <template v-slot:default>
@@ -110,7 +110,8 @@
                                                         <tr>
                                                             <th class="title font-weight-bold">Total</th>
                                                             <th class="pa-0">
-                                                                <v-icon class="font-weight-thin" small right>mdi-currency-ngn</v-icon> <span class="title font-weight-light">760.00</span>
+                                                                <v-icon class="font-weight-thin" small right>mdi-currency-ngn</v-icon> 
+                                                                <span class="title font-weight-light" v-text="cartTotal"></span>
                                                             </th>
                                                         </tr>
                                                     </thead>
@@ -122,7 +123,7 @@
                             </v-container>
                         </div>
 
-                        <div class="white darken-2 pa-4 mx-2 mb-4 d-flex justify-space-between">
+                        <div class="white darken-2 pa-4 mb-4 d-flex justify-space-between">
                             <v-btn @click="$router.push({ path: '/', query: { name: '' } })" depressed tile large color="red" dark>
                                 <v-icon left>mdi-arrow-left</v-icon> Continue Shopping
                             </v-btn>
@@ -295,6 +296,15 @@
                         <!-- </div>
                     </v-col> -->
                 </div>
+
+                <div class="d-flex justify-center post-caption red--text grey lighten-2 pa-5 mt-4" v-else>
+                    <div class="text-center">
+                        <div>You do not have any item in your cart</div>
+                        <div class="mt-2">
+                            <v-btn @click="$router.push({path: '/'})" color="green lighten-2" depressed small class="white--text">Continue shopping</v-btn>
+                        </div>
+                    </div>
+                </div>
             </v-container>
         </div>
     </div>
@@ -316,11 +326,6 @@ export default {
                 disabled: false,
                 href: 'breadcrumbs_dashboard',
             },
-            // {
-            //     text: 'Link 1',
-            //     disabled: false,
-            //     href: 'breadcrumbs_link_1',
-            // },
             {
                 text: 'Cart',
                 disabled: true,
@@ -332,7 +337,8 @@ export default {
     computed: {
         ...mapGetters({
             cartProducts: 'productss/cartProducts',
-            quantity: 'productss/quantity'
+            quantity: 'productss/quantity',
+            cartTotal: 'productss/cartTotal'
         })
         
     },
@@ -350,6 +356,13 @@ export default {
             this.product = event.params.product;
             this.imageSelected = event.params.product.productImage
         },
+        async initialise(){
+            //await this.$store.dispatch('productss/persistCart');
+        }
+    },
+
+    mounted(){
+        this.initialise()
     }
 }
 </script>

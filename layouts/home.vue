@@ -255,7 +255,7 @@
                 name="barcode-modal" :min-width="500"
                 :max-width="700" :adaptive="true"
                 :scrollable="true" height="auto"
-                transition="fade-transition" :clickToClose="false">
+                transition="fade-transition" :clickToClose="false" id="barcoeMdl">
 
                 <v-card>
                     <v-card-actions>
@@ -265,10 +265,10 @@
                         </v-btn>
                     </v-card-actions>
 
-                    <div class="text-center"  v-if="!scanning">
+                    <div class="text-center" id="mdlText" style="display:none">
                         <span class="headline list-color custom-style">...Awaiting Scan</span>
                     </div>
-                    <div class="text-center" v-else>
+                    <div class="text-center" id="mdlSpinner" style="display:none">
                         <span class="headline list-color custom-style">
                             <v-progress-circular
                                 indeterminate
@@ -280,7 +280,7 @@
                     <v-card-text>
                       <v-container>
                         <div>
-                          <v-text-field  type="text" ref="barcodeInput" id="scanInput" @change="BarcodeEvent($event)">
+                          <v-text-field clearable ref="inputRef" type="text" @change="onBarcodeScanned($event)" id="scanInput" data-barcode>
                           </v-text-field>
                             </div>
                         </v-container>
@@ -338,12 +338,13 @@ export default {
             { text: 'Dashboard', icon: 'mdi-view-dashboard-outline', url: '/admin/dashboard' },
         ],
         scanning: false,
+        scanNumber: 0,
         barcode: ""
         // itemsss: [
         //     { text: 'Dashboard', icon: 'mdi-view-dashboard-outline', url: '/admin/myThreads' },
         // ],
     }),
-
+    
     watch: {
         search (val) {
             val && val !== this.select && this.querySelections(val)
@@ -417,6 +418,8 @@ export default {
             this.$modal.show('barcode-modal');
 
             setTimeout(function (){
+                document.getElementById("mdlText").style.display = "block";
+                document.getElementById("mdlSpinner").style.display = "none";
                 document.getElementById("scanInput").focus();
                 // this.$refs.barcodeInput.focus();
             }, 1000)
@@ -424,18 +427,33 @@ export default {
             // this.addEventForBarcode()
             //document.getElementById("scanInput").focus();
         },
-        BarcodeEvent(e){
-            this.scanning = !this.scanning;
-            document.getElementById("scanInput").value = ""
-            setTimeout(function () {
-                alert("this product was not found");
-                this.scanning = false;
-                //this.$toast.warning("Product Was not found").goAway(2000);
-                document.getElementById("scanInput").focus();
-            }, 2000);
+        onBarcodeScanned (barcode) {
+            this.scanNumber = ++this.scanNumber;
+            console.log(this.scanNumber)
+            if (this.scanNumber < 2){
+                this.barcode = barcode;
+                this.scanning = true;
+                document.getElementById("scanInput").style.display = "none";
+                document.getElementById("mdlText").style.display = "none";
+                document.getElementById("mdlSpinner").style.display = "block";
+                document.querySelector("#barcoeMdl .v-input__append-inner button").click()
+                this.processBarCode(this.barcode);
+            }
         },
-        processBarCode(){
-            alert(this.barcode);
+        BarcodeEvent(e){
+            console.log("ww", e)
+        },
+        processBarCode(barcode){
+            setTimeout(() => {
+                this.scanning = false;
+                document.getElementById("scanInput").style.display = "block";
+                document.getElementById("mdlText").style.display = "block";
+                document.getElementById("mdlSpinner").style.display = "none";
+                document.querySelector("#barcoeMdl .v-input__append-inner button").click()
+                document.getElementById("scanInput").focus();
+                this.scanNumber = 0;
+                alert(barcode);
+            }, 1000);
         },
         close () {
             this.$modal.hide('barcode-modal');

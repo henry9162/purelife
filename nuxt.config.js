@@ -43,6 +43,7 @@ export default {
     { src: '~/node_modules/vue-flux', ssr: false},
     { src: '~/plugins/vue-carousel', ssr: false },
     { src: '~/plugins/paystack.client.js', ssr: false },
+    { src: '~/plugins/vue-scanner.js', mode:"client"},
   ],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)

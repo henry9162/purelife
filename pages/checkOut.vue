@@ -57,10 +57,10 @@
                                 <v-row class="mt-8">
                                     <v-hover v-slot:default="{ hover }">
                                         <v-card :elevation="hover ? 10 : ''" flat style="width: 100%">
-                                            <v-card-title class="font-weight-bold text--grey text--darken-2 title orange--text pb-4 pt-6">PAYMENT METHOD</v-card-title>
+                                            <v-card-title class="font-weight-bold text--grey text--darken-2 title orange--text pb-4 pt-6" >PAYMENT METHOD</v-card-title>
 
                                             <v-card-actions>
-                                                <v-btn tile depressed x-large color="orange" dark>CASH</v-btn>
+                                                <v-btn tile depressed x-large color="orange" dark @click="processCashPayment()">CASH</v-btn>
                                                 <paystack
                                                     style="margin:auto;"
                                                     class="v-btn v-btn--contained theme--light v-size--large green white--text"
@@ -151,7 +151,12 @@ export default {
         },
         processPayment(data) {
             debugger
-            this.$toast.success("User successfully made payment").goAway(4000);
+            this.$toast.success("successfully made payment").goAway(4000);
+            this.$router.push({ path: '/' });
+            this.clearCart();
+        },
+        processCashPayment(){
+            this.$toast.success("successfully made payment").goAway(4000);
             this.$router.push({ path: '/' });
             this.clearCart();
         }

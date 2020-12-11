@@ -130,6 +130,11 @@
                     Create Account
             </v-btn>
 
+            <v-btn large text @click="openScanModal"
+                class="custom-red post-caption text-capitalize px-3 mr-2 d-none d-sm-flex">
+                    Scan BarCode
+            </v-btn>
+
             <div v-if="$auth.loggedIn">
                 <v-menu v-model="userMenu" close-delay="200" 
                     max-width="200" :close-on-content-click="false" 
@@ -138,9 +143,9 @@
                     <template v-slot:activator="{ on }">
                         <v-btn class="post-caption" text style="height: 57px" v-on="on">
                             <v-avatar class="mr-4" size="36">
-                                <img :src="$auth.user.image ? url+$auth.user.image.image : defaultImage" :alt="$auth.user.firstName">
+                                <img :src="$auth.user != null ? $auth.user.image ? url+$auth.user.image.image : defaultImage : defaultImage" :alt="$auth.user != null ? $auth.user.firstName: ''">
                             </v-avatar>
-                            <span v-text="$auth.user.firstName"></span> <v-icon>mdi-chevron-down</v-icon>
+                            <span v-text="$auth.user != null ? $auth.user.firstName: ''"></span> <v-icon>mdi-chevron-down</v-icon>
                         </v-btn>
                     </template>
 
@@ -245,6 +250,43 @@
             <div>
                 <nuxt />
             </div>
+
+            <modal
+                name="barcode-modal" :min-width="500"
+                :max-width="700" :adaptive="true"
+                :scrollable="true" height="auto"
+                transition="fade-transition" :clickToClose="false">
+
+                <v-card>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="red" text @click="close()">
+                            <v-icon>mdi-window-close</v-icon>
+                        </v-btn>
+                    </v-card-actions>
+
+                    <div class="text-center"  v-if="!scanning">
+                        <span class="headline list-color custom-style">...Awaiting Scan</span>
+                    </div>
+                    <div class="text-center" v-else>
+                        <span class="headline list-color custom-style">
+                            <v-progress-circular
+                                indeterminate
+                                color="deep-orange lighten-2"
+                            ></v-progress-circular>
+                        </span>
+                    </div>
+
+                    <v-card-text>
+                      <v-container>
+                        <div>
+                          <v-text-field  type="text" ref="barcodeInput" id="scanInput" @change="BarcodeEvent($event)">
+                          </v-text-field>
+                            </div>
+                        </v-container>
+                    </v-card-text>
+                </v-card>
+            </modal>
         </v-main>
 
         <!-- Newsletter and Footer -->
@@ -295,6 +337,8 @@ export default {
         itemsss: [
             { text: 'Dashboard', icon: 'mdi-view-dashboard-outline', url: '/admin/dashboard' },
         ],
+        scanning: false,
+        barcode: ""
         // itemsss: [
         //     { text: 'Dashboard', icon: 'mdi-view-dashboard-outline', url: '/admin/myThreads' },
         // ],
@@ -368,6 +412,33 @@ export default {
         },
         async setUser(){
             await this.$store.dispatch('auths/setUser');
+        },
+        openScanModal(){
+            this.$modal.show('barcode-modal');
+
+            setTimeout(function (){
+                document.getElementById("scanInput").focus();
+                // this.$refs.barcodeInput.focus();
+            }, 1000)
+            
+            // this.addEventForBarcode()
+            //document.getElementById("scanInput").focus();
+        },
+        BarcodeEvent(e){
+            this.scanning = !this.scanning;
+            document.getElementById("scanInput").value = ""
+            setTimeout(function () {
+                alert("this product was not found");
+                this.scanning = false;
+                //this.$toast.warning("Product Was not found").goAway(2000);
+                document.getElementById("scanInput").focus();
+            }, 2000);
+        },
+        processBarCode(){
+            alert(this.barcode);
+        },
+        close () {
+            this.$modal.hide('barcode-modal');
         }
     },    
 

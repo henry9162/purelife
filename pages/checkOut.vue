@@ -64,14 +64,14 @@
                                                 <paystack
                                                     style="margin:auto;"
                                                     class="v-btn v-btn--contained theme--light v-size--large green white--text"
-                                                    :amount="amount * 100"
+                                                    :amount="cartTotal * 100"
                                                     email="folake@gmail.com"
                                                     :paystackkey="PUBLIC_KEY"
                                                     :callback="processPayment"
                                                     :reference="genRef()"
                                                     :close="close"
                                                     :embed="false"
-                                                >PAYSTACK (PAY NGN {{amount}})</paystack>
+                                                >PAYSTACK (PAY NGN {{cartTotal}})</paystack>
                                             </v-card-actions>
                                         </v-card>
                                     </v-hover>
@@ -95,7 +95,7 @@ import billingform from '../components/checkout/BillingForm'
 import shippingform from '../components/checkout/ShippingForm'
 import orderReview from '../components/checkout/OrderReview'
 import titleParalax from '../components/TitleParalax'
-import paystack from "vue-paystack";
+//import paystack from "vue-paystack";
 
 import { mapActions } from 'vuex';
 
@@ -103,7 +103,7 @@ import uniqid from 'uniqid';
 
 export default {
     layout: 'home',
-    components: { billingform, shippingform, orderReview, titleParalax, paystack },
+    components: { billingform, shippingform, orderReview, titleParalax },
 
     data: () => ({
         checkbox: true,
@@ -128,6 +128,16 @@ export default {
         amount: 760,
         PUBLIC_KEY: 'pk_test_c19414215f1bee0bd8d754fc85c30e216b2b5ae9'
     }),
+
+    computed: {
+        cartProducts(){
+            return this.$store.getters['productss/cartProducts']
+        },
+        cartTotal(){
+            return this.$store.getters['productss/cartTotal']
+        }
+    },
+
     methods: {
         ...mapActions({
             clearCart: 'productss/removeAllCartItems'

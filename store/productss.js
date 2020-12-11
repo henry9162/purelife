@@ -1,5 +1,6 @@
 export const state = () => ({
     products: [],
+    product: {},
     cart: [],
     quantity: 1,
     productId: '',
@@ -9,6 +10,9 @@ export const state = () => ({
 export const mutations = {
     setProducts(state, data){
         state.products = data
+    },
+    setProduct(state, data){
+        state.product = data
     },
     toggleShow(state, id){
         state.productId = id
@@ -22,6 +26,9 @@ export const mutations = {
         state.cart.push(cartData)
         localStorage.setItem('cartItem', JSON.stringify(state.cart))
         state.quantity = 1;
+    },
+    persistCart(state, cartItems){
+        //state.cart = cartItems
     },
     removeItem (state, id) {
         const cartItem = state.cart.find(item => item.productId === id);
@@ -44,11 +51,13 @@ export const actions = {
         context.commit('toggleShow', id)
     },
     persistCart(context) {
-        let storedCartItem = JSON.parse(localStorage.getItem('cartItem'));
-        if (storedCartItem) {
-            storedCartItem.forEach(cartItem => {
-                context.commit('addToCart', cartItem);
-            })
+        if(process.client){
+            let storedCartItems = JSON.parse(localStorage.getItem('cartItem'));
+            if (storedCartItems) {
+                storedCartItems.forEach(cartItem => {
+                    context.commit('addToCart', cartItem);
+                })
+            }
         }
     },
     addToCart(context, cartItemData) {
@@ -87,6 +96,14 @@ export const actions = {
         this.$axios.get('/Products/GetAllProducts')
             .then(response => {
                 context.commit('setProducts', response.data.data)
+            }).catch(error => {
+                context.dispatch('processError', error)
+            })
+    },
+    getProductById(context, id){
+        this.$axios.get(`/Products/GetProducts/${id}`)
+            .then(response => {
+                context.commit('setProduct', response.data.data)
             }).catch(error => {
                 context.dispatch('processError', error)
             })
@@ -141,6 +158,8 @@ export const getters = {
     },
     products(state) { return state.products },
 
+    product(state) { return state.product },
+
     show(state) { return state.show },
 
     productId(state) { return state.productId },
@@ -149,12 +168,15 @@ export const getters = {
         return state.quantity 
     },
 
-    numberOfCartItems(state) { return state.cart.length },
+    numberOfCartItems(state) { 
+        return state.cart.length 
+    },
 
     cartProducts(state) {
         if (state.cart.length > 0) {
             return state.cart.map(cartItem => {
                 const product = state.products.find(product => product.productId == cartItem.productId);
+                debugger
                 return {
                     productId: product.productId,
                     title: product.productName,

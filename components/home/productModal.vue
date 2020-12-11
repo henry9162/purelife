@@ -1,17 +1,17 @@
 <template>
-    <modal :classes="classes" name="product-modal" :min-width="700" :max-width="900" :adaptive="true" :scrollable="true" height="auto" transition="fade-transition" @before-open="productDetails">
+    <modal :classes="classes" name="product-modal" :min-width="800" :max-width="900" :adaptive="true" :scrollable="true" height="auto" transition="fade-transition" @before-open="productDetails">
             <v-container class="pt-0" fluid>
-                <v-row class="mx-0">
+                <v-row class="mx-0 py-4 px-4">
                     <v-col>
                         <v-row>
                             <v-card color="grey lighten-3" flat>
-                                <v-card-title v-text="product.productName" class="pt-0 title pl-0"></v-card-title>
+                                <v-card-title v-text="product.productName" class="pt-0 blue--text font-weight-bold title pl-0"></v-card-title>
                                 <zoom :img-normal="imageSelected"></zoom>
                                 <!-- <v-img :aspect-ratio="16/18" :src="product.image"></v-img> -->
                             </v-card>
                         </v-row>
                         <v-row>
-                            <v-col class="pl-0">
+                            <!-- <v-col class="pl-0">
                                 <v-card @click="selectImage(product.productImage)" tile flat max-width="100" color="white">
                                     <v-img :aspect-ratio="16/16" :src="product.productImage"></v-img>
                                 </v-card>
@@ -25,11 +25,11 @@
                                 <v-card @click="selectImage(product.productImage)" tile flat max-width="100" color="white">
                                     <v-img :aspect-ratio="16/16" :src="product.productImage"></v-img>
                                 </v-card>
-                            </v-col>
+                            </v-col> -->
                         </v-row>
                     </v-col>
-                    <v-col>
-                        <div>
+                    <v-col class="pl-8">
+                        <div class="mt-15">
                             <div class="text-right">
                                 <v-btn @click="$router.push({ path: '/ProductPage', query: {productId: product.productId} })" class="mb-3" small depressed dark color="orange darken-1">
                                     More Details <v-icon small right>mdi-arrow-right</v-icon>
@@ -79,7 +79,7 @@
                                     quantity: quantity,
                                     price: product.price * quantity
                                 })" 
-                                tile class="ml-6 mt-1" large depressed color="primary" dark>
+                                class="ml-6 mt-1" depressed color="primary" dark>
                                 <v-icon left>mdi-cart-arrow-down</v-icon> Add to Cart
                             </v-btn>
                         </div>

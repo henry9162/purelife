@@ -347,8 +347,7 @@ export default {
         initialise(){
             //this.getAll()
             //this.deactivateSnackbar();
-            this.$store.dispatch('products/getAllProducts');
-            this.$store.dispatch('products/persistCart');
+            this.$store.dispatch('productss/getAllProducts');
             this.$store.dispatch('categories/getAllCategories');
             this.$store.dispatch('filters/getAllProducts');
             
@@ -357,7 +356,6 @@ export default {
             this.$store.dispatch('packages/getAllPackages');
             this.$store.dispatch('groups/getAllProductGroups');
             this.$store.dispatch('branches/getAllBranches');
-            this.$store.dispatch('productss/getAllProducts');
             this.$store.dispatch('getAllStates');
             this.$store.dispatch('getAccountTypes');
             this.$store.dispatch('users/getAllUsers');

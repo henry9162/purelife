@@ -6,39 +6,39 @@
         </div>
 
         <!-- Product title parallax -->
-        <title-paralax>{{ selectedProduct.productName }}</title-paralax>
+        <title-paralax>{{ product.productName }}</title-paralax>
 
         <!-- Product Details -->
         <v-container class="pt-3 my-5">
             <v-row class="mx-1">
 
                 <!-- Image Side Views section -->
-                <v-col class="px-0" md="1">
+                <!-- <v-col class="px-0" md="1">
                     <div>
-                        <v-card @click="selectImage(selectedProduct.productImage)" tile flat max-width="100" color="white">
+                        <v-card @click="selectImage(product.productImage)" tile flat max-width="100" color="white">
                             <v-img :aspect-ratio="16/16" :src="selectedProduct.productImage"></v-img>
                         </v-card>
 
-                        <v-card @click="selectImage(selectedProduct.productImage)" tile flat class="my-4" max-width="100" color="white">
+                        <v-card @click="selectImage(product.productImage)" tile flat class="my-4" max-width="100" color="white">
                             <v-img :aspect-ratio="16/16" :src="selectedProduct.productImage"></v-img>
                         </v-card>
 
-                        <v-card @click="selectImage(selectedProduct.productImage)" tile flat max-width="100" color="white">
+                        <v-card @click="selectImage(product.productImage)" tile flat max-width="100" color="white">
                             <v-img :aspect-ratio="16/16" :src="selectedProduct.productImage"></v-img>
                         </v-card>
                     </div>
-                </v-col>
+                </v-col> -->
 
                 <!-- Zoomable Image -->
-                <v-col md="4">
+                <v-col md="5">
                     <v-card tile color="white" flat>
-                        <zoom :img-normal="imageSelected" :scale="2"></zoom>
+                        <zoom :img-normal="product.productImage" :scale="2"></zoom>
                     </v-card>
                 </v-col>
 
                 <!-- Product Description And Specification -->
                 <v-col md="7" class="px-15">
-                    <v-card class="mb-3" color="transparent" flat>
+                    <!-- <v-card class="mb-3" color="transparent" flat>
                         <div class="d-flex">
                             <div class="pl-2">
                                 <v-icon style="font-size: 50px" color="green">mdi-truck-fast</v-icon>
@@ -51,9 +51,9 @@
                                 </p>
                             </div>
                         </div>
-                    </v-card>
+                    </v-card> -->
 
-                    <v-card class="mt-5" flat>
+                    <v-card class="" flat>
                         <v-tabs v-model="tab" grow background-color="#313846" centered dark>
                             <v-tabs-slider></v-tabs-slider>
 
@@ -67,7 +67,7 @@
                         <v-tabs-items v-model="tab">
                             <v-tab-item value="tab-1">
                                 <v-card flat>
-                                    <v-card-text>{{ selectedProduct.productName }}</v-card-text>
+                                    <v-card-text>{{ product.productName }}</v-card-text>
                                 </v-card>
                             </v-tab-item>
 
@@ -88,13 +88,13 @@
                     <v-card class="mt-8" flat>
                         <div class="d-flex justify-between">
                             <v-card-text class="caption">
-                                <div><span class="subtitle-2 font-weight-bold">Quantity: </span> <span class="font-weight-bold" :class="selectedProduct.quantity > 0 ? 'green--text' : 'red--text'">{{ selectedProduct.quantity > 0 ? selectedProduct.quantity : 'Out Of Stock' }}</span></div>
-                                <div><span class="subtitle-2 font-weight-bold">Brand: </span> <span class="blue--text" v-text="selectedProduct.productBrandName"></span></div>
+                                <div><span class="subtitle-2 font-weight-bold">Quantity: </span> <span class="font-weight-bold" :class="product.quantity > 0 ? 'green--text' : 'red--text'">{{ product.quantity > 0 ? product.quantity : 'Out Of Stock' }}</span></div>
+                                <div><span class="subtitle-2 font-weight-bold">Brand: </span> <span class="blue--text" v-text="product.productBrandName"></span></div>
                                 <div>
                                     <span class="subtitle-2 font-weight-bold">Serial Number:</span> 
                                     <span>
-                                        <v-chip x-small class="ma-2" color="#ED0000" label text-color="white">
-                                            <v-icon x-small left>mdi-label</v-icon> {{ selectedProduct.serialNumber }}
+                                        <v-chip x-small class="ma-2" color="red" label text-color="white">
+                                            <v-icon x-small left>mdi-label</v-icon> {{ product.serialNumber }}
                                         </v-chip>
                                     </span>
                                     <!-- <span>
@@ -105,21 +105,21 @@
                                 </div>
                             </v-card-text>
 
-                            <v-card-text class="text-center mt-2 green--text font-weight-black display-2">
-                                <v-icon color="success" x-large right>mdi-currency-ngn</v-icon>{{ selectedProduct.price * quantity }}
+                            <v-card-text class="text-center mt-2 green--text font-weight-black text-h4">
+                                <v-icon color="success" right>mdi-currency-ngn</v-icon>{{ product.price * quantity }}
                             </v-card-text>
                         </div>
                     </v-card>
 
-                    <div class="mt-10 d-flex justify-space-between">
+                    <div class="mt-8 d-flex justify-space-between">
                         <div class="d-flex">
-                            <v-btn tile @click="updateQuantity({ product: selectedProduct, type: 'decrease' })" color="#ED0000" class="my-0 mt-4" dark x-small depressed>
+                            <v-btn tile @click="updateQuantity({ product: product, type: 'decrease' })" color="red" class="my-0 mt-4" dark x-small depressed>
                                 <v-icon x-small>mdi-minus</v-icon>
                             </v-btn>
 
                             <v-text-field class="custom-input-height" style="width: 40px" dense flat solo v-model="quantity"></v-text-field>
 
-                            <v-btn @click="updateQuantity({ product: selectedProduct, type: 'increase' })" tile color="#ED0000" class="my-0 mt-4" dark x-small depressed>
+                            <v-btn @click="updateQuantity({ product: product, type: 'increase' })" tile color="red" class="my-0 mt-4" dark x-small depressed>
                                 <v-icon x-small>mdi-plus</v-icon>
                             </v-btn>
                         </div>
@@ -127,18 +127,18 @@
                         <div>
                             <v-btn 
                                 @click="addToCart({ 
-                                    productId: selectedProduct.productId,
-                                    productName:  selectedProduct.productName,
-                                    inventory: selectedProduct.quantity,
+                                    productId: product.productId,
+                                    productName:  product.productName,
+                                    inventory: product.quantity,
                                     quantity: quantity,
-                                    price: selectedProduct.price * quantity 
+                                    price: product.price * quantity 
                                 })" 
                                 tile class="ml-6 mt-1" depressed color="success" dark>
 
                                 <v-icon left>mdi-cart-arrow-down</v-icon> Add to Cart
                             </v-btn>
 
-                            <v-btn @click="$router.push({ path: '/checkOut' })" tile class="ml-2 mt-1" depressed color="#ED0000" dark>
+                            <v-btn @click="$router.push({ path: '/checkOut' })" tile class="ml-2 mt-1" depressed color="red" dark>
                                 <v-icon left>mdi-currency-ngn</v-icon> Buy Now
                             </v-btn>
                         </div>
@@ -174,13 +174,14 @@ export default {
                 href: 'breadcrumbs_link_2',
             },
         ],
-        tab: null
+        tab: null,
+        test: ''
     }),
 
     computed: {
         ...mapGetters({
             quantity: 'productss/quantity',
-            productList: 'productss/allProducts'
+            product: 'productss/product'
         })
     },
 
@@ -198,20 +199,23 @@ export default {
         selectImage(image){
             this.imageSelected = image;
         },
-        productDetails(event) {
-            this.product = event.params.product;
-            this.imageSelected = event.params.product.productImage
-        },
-        async initialise(products){
-            let allProducts = await products.filter(product => product.productId == this.$route.query.productId);
-            allProducts.forEach(product => this.selectedProduct = product)
-            this.imageSelected = this.selectedProduct.productImage
-            this.items[1].text = this.selectedProduct.productName
+        async initialise(productId){
+            //let allProducts = testProducts.filter(product => product.productId == this.$route.query.productId);
+            //allProducts.forEach(product => this.selectedProduct = product)
+            await this.$store.dispatch('productss/getProductById', productId);
+            // this.imageSelected = this.product.productImage
+            // this.items[1].text = this.product.productName
         }
     },
 
     mounted() {
-        //set loader to wait for the watch handler
+        let productId = this.$route.query.productId;
+        if (productId != '') {
+            this.initialise(productId);
+        } else {
+           this.$router.push({path: '/'})
+           //set loader to wait for the watch handler
+        }
     }
 }
 </script>

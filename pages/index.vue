@@ -1,9 +1,9 @@
 <template>
     <div>
         <!-- Breadcrumbs -->
-        <div class="d-flex justify-center">
+        <!-- <div class="d-flex justify-center">
             <v-breadcrumbs class="pa-4" :items="items" small></v-breadcrumbs>
-        </div>
+        </div> -->
 
         <!-- Product title parallax -->
         <titleParalax class="post-caption">{{ $route.query.name ? $route.query.name : 'All-Product' }}</titleParalax>

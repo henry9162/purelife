@@ -42,7 +42,7 @@ export default {
     { src: '~/plugins/vue-js-modal.js'},
     { src: '~/node_modules/vue-flux', ssr: false},
     { src: '~/plugins/vue-carousel', ssr: false },
-    { src: '~/plugins/paystack', ssr: false },
+    { src: '~/plugins/paystack.client.js', ssr: false },
   ],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)

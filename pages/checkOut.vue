@@ -1,9 +1,9 @@
 <template>
     <div>
         <!-- Breadcrumbs -->
-        <div class="d-flex justify-center">
+        <!-- <div class="d-flex justify-center">
             <v-breadcrumbs class="pa-4" :items="items" small></v-breadcrumbs>
-        </div>
+        </div> -->
 
         <!-- Product title parallax -->
         <titleParalax>Quick Checkout</titleParalax>
@@ -71,7 +71,8 @@
                                                     :reference="genRef()"
                                                     :close="close"
                                                     :embed="false"
-                                                >PAYSTACK (PAY NGN {{cartTotal}})</paystack>
+                                                >
+                                                PAYSTACK (PAY N {{cartTotal}})</paystack>
                                             </v-card-actions>
                                         </v-card>
                                     </v-hover>

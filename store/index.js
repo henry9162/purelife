@@ -7,7 +7,8 @@ export const state = () => ({
     lgas: [],
     accountTypes: [],
     defaultImage: 'https://via.placeholder.com/150',
-    dashboard: {}
+    dashboard: {},
+    billIfo: {}
 })
 
 export const mutations = {
@@ -33,6 +34,9 @@ export const mutations = {
     },
     setDashboard(state, data){
         state.dashboard = data
+    },
+    setBill(state, data){
+        state.billIfo  = data
     }
 }
 
@@ -68,6 +72,9 @@ export const actions = {
         }).catch(error => {
             this.$toast.error(error).goAway(3500)
         })
+    },
+    setBillInfo(context, data){
+        context.commit('setBill', data)
     }
 }
 
@@ -113,5 +120,8 @@ export const getters = {
     },
     topSales(state){
         return state.dashboard.top5SalesfortheWeek
+    },
+    billIfo(state){
+        return state.billIfo
     }
 }

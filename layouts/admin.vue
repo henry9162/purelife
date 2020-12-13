@@ -5,7 +5,7 @@
                 <v-list-item class="pl-2 post-caption">
                     <v-list-item-avatar  style="margin-bottom: 13px">
                         <!-- <img @click="$router.push({path: '/'})" :src="require(`~/assets/logos/${imgSrc.src}`)" weight="120px" height="120px"> -->
-                        <img src="~assets/images/deborah.jpg">
+                        <img :src="defaultImage">
                     </v-list-item-avatar>
 
                     <v-list-item-content>

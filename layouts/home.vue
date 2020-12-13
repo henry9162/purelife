@@ -205,7 +205,7 @@
                             Shop/Order
                     </v-btn>
 
-                    <v-menu z-index="99999999999999999999999999999" transition="slide-x-transition" open-on-hover nudge-bottom="60" bottom right>
+                    <!-- <v-menu z-index="99999999999999999999999999999" transition="slide-x-transition" open-on-hover nudge-bottom="60" bottom right>
                         <template v-slot:activator="{ on, attrs }">
                             <v-btn class="post-caption white--text text-capitalize" large text v-bind="attrs" v-on="on">
                                 Pharmacy
@@ -217,7 +217,7 @@
                                 <v-list-item-title class="post-caption custom-green">{{ item.text }}</v-list-item-title>
                             </v-list-item>
                         </v-list>
-                    </v-menu>
+                    </v-menu> -->
 
                     <!-- <v-menu z-index="9999999999999999999999999999999" transition="scale-transition" close-delay="1000" open-on-hover nudge-bottom="60" bottom origin="center right">
                         <template v-slot:activator="{ on, attrs }">
@@ -344,10 +344,11 @@ export default {
         deactivateSnackbar(){
             this.$store.dispatch('deactivateSnackbar')
         },
-        initialise(){
+        async initialise(){
             //this.getAll()
             //this.deactivateSnackbar();
-            this.$store.dispatch('productss/getAllProducts');
+            await this.$store.dispatch('productss/getAllProducts');
+            //this.$store.dispatch('productss/persistCart');
             this.$store.dispatch('categories/getAllCategories');
             this.$store.dispatch('filters/getAllProducts');
             

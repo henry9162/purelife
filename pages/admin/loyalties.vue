@@ -14,7 +14,7 @@
                             </v-text-field>
 
                             <v-text-field 
-                                v-model="value" prepend-inner-icon="" type="number" color="green"
+                                v-model="value" prepend-inner-icon="mdi-currency-ngn" type="number" color="green"
                                 filled dense rounded :disabled="disabled" label="Value">
                             </v-text-field>
                         </v-col>
@@ -27,7 +27,7 @@
                             </v-text-field>
 
                             <v-text-field 
-                                v-model="valueToBuy" prepend-inner-icon="" type="number" color="green"
+                                v-model="valueToBuy" prepend-inner-icon="mdi-currency-ngn" type="number" color="green"
                                 filled dense rounded :disabled="disabled" label="Value">
                             </v-text-field>
                         </v-col>

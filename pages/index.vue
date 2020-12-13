@@ -5,6 +5,12 @@
             <v-breadcrumbs class="pa-4" :items="items" small></v-breadcrumbs>
         </div> -->
 
+        <!-- <loading 
+            :active.sync="isLoading" 
+            :can-cancel="true" 
+            :is-full-page="fullPage">
+        </loading> -->
+
         <!-- Product title parallax -->
         <titleParalax class="post-caption">{{ $route.query.name ? $route.query.name : 'All-Product' }}</titleParalax>
 
@@ -192,13 +198,15 @@ export default {
                 disabled: true,
                 href: 'breadcrumbs_link_2',
             },
-        ]
+        ],
+        fullPage: true
     }),
 
     computed: {
         ...mapGetters({
             allProducts: 'filters/filteredProducts',
             categories: 'filters/getCategories',
+            isLoading: 'filters/getLoader'
         }),
         products(){
             return this.getAllProducts().filter(product => {
@@ -228,20 +236,20 @@ export default {
             if (mode == 'hidden') this.visible = false
             if (mode == 'open') this.visible = true
         },
+        initialise(){
+           // this.$store.dispatch('productss/persistCart');
+             let name = this.$route.query.name;
+            if (name) {
+                this.$store.dispatch('filters/categoryProducts', name)
+                this.expandCategories = true
+            } else {
+                this.$store.commit('filters/emptyFilteredProduct');
+            }
+        }
     },
 
     mounted() {
-        let name = this.$route.query.name;
-        if (name) {
-            this.$store.dispatch('filters/categoryProducts', name)
-            this.expandCategories = true
-            // this.expandPrice = false
-            // this.expandSizes = false
-            // this.expandStyles = false
-            // this.expandColors = false
-        } else {
-            this.$store.commit('filters/emptyFilteredProduct');
-        }
+        this.initialise()
     }
 }
 

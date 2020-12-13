@@ -16,7 +16,8 @@ export const state = () => ({
     },
     filteredProducts: [],
     products: [],
-    isClicked: false
+    isClicked: false,
+    loader: false
 })
 
 export const mutations = {
@@ -27,6 +28,9 @@ export const mutations = {
     },
     setProducts(state, data){
         state.products = data
+    },
+    setLoader(state, value){
+        value == true ? state.loader = true : state.loader = false
     },
     removeFromFilter(state, payload){
         if (payload.type == 'sizes') state.filters.size = state.filters.size.filter(size => size != payload.name)
@@ -85,8 +89,10 @@ export const actions = {
             }) 
     },
     getAllProducts(context){
+        context.commit('setLoader', true)
         this.$axios.get('/Products/GetAllProducts').then(response => {
             context.commit('setProducts', response.data.data)
+            context.commit('setLoader', false)
         })
         .catch(error => {
             console.log(error)
@@ -117,4 +123,5 @@ export const getters = {
         // return products;
     },
     getCategories(state){ return state.categories },
+    getLoader(state) { return state.loader }
 }

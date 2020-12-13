@@ -1,16 +1,22 @@
 <template>
     <div>
         <!-- Breadcrumbs -->
-        <div class="d-flex justify-center">
+        <!-- <div class="d-flex justify-center">
             <v-breadcrumbs class="pa-4" :items="items" small></v-breadcrumbs>
-        </div>
+        </div> -->
+
+        <loading 
+            :active.sync="isLoading" 
+            :can-cancel="true" 
+            :is-full-page="fullPage">
+        </loading>
 
         <!-- Product title parallax -->
         <title-paralax>{{ product.productName }}</title-paralax>
 
         <!-- Product Details -->
         <v-container class="pt-3 my-5">
-            <v-row class="mx-1">
+            <v-row v-if="product" class="mx-1">
 
                 <!-- Image Side Views section -->
                 <!-- <v-col class="px-0" md="1">
@@ -30,14 +36,14 @@
                 </v-col> -->
 
                 <!-- Zoomable Image -->
-                <v-col md="5">
+                <v-col md="6">
                     <v-card tile color="white" flat>
                         <zoom :img-normal="product.productImage" :scale="2"></zoom>
                     </v-card>
                 </v-col>
 
                 <!-- Product Description And Specification -->
-                <v-col md="7" class="px-15">
+                <v-col md="6" class="px-15">
                     <!-- <v-card class="mb-3" color="transparent" flat>
                         <div class="d-flex">
                             <div class="pl-2">
@@ -145,6 +151,16 @@
                     </div>
                 </v-col>
             </v-row>
+            <v-row v-else>
+                <div class="d-flex justify-center post-caption red--text grey lighten-2 pa-5 mt-4">
+                    <div class="text-center">
+                        <div>Ooops.. Product not found!</div>
+                        <div class="mt-2">
+                            <v-btn @click="$router.push({path: '/'})" color="green lighten-2" depressed small class="white--text">Continue shopping</v-btn>
+                        </div>
+                    </div>
+                </div>
+            </v-row>
         </v-container>
     </div>
 </template>
@@ -175,7 +191,9 @@ export default {
             },
         ],
         tab: null,
-        test: ''
+        test: '',
+        isLoading: false,
+        fullPage: true
     }),
 
     computed: {
@@ -200,15 +218,15 @@ export default {
             this.imageSelected = image;
         },
         async initialise(productId){
-            //let allProducts = testProducts.filter(product => product.productId == this.$route.query.productId);
-            //allProducts.forEach(product => this.selectedProduct = product)
-            await this.$store.dispatch('productss/getProductById', productId);
-            // this.imageSelected = this.product.productImage
-            // this.items[1].text = this.product.productName
+            this.isLoading = true
+            await this.$store.dispatch('productss/getProductById', productId).then(response => {
+                this.isLoading = false
+            });
         }
     },
 
     mounted() {
+        //this.$store.dispatch('productss/persistCart')
         let productId = this.$route.query.productId;
         if (productId != '') {
             this.initialise(productId);

@@ -1,9 +1,15 @@
 <template>
     <div>
         <!-- Breadcrumbs -->
-        <div class="d-flex justify-center">
+        <!-- <div class="d-flex justify-center">
             <v-breadcrumbs class="pa-4" :items="items" small></v-breadcrumbs>
-        </div>
+        </div> -->
+
+        <loading 
+            :active.sync="isLoading" 
+            :can-cancel="true" 
+            :is-full-page="fullPage">
+        </loading>
 
         <!-- Product title parallax -->
         <titleParalax>Shopping Cart</titleParalax>
@@ -92,7 +98,7 @@
                                                         <div class="d-flex justify-space-between pt-8">
                                                             <div>Enter your Loyalty point here</div>
                                                             <div class="ml-4 d-flex">
-                                                                <v-text-field label="Enter Gift Code" clearable outlined dense></v-text-field>
+                                                                <v-text-field label="Enter point" clearable outlined dense></v-text-field>
                                                                 <v-btn class="ml-2" tile depressed color="primary" dark>Apply Loyalty Point</v-btn>
                                                             </div>
                                                         </div> 
@@ -331,14 +337,16 @@ export default {
                 disabled: true,
                 href: 'breadcrumbs_link_2',
             },
-        ]
+        ],
+        fullPage: true
     }),
 
     computed: {
         ...mapGetters({
             cartProducts: 'productss/cartProducts',
             quantity: 'productss/quantity',
-            cartTotal: 'productss/cartTotal'
+            cartTotal: 'productss/cartTotal',
+            isLoading: 'productss/getLoader'
         })
         
     },
@@ -358,6 +366,7 @@ export default {
         },
         async initialise(){
             //await this.$store.dispatch('productss/persistCart');
+            //await this.$store.dispatch('productss/persistCart')
         }
     },
 

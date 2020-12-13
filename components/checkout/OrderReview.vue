@@ -4,7 +4,7 @@
             <v-row>
                 <v-hover v-slot:default="{hover}">
                     <v-card :elevation="hover ? 10 : ''" flat style="width: 100%">
-                        <v-card-title class="font-weight-bold text--grey text--darken-2 title orange--text pt-6">REVIEW YOUR ORDER</v-card-title>
+                        <div class="font-weight-bold customm-caption text-center red--text pt-6 px-6">Review Your Order</div>
                         <v-container class="pt-0">
                             <v-hover v-slot:default="{hover}">
                                 <v-row class="px-2 py-0" :class="hover ? 'grey lighten-3' : ''">
@@ -39,20 +39,10 @@
                                 <div class="mx-4" style="border: 10px solid #b6bbc6; width: 100%">
                                     <v-expansion-panels flat focusable>
                                         <v-expansion-panel>
-                                            <v-expansion-panel-header>Use Coupon Code</v-expansion-panel-header>
+                                            <v-expansion-panel-header>Use Loyalty Point</v-expansion-panel-header>
                                             <v-expansion-panel-content>
                                                 <div class="d-flex pt-8">
-                                                    <v-text-field label="" hint="Enter coupon code" clearable outlined></v-text-field>
-                                                    <v-btn class="ml-2 mt-2" tile depressed color="primary" dark>Apply</v-btn>  
-                                                </div> 
-                                            </v-expansion-panel-content>
-                                        </v-expansion-panel>
-
-                                        <v-expansion-panel>
-                                            <v-expansion-panel-header>Use Gift Card</v-expansion-panel-header>
-                                            <v-expansion-panel-content>
-                                                <div class="d-flex pt-8">
-                                                    <v-text-field label="" hint="Enter Gift code" clearable outlined></v-text-field>
+                                                    <v-text-field label="" hint="Enter Loyalty Point" clearable outlined></v-text-field>
                                                     <v-btn class="ml-2 mt-2" tile depressed color="primary" dark>Apply</v-btn>  
                                                 </div> 
                                             </v-expansion-panel-content>
@@ -60,18 +50,11 @@
                                     </v-expansion-panels>
                                 </div>
 
-                                <div class="mx-4 mt-4 pr-2" style="width: 100%; border: 10px solid #b6bbc6">
+                                <div class="mx-4 mb-3 mt-4 pr-2" style="width: 50%; border: 10px solid #b6bbc6">
                                     <v-simple-table fixed-header>
                                         <template v-slot:default>
                                             <thead>
                                                 <tr>
-                                                    <th class="subtitle-2 font-weight-bold">
-                                                        Subtotal 
-                                                        <span>
-                                                            <v-icon class="font-weight-thin" small right>mdi-currency-ngn</v-icon>
-                                                        </span>
-                                                        <span class="subtitle-2 font-weight-light">760.00</span>
-                                                    </th>
                                                     <th style="border-left: 2px solid grey" class="title font-weight-bold">
                                                         Total
                                                         <span>
@@ -83,15 +66,7 @@
                                             </thead>
                                         </template>
                                     </v-simple-table>
-                                </div>
-
-                                <div class="mx-4 mt-4" style="width: 100%">
-                                    <v-textarea label="Add a comment about this order" auto-grow outlined rows="3" row-height="30"></v-textarea>
-                                </div>
-
-                                <div class="d-flex justify-center pb-4" style="width: 100%">
-                                    <v-btn tile depressed x-large color="orange" dark>PLACE ORDER</v-btn>
-                                </div>                            
+                                </div>                         
                             </v-row>
                         </v-container>
                     </v-card>

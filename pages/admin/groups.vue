@@ -52,7 +52,7 @@
                                 <v-text-field v-model="editedItem.lowerMeasurement"  label="Lower Measurement"></v-text-field>
 
                                 <v-select
-                                    v-model="editedItem.productGroupClassificationIds"
+                                    v-model="editedItem.getClassificationList"
                                     :items="classifications"
                                     item-text="productClassificationName"
                                     item-value="productGroupClassificationId"
@@ -144,7 +144,7 @@ export default {
             productCategyId: '',
             productBrandId: '',
             productPackagingId: '',
-            productGroupClassificationIds: [],
+            getClassificationList: [],
             description: '',
             size: '',
             lowerMeasurement: '',
@@ -156,7 +156,7 @@ export default {
             productCategyId: '',
             productBrandId: '',
             productPackagingId: '',
-            productGroupClassificationIds: [],
+            getClassificationList: [],
             description: '',
             size: '',
             lowerMeasurement: '',

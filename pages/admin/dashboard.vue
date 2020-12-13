@@ -4,7 +4,7 @@
             <v-list style="padding: 0px" two-line>
                 <v-list-item class="pl-2 post-caption">
                     <v-list-item-avatar style="margin-bottom: 13px">
-                        <img src="~assets/images/deborah.jpg">
+                        <img :src="defaultImage">
                     </v-list-item-avatar>
 
                     <v-list-item-content>

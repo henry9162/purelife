@@ -54,6 +54,16 @@ export const actions = {
             }
         }
     },
+    resetUser(context){
+        if(this.$auth.loggedIn){
+            if(process.client){
+                let user = localStorage.getItem('signedInUser')
+                if(user != null || user != undefined || user != ''){
+                    context.commit('setAuthData', JSON.parse(user))
+                }
+            }
+        }
+    },
     logout(context){
         if(process.client){
             let user = localStorage.getItem('signedInUser');

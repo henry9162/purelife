@@ -5,11 +5,15 @@ export const state = () => ({
     quantity: 1,
     productId: '',
     show: false,
+    loader: false
 })
 
 export const mutations = {
     setProducts(state, data){
         state.products = data
+    },
+    setLoader(state, value){
+        value == true ? state.loader = true : state.loader = false
     },
     setProduct(state, data){
         state.product = data
@@ -28,7 +32,7 @@ export const mutations = {
         state.quantity = 1;
     },
     persistCart(state, cartItems){
-        //state.cart = cartItems
+        state.cart = cartItems
     },
     removeItem (state, id) {
         const cartItem = state.cart.find(item => item.productId === id);
@@ -51,12 +55,12 @@ export const actions = {
         context.commit('toggleShow', id)
     },
     persistCart(context) {
+        debugger
         if(process.client){
             let storedCartItems = JSON.parse(localStorage.getItem('cartItem'));
             if (storedCartItems) {
-                storedCartItems.forEach(cartItem => {
-                    context.commit('addToCart', cartItem);
-                })
+                debugger
+                context.commit('persistCart', storedCartItems);
             }
         }
     },
@@ -93,20 +97,28 @@ export const actions = {
         context.commit('updateQuantity', data);
     },
     getAllProducts(context){
+        debugger
+        context.commit('setLoader', true)
         this.$axios.get('/Products/GetAllProducts')
             .then(response => {
                 context.commit('setProducts', response.data.data)
+                context.commit('setLoader', false)
+                context.dispatch('persistCart')
             }).catch(error => {
                 context.dispatch('processError', error)
             })
     },
     getProductById(context, id){
-        this.$axios.get(`/Products/GetProducts/${id}`)
-            .then(response => {
-                context.commit('setProduct', response.data.data)
-            }).catch(error => {
-                context.dispatch('processError', error)
-            })
+        return new Promise((resolve, reject) => {
+            this.$axios.get(`/Products/GetProducts/${id}`)
+                .then(response => {
+                    context.commit('setProduct', response.data.data)
+                    resolve(response)
+                }).catch(error => {
+                    context.dispatch('processError', error)
+                    reject(error)
+                })
+        })
     },
     addProduct(context, data){
         return new Promise((resolve, reject) => {
@@ -196,5 +208,8 @@ export const getters = {
             });
         }
         return total;
+    },
+    getLoader(state){
+        return state.loader
     }
 }

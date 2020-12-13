@@ -53,12 +53,16 @@ export const actions = {
     updateLoyalty(context){
         let data = {
             toAcquire: {
+                id: context.state.loyaltySetUp.toAcquire.id,
                 loyaltyPoint: context.state.loyaltyPoint,
                 value: context.state.value,
+                toAcquire: true
             },
             toBuy: {
-                loyaltyPointToBuy: context.state.loyaltyPointToBuy,
-                valueToBuy: context.state.valueToBuy,
+                id:  context.state.loyaltySetUp.toBuy.id,
+                loyaltyPoint: context.state.loyaltyPointToBuy,
+                value: context.state.valueToBuy,
+                toAcquire: false
             }
         }
         return new Promise((resolve, reject) => {

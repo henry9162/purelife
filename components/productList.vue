@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-container class="pt-0" fluid>
-            <v-row>
+            <v-row v-if="products.length > 0">
                 <v-col class="px-3 py-4" v-for="product in products" :key="product.productId" :md="gridValue == 3 ? '4' : gridValue == 4 ? '3' : '4'">
                     <v-hover v-slot:default="{ hover }">
                         <v-card color="white" max-width="400" :elevation="hover ? 20 : '4'">
@@ -77,6 +77,12 @@
                             </v-expand-transition>
                         </v-card>
                     </v-hover>
+                </v-col>
+            </v-row>
+
+            <v-row v-else>
+                <v-col v-for="n in 9" :key="n" md="4">
+                    <v-skeleton-loader type="card"></v-skeleton-loader>
                 </v-col>
             </v-row>
         </v-container>

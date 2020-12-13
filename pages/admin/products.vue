@@ -1,5 +1,11 @@
 <template>
 <div>
+    <loading 
+        :active.sync="isLoading" 
+        :can-cancel="true" 
+        :is-full-page="fullPage">
+    </loading>
+
     <v-card class="mx-10 mt-14" color="#22A64E">
         <modal
             name="products-modal" :min-width="1000"
@@ -117,7 +123,7 @@
         </modal>
 
 
-        <v-data-table :headers="headers" :items="products" sort-by="calories" class="px-8 py-4">
+        <v-data-table :headers="headers" :items="products" sort-by="calories" class="mx-4 py-4">
             <template v-slot:top>
                 <v-toolbar flat color="white">
                     <v-toolbar-title class="list-color custom-style">All Products</v-toolbar-title>
@@ -149,6 +155,7 @@ export default {
     data: () => ({
         dialog: true,
         loading: false,
+        fullPage: true,
         headers: [
             {
                 text: 'Name',
@@ -212,6 +219,9 @@ export default {
         products(){
             return this.$store.getters["productss/allProducts"];s
         },
+        isLoading(){
+            return this.$store.getters['productss/getLoader']
+        },
         branches(){
           return this.$store.getters["branches/allBranches"];
         },
@@ -247,7 +257,7 @@ export default {
             this.threadImage = item.productImage;
             this.$modal.show('products-modal')
         },
-        addProduct(){
+        async addProduct(){
             this.loading = true
             let data = {
                 productName: this.editedItem.productName,
@@ -261,13 +271,13 @@ export default {
                 createdOn: new Date(),
             }
             
-            this.$store.dispatch('productss/addProduct', data).then(response => {
+            await this.$store.dispatch('productss/addProduct', data).then(response => {
                 this.loading = false
                 this.refreshTable()
                 this.close();
             })
         },
-        updateProduct(){
+        async updateProduct(){
             this.loading = true
             let data = {
                 productId: this.products[this.editedIndex].productId,
@@ -284,7 +294,7 @@ export default {
             }
             //console.log(data)
 
-            this.$store.dispatch('productss/updateProduct', data).then(response => {
+            await this.$store.dispatch('productss/updateProduct', data).then(response => {
                 this.loading  = false
                 this.refreshTable();
                 this.close();

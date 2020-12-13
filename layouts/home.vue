@@ -130,6 +130,11 @@
                     Create Account
             </v-btn>
 
+            <v-btn large text @click="openScanModal"
+                class="custom-red post-caption text-capitalize px-3 mr-2 d-none d-sm-flex">
+                    Scan BarCode
+            </v-btn>
+
             <div v-if="$auth.loggedIn">
                 <v-menu v-model="userMenu" close-delay="200" 
                     max-width="200" :close-on-content-click="false" 
@@ -138,9 +143,9 @@
                     <template v-slot:activator="{ on }">
                         <v-btn class="post-caption" text style="height: 57px" v-on="on">
                             <v-avatar class="mr-4" size="36">
-                                <img :src="$auth.user.image ? url+$auth.user.image.image : defaultImage" :alt="$auth.user.firstName">
+                                <img :src="$auth.user != null ? $auth.user.image ? url+$auth.user.image.image : defaultImage : defaultImage" :alt="$auth.user != null ? $auth.user.firstName: ''">
                             </v-avatar>
-                            <span v-text="$auth.user.firstName"></span> <v-icon>mdi-chevron-down</v-icon>
+                            <span v-text="$auth.user != null ? $auth.user.firstName: ''"></span> <v-icon>mdi-chevron-down</v-icon>
                         </v-btn>
                     </template>
 
@@ -245,6 +250,43 @@
             <div>
                 <nuxt />
             </div>
+
+            <modal
+                name="barcode-modal" :min-width="500"
+                :max-width="700" :adaptive="true"
+                :scrollable="true" height="auto"
+                transition="fade-transition" :clickToClose="false" id="barcoeMdl">
+
+                <v-card>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="red" text @click="close()">
+                            <v-icon>mdi-window-close</v-icon>
+                        </v-btn>
+                    </v-card-actions>
+
+                    <div class="text-center" id="mdlText" style="display:none">
+                        <span class="headline list-color custom-style">...Awaiting Scan</span>
+                    </div>
+                    <div class="text-center" id="mdlSpinner" style="display:none">
+                        <span class="headline list-color custom-style">
+                            <v-progress-circular
+                                indeterminate
+                                color="deep-orange lighten-2"
+                            ></v-progress-circular>
+                        </span>
+                    </div>
+
+                    <v-card-text>
+                      <v-container>
+                        <div>
+                          <v-text-field clearable ref="inputRef" type="text" @change="onBarcodeScanned($event)" id="scanInput" data-barcode>
+                          </v-text-field>
+                            </div>
+                        </v-container>
+                    </v-card-text>
+                </v-card>
+            </modal>
         </v-main>
 
         <!-- Newsletter and Footer -->
@@ -295,11 +337,14 @@ export default {
         itemsss: [
             { text: 'Dashboard', icon: 'mdi-view-dashboard-outline', url: '/admin/dashboard' },
         ],
+        scanning: false,
+        scanNumber: 0,
+        barcode: ""
         // itemsss: [
         //     { text: 'Dashboard', icon: 'mdi-view-dashboard-outline', url: '/admin/myThreads' },
         // ],
     }),
-
+    
     watch: {
         search (val) {
             val && val !== this.select && this.querySelections(val)
@@ -369,6 +414,50 @@ export default {
         },
         async setUser(){
             await this.$store.dispatch('auths/setUser');
+        },
+        openScanModal(){
+            this.$modal.show('barcode-modal');
+
+            setTimeout(function (){
+                document.getElementById("mdlText").style.display = "block";
+                document.getElementById("mdlSpinner").style.display = "none";
+                document.getElementById("scanInput").focus();
+                // this.$refs.barcodeInput.focus();
+            }, 1000)
+            
+            // this.addEventForBarcode()
+            //document.getElementById("scanInput").focus();
+        },
+        onBarcodeScanned (barcode) {
+            this.scanNumber = ++this.scanNumber;
+            console.log(this.scanNumber)
+            if (this.scanNumber < 2){
+                this.barcode = barcode;
+                this.scanning = true;
+                document.getElementById("scanInput").style.display = "none";
+                document.getElementById("mdlText").style.display = "none";
+                document.getElementById("mdlSpinner").style.display = "block";
+                document.querySelector("#barcoeMdl .v-input__append-inner button").click()
+                this.processBarCode(this.barcode);
+            }
+        },
+        BarcodeEvent(e){
+            console.log("ww", e)
+        },
+        processBarCode(barcode){
+            setTimeout(() => {
+                this.scanning = false;
+                document.getElementById("scanInput").style.display = "block";
+                document.getElementById("mdlText").style.display = "block";
+                document.getElementById("mdlSpinner").style.display = "none";
+                document.querySelector("#barcoeMdl .v-input__append-inner button").click()
+                document.getElementById("scanInput").focus();
+                this.scanNumber = 0;
+                alert(barcode);
+            }, 1000);
+        },
+        close () {
+            this.$modal.hide('barcode-modal');
         }
     },    
 

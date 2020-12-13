@@ -45,6 +45,7 @@ export default {
     { src: '~/plugins/paystack.client.js', ssr: false },
     { src: '~/plugins/loader.client.js', ssr: false },
     { src: '~/plugins/doc.client.js', ssr: false },
+    { src: '~/plugins/vue-scanner.js', mode:"client"},
   ],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)

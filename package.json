@@ -19,6 +19,7 @@
     "core-js": "^3.6.5",
     "nuxt": "^2.14.6",
     "uniqid": "^5.2.0",
+    "vue-barcode-scanner": "^0.8.1",
     "vue-chartjs": "^3.5.1",
     "vue-doc-preview": "^0.3.2",
     "vue-flux": "^6.3.1",

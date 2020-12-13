@@ -198,7 +198,6 @@ import uniqid from 'uniqid';
 export default {
     layout: 'home',
     components: { billingform, shippingform, orderReview, titleParalax },
-
     data: () => ({
         checkbox: true,
         radios: 'regularShipping',

@@ -130,10 +130,10 @@
                     Create Account
             </v-btn>
 
-            <v-btn large text @click="openScanModal"
+            <!-- <v-btn large text @click="openScanModal"
                 class="custom-red post-caption text-capitalize px-3 mr-2 d-none d-sm-flex">
                     Scan BarCode
-            </v-btn>
+            </v-btn> -->
 
             <div v-if="$auth.loggedIn">
                 <v-menu v-model="userMenu" close-delay="200" 

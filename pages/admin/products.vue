@@ -238,17 +238,19 @@ export default {
 
     methods: {
         processImage(imageFile){
-            // let imageSize = Number((imageFile.size / 1024 / 1024).toFixed(3));
-            // if(imageSize > 0.322){
-            //     this.$toast.error('Image should be of size 320kb or less, Please resize!').goAway(3500)
-            //     return
-            // }
+            let imageSize = Number((imageFile.size / 1024 / 1024).toFixed(3));
+            if(imageSize > 0.322){
+                this.$toast.error('Image should be of size 320kb or less, Please resize!').goAway(3500)
+                return
+            }
+            this.setImage(imageFile)
+        },
+        setImage(imageFile){
             let reader = new FileReader();
             reader.readAsDataURL(imageFile);
             reader.onload = e => {
-                let base64 = e.target.result;
-                this.tempImage = base64
-                this.editedItem.productImage = base64
+                this.tempImage = e.target.result;
+                this.editedItem.productImage = imageFile
             };
         },
         editItem (item) {
@@ -259,19 +261,30 @@ export default {
         },
         async addProduct(){
             this.loading = true
-            let data = {
-                productName: this.editedItem.productName,
-                quantity: this.editedItem.quantity,
-                price: this.editedItem.price,
-                serialNumber: this.editedItem.serialNumber,
-                expiryDate: this.editedItem.expiryDate,
-                productBranchId: this.editedItem.productBranchId,
-                productGroupId: this.editedItem.productGroupId,
-                productImage: this.editedItem.productImage,
-                createdOn: new Date(),
-            }
-            
-            await this.$store.dispatch('productss/addProduct', data).then(response => {
+            const formData = new FormData();
+            formData.append('productName', this.editedItem.productName)
+            formData.append('quantity', this.editedItem.quantity)
+            formData.append('price', this.editedItem.price)
+            formData.append('serialNumber', this.editedItem.serialNumber)
+            formData.append('expiryDate', this.editedItem.expiryDate)
+            formData.append('productBranchId', this.editedItem.productBranchId)
+            formData.append('productGroupId', this.editedItem.productGroupId)
+            formData.append('image', this.editedItem.productImage)
+            formData.append('createdOn', new Date())
+
+            // let data = {
+            //     productName: this.editedItem.productName,
+            //     quantity: this.editedItem.quantity,
+            //     price: this.editedItem.price,
+            //     serialNumber: this.editedItem.serialNumber,
+            //     expiryDate: this.editedItem.expiryDate,
+            //     productBranchId: this.editedItem.productBranchId,
+            //     productGroupId: this.editedItem.productGroupId,
+            //     image: formData,
+            //     createdOn: new Date(),
+            // }
+            // console.log(this.editedItem.productImage);
+            await this.$store.dispatch('productss/addProduct', formData).then(response => {
                 this.loading = false
                 this.refreshTable()
                 this.close();
@@ -279,22 +292,39 @@ export default {
         },
         async updateProduct(){
             this.loading = true
-            let data = {
-                productId: this.products[this.editedIndex].productId,
-                productName: this.editedItem.productName,
-                quantity: this.editedItem.quantity,
-                price: this.editedItem.price,
-                serialNumber: this.editedItem.serialNumber,
-                expiryDate: this.editedItem.expiryDate,
-                productBranchId: this.editedItem.productBranchId,
-                productGroupId: this.editedItem.productGroupId,
-                productImage: this.editedItem.productImage,
-                modifiedOn: new Date(),
-                isDeprecated: this.products[this.editedIndex].isDeprecated
+            const formData = new FormData();
+            // formData.append('productId', this.products[this.editedIndex].productId)
+            formData.append('productName', this.editedItem.productName)
+            formData.append('quantity', this.editedItem.quantity)
+            formData.append('price', this.editedItem.price)
+            formData.append('serialNumber', this.editedItem.serialNumber)
+            formData.append('expiryDate', this.editedItem.expiryDate)
+            formData.append('productBranchId', this.editedItem.productBranchId)
+            formData.append('productGroupId', this.editedItem.productGroupId)
+            formData.append('image', this.editedItem.productImage)
+            formData.append('modifiedOn', new Date())
+            formData.append('isDeprecated', this.products[this.editedIndex].isDeprecated)
+            let data1 = {
+                id: this.products[this.editedIndex].productId,
+                data: formData
             }
+            // let data = {
+            //     productId: this.products[this.editedIndex].productId,
+            //     productName: this.editedItem.productName,
+            //     quantity: this.editedItem.quantity,
+            //     price: this.editedItem.price,
+            //     serialNumber: this.editedItem.serialNumber,
+            //     expiryDate: this.editedItem.expiryDate,
+            //     productBranchId: this.editedItem.productBranchId,
+            //     productGroupId: this.editedItem.productGroupId,
+            //     Image: this.editedItem.productImage,
+            //     modifiedOn: new Date(),
+            //     isDeprecated: this.products[this.editedIndex].isDeprecated
+            // }
             //console.log(data)
+           // debugger
 
-            await this.$store.dispatch('productss/updateProduct', data).then(response => {
+            await this.$store.dispatch('productss/updateProduct', data1).then(response => {
                 this.loading  = false
                 this.refreshTable();
                 this.close();

@@ -68,7 +68,7 @@ export const actions = {
         context.commit('toggleShow', id)
     },
     persistCart(context) {
-        debugger
+        
         if(process.client){
             let storedCartItems = JSON.parse(localStorage.getItem('cartItem'));
             if (storedCartItems) {
@@ -112,7 +112,7 @@ export const actions = {
         context.commit('updateQuantity', data);
     },
     getAllProducts(context){
-        debugger
+        
         context.commit('setLoader', true)
         this.$axios.get('/Products/GetAllProducts')
             .then(response => {
@@ -207,7 +207,6 @@ export const getters = {
     cartProducts(state) {
         if (state.cart.length > 0) {
             return state.cart.map(cartItem => {
-                debugger
                 const product = state.products.find(product => product.productId == cartItem.productId);
                 return {
                     productId: product.productId,

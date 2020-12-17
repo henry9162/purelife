@@ -118,7 +118,14 @@ export default {
     //proxy: true,
     //baseURL: 'https://api.cbforum.org/api'
     //baseURL: 'https://localhost:5001/api/v1',
-    baseURL: 'http://purelifeapi.nologysolutionsng.com/api/v1'
+    baseURL: 'http://purelifeapi.nologysolutionsng.com/api/v1',
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      common: {
+        'Access-Control-Allow-Origin': '*',
+        'Accept': 'application/json, text/plain, */*'
+      }
+    }
     //baseURL: 'https://api.cbforum.org/api'
   },
 

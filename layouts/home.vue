@@ -251,42 +251,6 @@
                 <nuxt />
             </div>
 
-            <modal
-                name="barcode-modal" :min-width="500"
-                :max-width="700" :adaptive="true"
-                :scrollable="true" height="auto"
-                transition="fade-transition" :clickToClose="false" id="barcoeMdl">
-
-                <v-card>
-                    <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn color="red" text @click="close()">
-                            <v-icon>mdi-window-close</v-icon>
-                        </v-btn>
-                    </v-card-actions>
-
-                    <div class="text-center" id="mdlText" style="display:none">
-                        <span class="headline list-color custom-style">...Awaiting Scan</span>
-                    </div>
-                    <div class="text-center" id="mdlSpinner" style="display:none">
-                        <span class="headline list-color custom-style">
-                            <v-progress-circular
-                                indeterminate
-                                color="deep-orange lighten-2"
-                            ></v-progress-circular>
-                        </span>
-                    </div>
-
-                    <v-card-text>
-                      <v-container>
-                        <div>
-                          <v-text-field clearable ref="inputRef" type="text" @change="onBarcodeScanned($event)" id="scanInput" data-barcode>
-                          </v-text-field>
-                            </div>
-                        </v-container>
-                    </v-card-text>
-                </v-card>
-            </modal>
         </v-main>
 
         <!-- Newsletter and Footer -->

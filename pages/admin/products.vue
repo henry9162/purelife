@@ -217,7 +217,7 @@ export default {
 
     computed: {
         products(){
-            return this.$store.getters["productss/allProducts"];s
+            return this.$store.getters["productss/allProducts"];
         },
         isLoading(){
             return this.$store.getters['productss/getLoader']

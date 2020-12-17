@@ -50,6 +50,16 @@
                     </v-list-item>
                 </v-list-group>
 
+                <v-list-group color="#22A64E" class="post-caption list-color" no-action prepend-icon="mdi-post-outline">
+                    <template v-slot:activator>
+                        <v-list-item-title class="list-color">Refill Management</v-list-item-title>
+                    </template>
+
+                    <v-list-item @click="$router.push({path: refill.url})" v-for="(refill, i) in refillList" :key="i" link class="post-caption">
+                        <v-list-item-title class="list-color" v-text="refill.name"></v-list-item-title>
+                    </v-list-item>
+                </v-list-group>
+
                 <v-list-group color="#22A64E" class="post-caption list-color" no-action prepend-icon="mdi-shape">
                     <template v-slot:activator>
                         <v-list-item-title class="list-color">Disease Management</v-list-item-title>
@@ -171,7 +181,6 @@
                                 </div> -->
 
                                 <!-- <v-divider></v-divider> -->
-
                                 <v-list-item @click="logout">
                                     <v-list-item-icon class="mr-4">
                                         <v-icon>mdi-logout</v-icon>
@@ -217,7 +226,7 @@ export default {
         itemsss: [
             { text: 'Dashboard', icon: 'mdi-view-dashboard-outline', url: '/admin/dashboard' },
         ],
-        defaultImage: 'https://via.placeholder.com/150',
+        defaultImage: 'https://via.placeholder.com/150'
     }),
 
     computed: {

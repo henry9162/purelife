@@ -42,19 +42,23 @@
 
                                             <td class="text-center pt-4 mb-0">
                                                 <div style="width: 100%" class="d-flex justify-center">
-                                                    <v-btn tile @click="updateQuantity({ product: product, type: 'decrease' })" color="success" class="my-0 mt-4" dark x-small depressed>
+                                                    <v-btn tile @click="updateCartQuantity({ product: product, type: 'decrease' })" color="success" class="my-0 mt-4" dark x-small depressed>
                                                         <v-icon x-small>mdi-minus</v-icon>
                                                     </v-btn>
 
                                                     <div style="width: 10%">
-                                                        <v-text-field class="custom-input-height" dense flat solo v-model="quantity"></v-text-field>
+                                                        <v-text-field 
+                                                            class="custom-input-height" 
+                                                            disabled dense flat solo 
+                                                            :value="product.quantity">
+                                                        </v-text-field>
                                                     </div>                                                    
 
-                                                    <v-btn @click="updateQuantity({ product: product, type: 'increase' })" tile color="success" class="my-0 mt-4" dark x-small depressed>
+                                                    <v-btn @click="updateCartQuantity({ product: product, type: 'increase' })" tile color="success" class="my-0 mt-4" dark x-small depressed>
                                                         <v-icon x-small>mdi-plus</v-icon>
                                                     </v-btn>
 
-                                                    <v-btn @click="removeCartItem(product.id)" depressed tile class="ml-4 mt-4" color="red" x-small dark>
+                                                    <v-btn @click="removeCartItem(product.productId)" depressed tile class="ml-4 mt-4" color="red" x-small dark>
                                                         <v-icon x-small>mdi-close</v-icon>
                                                     </v-btn>
                                                 </div>
@@ -64,7 +68,7 @@
                                                 <v-icon class="font-weight-thin" small right>mdi-currency-ngn</v-icon>{{ product.price }}
                                             </td>
                                             <td class="text-center py-4">
-                                                <v-icon class="font-weight-thin" small right>mdi-currency-ngn</v-icon>{{ product.price * quantity }}
+                                                <v-icon class="font-weight-thin" small right>mdi-currency-ngn</v-icon>{{ product.price * product.quantity }}
                                             </td>
                                         </tr>
                                     </tbody>
@@ -353,7 +357,7 @@ export default {
 
     methods: {
         ...mapActions({
-            updateQuantity: 'productss/updateQuantity',
+            updateCartQuantity: 'productss/updateCartQuantity',
             addToCart: 'productss/addToCart',
             removeCartItem: 'productss/removeCartItem'
         }),

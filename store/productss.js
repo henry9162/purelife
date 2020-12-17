@@ -22,6 +22,18 @@ export const mutations = {
         state.productId = id
         state.show = !state.show
     },
+    updateCartQuantity(state, data){
+        if(state.cart.length > 0){
+            const cartItem = state.cart.find(item => data.product.productId == item.productId)
+            const index = state.cart.indexOf(cartItem)
+            if(data.type == 'increase'){
+                state.cart[index].quantity < state.cart[index].inventory ? state.cart[index].quantity++ : ''
+            } 
+            else if(data.type == 'decrease'){
+                state.cart[index].quantity != 1 ? state.cart[index].quantity-- : state.cart[index].quantity = 1
+            }
+        }
+    },
     updateQuantity(state, data) {
         if ( data.type == 'increase') state.quantity < data.product.quantity ? state.quantity++ : '';
         if ( data.type == 'decrease') state.quantity != 1 ? state.quantity-- : state.quantity = 1;    
@@ -37,6 +49,7 @@ export const mutations = {
     removeItem (state, id) {
         const cartItem = state.cart.find(item => item.productId === id);
         state.cart.splice(state.cart.indexOf(cartItem), 1);
+        localStorage.setItem('cartItem', JSON.stringify(state.cart))
     },
     removeAllItems (state) {
         state.cart = [];
@@ -59,7 +72,6 @@ export const actions = {
         if(process.client){
             let storedCartItems = JSON.parse(localStorage.getItem('cartItem'));
             if (storedCartItems) {
-                debugger
                 context.commit('persistCart', storedCartItems);
             }
         }
@@ -92,6 +104,9 @@ export const actions = {
             message: info ? info.message : 'Product was added cart successfully',
             color: info ? info.color : 'success'
         }, {root: true});
+    },
+    updateCartQuantity(context, data) {
+        context.commit('updateCartQuantity', data);
     },
     updateQuantity(context, data) {
         context.commit('updateQuantity', data);
@@ -133,8 +148,13 @@ export const actions = {
         })
     },
     updateProduct(context, data){
+        console.log(data);
         return new Promise((resolve, reject) => {
-            this.$axios.put(`/Products/${data.productId}`, data).then(response => {
+            this.$axios.put(`/Products/${data.id}`, data.data, {
+                'headers': {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
                 context.dispatch('processResponse', response)
                 resolve(response)
             })
@@ -187,14 +207,15 @@ export const getters = {
     cartProducts(state) {
         if (state.cart.length > 0) {
             return state.cart.map(cartItem => {
-                const product = state.products.find(product => product.productId == cartItem.productId);
                 debugger
+                const product = state.products.find(product => product.productId == cartItem.productId);
                 return {
                     productId: product.productId,
                     title: product.productName,
                     price: product.price,
                     image_front: product.productImage,
-                    quantity: cartItem.quantity
+                    quantity: cartItem.quantity,
+                    inventory: cartItem.inventory
                 };
             })
         }

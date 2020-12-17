@@ -119,14 +119,26 @@
                                                             <div class="d-flex justify-space-between">
                                                                 <div class="d-flex mt-2">
                                                                     <!-- <v-text-field value="1" class="my-0 mr-4" style="width: 35px" outlined></v-text-field> -->
-                                                                    <input value="1" class="my-0 mr-4 text-center" style="width: 35px; border: 1px solid grey">
-                                                                    <v-btn class="title font-weight-thin" depressed x-small fab color="grey lighten-3">-</v-btn>
-                                                                    <v-btn class="ml-2 title font-weight-thin" depressed x-small fab color="grey lighten-3">+</v-btn>
+                                                                    <input disabled :value="product.quantity" class="my-0 mr-4 text-center" style="width: 35px; border: 1px solid grey">
+                                                                    <v-btn 
+                                                                        @click="updateCartQuantity({ product: product, type: 'decrease' })"
+                                                                        class="title font-weight-thin" 
+                                                                        depressed x-small fab 
+                                                                        color="grey lighten-3">
+                                                                        -
+                                                                    </v-btn>
+                                                                    <v-btn 
+                                                                        @click="updateCartQuantity({ product: product, type: 'increase' })"
+                                                                        class="ml-2 title font-weight-thin" 
+                                                                        depressed x-small fab 
+                                                                        color="grey lighten-3">
+                                                                        +
+                                                                    </v-btn>
                                                                 </div>
                                                                 <div class="d-flex justify-space-between">
-                                                                    <div class="subtitle-2 mt-4"><v-icon small>mdi-currency-ngn</v-icon>{{ product.price }}</div>
+                                                                    <div class="subtitle-2 mt-4"><v-icon small>mdi-currency-ngn</v-icon>{{ product.price * product.quantity }}</div>
                                                                     <div class="mt-2">
-                                                                        <v-btn fab x-small depressed color="transparent">
+                                                                        <v-btn @click="removeCartItem(product.productId)" fab x-small depressed color="transparent">
                                                                             <v-icon color="red">mdi-close</v-icon>
                                                                         </v-btn>
                                                                     </div>
@@ -228,7 +240,9 @@ export default {
 
     methods: {
         ...mapActions({
-            clearCart: 'productss/removeAllCartItems'
+            clearCart: 'productss/removeAllCartItems',
+            updateCartQuantity: 'productss/updateCartQuantity',
+            removeCartItem: 'productss/removeCartItem'
         }),
         close() {
             this.$toast.error("User cancelled payment").goAway(3000);

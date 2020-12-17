@@ -51,7 +51,8 @@ export const actions = {
                         quantity: 1,
                         serial: data.serialNumber,
                         unitPrice: data.price,
-                        total: data.price
+                        total: data.price,
+                        type: "increase"
                     };
 
                     context.commit("setProducts", dataToSend);

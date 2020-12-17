@@ -1,7 +1,12 @@
 <template>
 <div>
     <v-container class="grey lighten-5 mx-10 mt-14">
-        <v-row>
+        <v-row justify="end">
+            <v-col cols="12" xs="12" justify="end" style="text-align:right">
+                 <v-btn tile @click="openScanModal()" color="secondary" class="my-0 mt-4" dark small elevation="3">
+                    Open Scanning mode
+                </v-btn>
+            </v-col>
             <v-col cols="12" md="4">
                  <v-card color="blue">
                     <v-simple-table fixed-header color="blue" dark>
@@ -86,6 +91,10 @@
             <div class="text-center" id="mdlText" style="display:none">
                 <span class="headline list-color custom-style">...Awaiting Scan</span>
             </div>
+            <div class="text-center" id="focusOutText" style="display:none">
+                <span class="list-color custom-style">Please select textbox to scan</span>
+            </div>
+            
             <div class="text-center" id="mdlSpinner" style="display:none">
                 <span class="headline list-color custom-style">
                     <v-progress-circular
@@ -102,7 +111,9 @@
                         ref="inputRef" type="text" 
                         @change="onBarcodeScanned($event)" 
                         id="scanInput" 
-                        data-barcode>
+                        data-barcode
+                        @blur="handleFocus(false)"
+                        @focus="handleFocus(true)">
                     </v-text-field>
                     </div>
                 </v-container>
@@ -194,10 +205,16 @@ export default {
             }
 
             this.updateQuantity(data);
+        },
+        handleFocus(state) {
+            let inputBox = document.getElementById("focusOutText");
+            if (inputBox) {
+                state ? inputBox.style.display= "none" : inputBox.style.display= "block";
+            }
         }
     },
     mounted(){
-        this.openScanModal()
+        this.openScanModal();
     }
 }
 </script>

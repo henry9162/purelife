@@ -100,7 +100,7 @@
                                                     <v-expansion-panel-header>Use Loyalty Point</v-expansion-panel-header>
                                                     <v-expansion-panel-content>
                                                         <div class="d-flex justify-space-between pt-8">
-                                                            <div>Enter your Loyalty point here</div>
+                                                            <!-- <div>Enter your Loyalty point here</div> -->
                                                             <div class="ml-4 d-flex">
                                                                 <v-text-field label="Enter point" clearable outlined dense></v-text-field>
                                                                 <v-btn class="ml-2" tile depressed color="primary" dark>Apply Loyalty Point</v-btn>
@@ -342,7 +342,7 @@ export default {
                 href: 'breadcrumbs_link_2',
             },
         ],
-        fullPage: true
+        fullPage: false
     }),
 
     computed: {

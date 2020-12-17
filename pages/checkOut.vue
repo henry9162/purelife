@@ -10,10 +10,16 @@
 
         <!-- checkout forms section -->
         <div class="mt-2">
+            <loading 
+                :active.sync="isLoading" 
+                :can-cancel="true" 
+                :is-full-page="fullPage">
+            </loading>
+
             <v-container class="pt-0">
                 <v-row>
                     <!-- Billing and Shipping address -->
-                    <v-col md="7">
+                    <v-col v-if="cartProducts" md="7">
                         <div>                     
                             <v-container fluid>
                                 <v-row>
@@ -24,28 +30,28 @@
                                                 <v-row class="px-12 pb-4">
                                                     <v-col md="6">
                                                         <v-text-field 
-                                                            v-model="fullName" dense color="green" label="Full Name">
+                                                            v-model="fullName" color="green" label="Full Name">
                                                         </v-text-field>
                                                     </v-col>
                                                     <v-col md="6">
                                                         <v-text-field 
-                                                            v-model="email" dense color="green" label="Email">
+                                                            v-model="email" color="green" label="Email">
                                                         </v-text-field>
                                                     </v-col>
                                                     <v-col class="py-0 my-0" md="6">
                                                         <v-text-field 
-                                                            v-model="phoneNumber" dense color="green" label="Phone Number">
+                                                            v-model="phoneNumber" color="green" label="Phone Number">
                                                         </v-text-field>
                                                     </v-col>
                                                     <v-col class="py-0 my-0" md="6">
                                                         <v-text-field 
-                                                            v-model="address" dense color="green" label="Address">
+                                                            v-model="address" color="green" label="Address">
                                                         </v-text-field>
                                                     </v-col>
                                                     <v-col class="py-0" md="6">
                                                          <v-select
                                                                 v-model="stateId"
-                                                                :items="states" dense
+                                                                :items="states"
                                                                 item-text="stateName"
                                                                 item-value="stateId"
                                                                 label="State"
@@ -54,9 +60,15 @@
                                                     </v-col>
                                                 
                                                     <v-col class="py-0" md="6">
-                                                        <v-text-field 
-                                                            v-model="country" readonly class="mt-5" hint="Default country is preselected" dense color="green" label="Country">
-                                                        </v-text-field>
+                                                        <!-- <v-text-field 
+                                                            v-model="country" readonly class="mt-5" hint="Default country is preselected" color="green" label="Country">
+                                                        </v-text-field> -->
+                                                        <v-select
+                                                            readonly
+                                                            v-model="country"
+                                                            :items="countries"
+                                                            hint="Default country is preselected" color="green" label="Country" chips>
+                                                        </v-select>
                                                     </v-col>
                                                     
                                                     <v-col md="12">
@@ -101,7 +113,7 @@
                     </v-col>
 
                     <!-- Review Your Order -->
-                    <v-col md="5">
+                    <v-col  v-if="cartProducts" md="5">
                         <div style="width: 100%">
                             <v-container>
                                 <v-row>
@@ -190,8 +202,33 @@
                             </v-container>
                         </div>
                     </v-col>
+
+                    <v-col cols="12" md="12" v-else>
+                        <div class="d-flex justify-center post-caption red--text grey lighten-2 pa-5 mt-12">
+                            <div class="text-center">
+                                <div>You do not have any item in your cart</div>
+                                <div class="mt-2">
+                                    <v-btn @click="$router.push({path: '/'})" color="green lighten-2" depressed small class="white--text">Continue shopping</v-btn>
+                                </div>
+                            </div>
+                        </div>
+                    </v-col>
                 </v-row>
+
             </v-container>
+
+            <!-- <v-container v-else>
+                 <v-row>
+                     <div class="d-flex justify-center post-caption red--text grey lighten-2 pa-5 mt-4" v-else>
+                        <div class="text-center">
+                            <div>You do not have any item in your cart</div>
+                            <div class="mt-2">
+                                <v-btn @click="$router.push({path: '/'})" color="green lighten-2" depressed small class="white--text">Continue shopping</v-btn>
+                            </div>
+                        </div>
+                    </div>
+                </v-row>
+            </v-container> -->
         </div>
     </div>
 </template>
@@ -201,9 +238,7 @@ import billingform from '../components/checkout/BillingForm'
 import shippingform from '../components/checkout/ShippingForm'
 import orderReview from '../components/checkout/OrderReview'
 import titleParalax from '../components/TitleParalax'
-//import paystack from "vue-paystack";
-
-import { mapActions } from 'vuex';
+import { mapState, mapGetters, mapActions } from 'vuex'
 
 import uniqid from 'uniqid';
 
@@ -222,17 +257,18 @@ export default {
         stateName: '',
         town: '',
         country: 'Nigeria',
+        countries: ['Nigeria'],
         loading: false,
-        PUBLIC_KEY: 'pk_test_c19414215f1bee0bd8d754fc85c30e216b2b5ae9'
+        PUBLIC_KEY: 'pk_test_c19414215f1bee0bd8d754fc85c30e216b2b5ae9',
+        fullPage: false
     }),
 
     computed: {
-        cartProducts(){
-            return this.$store.getters['productss/cartProducts']
-        },
-        cartTotal(){
-            return this.$store.getters['productss/cartTotal']
-        },
+         ...mapGetters({
+            cartProducts: 'productss/cartProducts',
+            cartTotal: 'productss/cartTotal',
+            isLoading: 'filters/getLoader'
+        }),
         authEmail(){
             return this.$store.state.auths.authUser.email
         }

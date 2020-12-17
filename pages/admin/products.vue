@@ -155,7 +155,7 @@ export default {
     data: () => ({
         dialog: true,
         loading: false,
-        fullPage: true,
+        fullPage: false,
         headers: [
             {
                 text: 'Name',

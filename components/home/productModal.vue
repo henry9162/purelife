@@ -64,7 +64,7 @@
                                     <v-icon x-small>mdi-minus</v-icon>
                                 </v-btn>
 
-                                <v-text-field class="custom-input-height" dense flat solo v-model="quantity"></v-text-field>
+                                <v-text-field class="custom-input-height" disabled dense flat solo v-model="quantity"></v-text-field>
 
                                 <v-btn @click="updateQuantity({ product: product, type: 'increase' })" tile color="blue darken-3 mt-0" class="my-0 mt-4" dark x-small depressed>
                                     <v-icon x-small>mdi-plus</v-icon>

@@ -37,8 +37,11 @@
 
                 <!-- Zoomable Image -->
                 <v-col md="6">
-                    <v-card tile color="white" flat>
+                    <v-card v-if="product.productImage" tile color="white">
                         <zoom :img-normal="product.productImage" :scale="2"></zoom>
+                    </v-card>
+                    <v-card tile color="inherit" v-else>
+                        <v-img :src="defaultImage"></v-img>
                     </v-card>
                 </v-col>
 
@@ -96,7 +99,7 @@
                             <v-card-text class="caption">
                                 <div><span class="subtitle-2 font-weight-bold">Quantity: </span> <span class="font-weight-bold" :class="product.quantity > 0 ? 'green--text' : 'red--text'">{{ product.quantity > 0 ? product.quantity : 'Out Of Stock' }}</span></div>
                                 <div><span class="subtitle-2 font-weight-bold">Brand: </span> <span class="blue--text" v-text="product.productBrandName"></span></div>
-                                <div>
+                                <div style="width: 100%">
                                     <span class="subtitle-2 font-weight-bold">Serial Number:</span> 
                                     <span>
                                         <v-chip x-small class="ma-2" color="red" label text-color="white">
@@ -119,14 +122,24 @@
 
                     <div class="mt-8 d-flex justify-space-between">
                         <div class="d-flex">
-                            <v-btn tile @click="updateQuantity({ product: product, type: 'decrease' })" color="red" class="my-0 mt-4" dark x-small depressed>
-                                <v-icon x-small>mdi-minus</v-icon>
+                            <v-btn  
+                                @click="updateQuantity({ product: product, type: 'decrease' })" 
+                                color="red darken-2" class="my-0 mt-4" 
+                                dark x-small tile depressed>
+                                    <v-icon x-small>mdi-minus</v-icon>
                             </v-btn>
 
-                            <v-text-field class="custom-input-height" style="width: 40px" dense flat solo v-model="quantity"></v-text-field>
+                            <v-text-field 
+                                class="custom-input-height" 
+                                style="width: 40px" disabled dense 
+                                flat solo v-model="quantity">
+                            </v-text-field>
 
-                            <v-btn @click="updateQuantity({ product: product, type: 'increase' })" tile color="red" class="my-0 mt-4" dark x-small depressed>
-                                <v-icon x-small>mdi-plus</v-icon>
+                            <v-btn 
+                                @click="updateQuantity({ product: product, type: 'increase' })" 
+                                tile color="red darken-2" 
+                                class="my-0 mt-4" dark x-small depressed>
+                                    <v-icon x-small>mdi-plus</v-icon>
                             </v-btn>
                         </div>
 
@@ -144,7 +157,7 @@
                                 <v-icon left>mdi-cart-arrow-down</v-icon> Add to Cart
                             </v-btn>
 
-                            <v-btn @click="$router.push({ path: '/checkOut' })" tile class="ml-2 mt-1" depressed color="red" dark>
+                            <v-btn @click="$router.push({ path: '/checkOut' })" tile class="ml-2 mt-1" depressed color="red darken-2" dark>
                                 <v-icon left>mdi-currency-ngn</v-icon> Buy Now
                             </v-btn>
                         </div>
@@ -193,7 +206,8 @@ export default {
         tab: null,
         test: '',
         isLoading: false,
-        fullPage: true
+        fullPage: false,
+        defaultImage: 'https://via.placeholder.com/150',
     }),
 
     computed: {

@@ -1,0 +1,89 @@
+export const state = () => ({
+    products: [],
+    totalQuantity: 0
+})
+
+export const mutations = {
+    setProducts(state, data){
+        let productIndex = state.products.findIndex(el => el.serial == data.serial);
+        if (productIndex > -1){
+            if (data.type == "increase"){
+                state.products[productIndex].quantity += 1;
+                state.products[productIndex].total = state.products[productIndex].quantity * state.products[productIndex].unitPrice;
+            } else {
+
+                if (state.products[productIndex].quantity > 0){
+                    state.products[productIndex].quantity -= 1;
+                    state.products[productIndex].total = state.products[productIndex].quantity * state.products[productIndex].unitPrice;
+                }
+            }
+            
+        } else {
+            delete data.type;
+            debugger
+            state.products.push(data);
+        }
+    }
+}
+
+export const actions = {
+    updateQuantity(context, payload) {
+        let item = payload.product;
+        let type = payload.type;
+        item = { ...item, type};
+        
+        context.commit("setProducts", item);
+        
+    },
+    removeItem(context, cartItemData) {
+        debugger
+        let cartItem = context.state.cart.find(cartItem => cartItem.productId == cartItemData.productId);
+    },
+    getProduct(context, payload){
+        this.$axios.get('/Products/GetPOSBySerialNumber/' + payload)
+            .then(response => {
+                let data = response.data.data;
+                if (data.quantity < 1){
+                    this.$toast.error("Product not in stock").goAway(5000)
+                } else {
+                    let dataToSend = {
+                        productName: data.productName,
+                        quantity: 1,
+                        serial: data.serialNumber,
+                        unitPrice: data.price,
+                        total: data.price
+                    };
+
+                    context.commit("setProducts", dataToSend);
+                }
+
+                this.scanning = false;
+                document.getElementById("scanInput").style.display = "block";
+                document.getElementById("mdlText").style.display = "block";
+                document.getElementById("mdlSpinner").style.display = "none";
+                document.querySelector("#barcoeMdl .v-input__append-inner button").click()
+                document.getElementById("scanInput").focus();
+                this.scanNumber = 0;
+            }).catch(error => {
+                context.dispatch('processError', error)
+            })
+    },
+    processError(context, error){
+        this.$toast.error(error).goAway(3500)
+    }
+
+}
+
+export const getters = {
+    allProducts(state){
+        return state.products;
+    },
+    totalPrice(state){
+        let price = 0;
+        state.products.map(el => {
+            price += el["quantity"] * el["unitPrice"]
+        });
+
+        return price;
+    }
+}

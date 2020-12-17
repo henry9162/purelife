@@ -8,6 +8,10 @@ export default {
             { name: 'Product Packages', icon: 'mdi-account-supervisor', url: '/admin/packages' },
             { name: 'Product Groups', icon: 'mdi-shape', url: '/admin/groups' },
             { name: 'Products', icon: 'mdi-post-outline', url: '/admin/products' },
+            { name: 'Point of Sale', icon: 'mdi-post-outline', url: '/admin/pointOfSale' },
+        ],
+        refillList: [
+            { name: 'Refills', icon: 'mdi-shape', url: '/admin/refills' }
         ],
         branchList: [
             { name: 'Pharmacy Branch', icon: 'mdi-shape', url: '/admin/branches' },

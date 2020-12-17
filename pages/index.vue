@@ -12,7 +12,7 @@
         </loading> -->
 
         <!-- Product title parallax -->
-        <titleParalax class="post-caption">{{ $route.query.name ? $route.query.name : 'All-Product' }}</titleParalax>
+        <!-- <titleParalax class="post-caption">{{ $route.query.name ? $route.query.name : 'All-Product' }}</titleParalax> -->
 
         <v-container class="white px-0 pt-0 pb-0" fluid>
             <v-row class="white mx-0 px-0 pb-0">

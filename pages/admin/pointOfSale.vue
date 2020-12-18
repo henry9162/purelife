@@ -252,7 +252,7 @@ export default {
         },
         processCashPayment(){
             let data = {
-                transactionId: this.uniqid
+                transactionId: this.uniqid()
             }
 
             this.processPayment(data);

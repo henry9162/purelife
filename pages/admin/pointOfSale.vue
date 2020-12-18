@@ -27,7 +27,7 @@
 
                 <v-card class="mt-3" color="secondary" v-if="totalPriceBool">
                     <div class="text-center">
-                        <v-btn @click="save" depressed prepend-inner-icon="mdi-map-marker" clearable
+                        <v-btn @click="processCashPayment()" depressed prepend-inner-icon="mdi-map-marker" clearable
                             class="white--text text-center rounded-0 text-capitalize"
                             color="primary" :loading="loading" :disabled="loading">
                             PAY (CASH N{{totalPrice}})
@@ -41,8 +41,8 @@
                             <paystack
                             style="margin:auto;"
                             class="v-btn my-3 v-btn--contained theme--light v-size--large green white--text"
-                            :amount="cartTotal * 100"
-                            :email="authEmail"
+                            :amount="totalPrice * 100"
+                            :email="email"
                             :paystackkey="PUBLIC_KEY"
                             :callback="processPayment"
                             :reference="genRef()"
@@ -161,6 +161,7 @@ export default {
 
     data: () => ({
         scanning: false,
+        email:"test@gmail.com",
         scanNumber: 0,
         barcode: "",
         loading: false,
@@ -186,7 +187,8 @@ export default {
         ...mapActions({
             updateQuantity: 'pointOfSale/updateQuantity',
             removeItem: 'pointOfSale/removeItem',
-            getProduct: 'pointOfSale/getProduct'
+            getProduct: 'pointOfSale/getProduct',
+            clearProducts: 'pointOfSale/clearProducts'
         }),
         openScanModal(){
             this.$modal.show('barcode-modal');
@@ -214,8 +216,10 @@ export default {
                 this.processBarCode(this.barcode);
             }
         },
-        processBarCode(barcode){
-            this.getProduct(barcode);
+        async processBarCode(barcode){
+            await this.getProduct(barcode).then(()=> {
+                this.scanNumber = 0
+            });
         },
         close () {
             this.$modal.hide('barcode-modal');
@@ -246,9 +250,16 @@ export default {
         genRef() {
             return uniqid("pstk-");
         },
+        processCashPayment(){
+            let data = {
+                transactionId: this.uniqid
+            }
+
+            this.processPayment(data);
+        },
         processPayment(data) {
-            debugger
             this.$toast.success("User successfully made payment").goAway(4000);
+            this.clearProducts();
         }
     },
     mounted(){

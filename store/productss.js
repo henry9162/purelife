@@ -2,6 +2,8 @@ export const state = () => ({
     products: [],
     product: {},
     cart: [],
+    billInfo: {},
+    productPreview: [],
     quantity: 1,
     productId: '',
     show: false,
@@ -17,6 +19,10 @@ export const mutations = {
     },
     setProduct(state, data){
         state.product = data
+    },
+    setPreview(state, data){
+        state.billInfo = data.billInfo
+        state.productPreview = data.cart
     },
     toggleShow(state, id){
         state.productId = id
@@ -176,6 +182,9 @@ export const actions = {
             })
         })
     },
+    setPreview(context, data){
+        context.commit('setPreview', data)
+    },
     processError(context, error){
         this.$toast.error(error).goAway(3500)
     },
@@ -214,7 +223,9 @@ export const getters = {
                     price: product.price,
                     image_front: product.productImage,
                     quantity: cartItem.quantity,
-                    inventory: cartItem.inventory
+                    inventory: cartItem.inventory,
+                    packageName: product.productPackageName,
+                    brandName: product.productBrandName
                 };
             })
         }
@@ -231,5 +242,11 @@ export const getters = {
     },
     getLoader(state){
         return state.loader
+    },
+    billInfo(state){
+        return state.billInfo
+    },
+    productPreview(state){
+        return state.productPreview
     }
 }

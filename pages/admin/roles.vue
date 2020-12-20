@@ -45,7 +45,7 @@
         </modal>
 
 
-        <v-data-table :headers="headers" :items="roles" sort-by="" class="px-8 py-4">
+        <v-data-table :headers="headers" :items="roles" sort-by="" class="mx-4 py-4">
             <template v-slot:top>
                 <v-toolbar flat color="white">
                     <v-toolbar-title class="list-color custom-style">All Role</v-toolbar-title>

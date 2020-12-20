@@ -155,7 +155,7 @@
                                 <div>
                                     <v-list-item v-for="(item, i) in itemsss" :key="i" :to="item.url">
                                         <v-list-item-icon class="mr-4">
-                                            <v-icon v-text="item.icon"></v-icon>
+                                            <v-icon small v-text="item.icon"></v-icon>
                                         </v-list-item-icon>
 
                                         <v-list-item-content>
@@ -180,7 +180,7 @@
 
                                 <v-list-item @click="logout">
                                     <v-list-item-icon class="mr-4">
-                                        <v-icon>mdi-logout</v-icon>
+                                        <v-icon small>mdi-logout</v-icon>
                                     </v-list-item-icon>
 
                                     <v-list-item-content>
@@ -300,6 +300,8 @@ export default {
         ],
         itemsss: [
             { text: 'Dashboard', icon: 'mdi-view-dashboard-outline', url: '/admin/dashboard' },
+            { text: 'Orders', icon: 'mdi-sale', url: '/orders' },
+            { text: 'Profile', icon: 'mdi-face-profile', url: '/profile' }
         ],
         scanning: false,
         scanNumber: 0,

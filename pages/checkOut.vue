@@ -25,83 +25,96 @@
                                 <v-row>
                                     <div>   
                                         <v-hover v-slot:default="{ hover }">
-                                            <v-card :elevation="hover ? 15 : ''" flat>  
-                                                <div class="font-weight-bold customm-caption pb-2 text-center red--text pt-6 px-6">Billing Details</div>
-                                                <v-row class="px-12 pb-4">
-                                                    <v-col md="6">
-                                                        <v-text-field 
-                                                            v-model="fullName" color="green" label="Full Name">
-                                                        </v-text-field>
-                                                    </v-col>
-                                                    <v-col md="6">
-                                                        <v-text-field 
-                                                            v-model="email" color="green" label="Email">
-                                                        </v-text-field>
-                                                    </v-col>
-                                                    <v-col class="py-0 my-0" md="6">
-                                                        <v-text-field 
-                                                            v-model="phoneNumber" color="green" label="Phone Number">
-                                                        </v-text-field>
-                                                    </v-col>
-                                                    <v-col class="py-0 my-0" md="6">
-                                                        <v-text-field 
-                                                            v-model="address" color="green" label="Address">
-                                                        </v-text-field>
-                                                    </v-col>
-                                                    <v-col class="py-0" md="6">
-                                                         <v-select
+                                            <v-card color="green darken-2" :elevation="hover ? 15 : ''" flat>  
+                                                <v-card class="mx-4">
+                                                <div class="font-weight-bold customm-caption pb-2 text-center green--text text-darken-2 pt-10 px-6">Billing Details</div>
+
+                                                <v-form ref="form" class="text-center" v-model="valid" lazy-validation>
+                                                    <v-row class="px-12 pb-4">
+                                                        <v-col md="6">
+                                                            <v-text-field 
+                                                                @keyup="activateBtn"
+                                                                v-model="fullName" 
+                                                                :rules="fullNameRules"
+                                                                prepend-inner-icon="mdi-account" 
+                                                                color="green" label="Full Name">
+                                                            </v-text-field>
+                                                        </v-col>
+                                                        <v-col md="6">
+                                                            <v-text-field 
+                                                                @keyup="activateBtn"
+                                                                v-model="email" 
+                                                                :rules="emailRules"
+                                                                prepend-inner-icon="mdi-email"  
+                                                                color="green" label="Email">
+                                                            </v-text-field>
+                                                        </v-col>
+                                                        <v-col class="py-0 my-0" md="6">
+                                                            <v-text-field 
+                                                                @keyup="activateBtn"
+                                                                v-model="phoneNumber" 
+                                                                :rules="phoneRules"
+                                                                prepend-inner-icon="mdi-cellphone" 
+                                                                color="green" label="Phone Number">
+                                                            </v-text-field>
+                                                        </v-col>
+                                                        <v-col class="py-0 my-0" md="6">
+                                                            <v-text-field 
+                                                                @keyup="activateBtn"
+                                                                v-model="address" 
+                                                                prepend-inner-icon="mdi-map-marker"
+                                                                :rules="addressRules" 
+                                                                color="green" label="Address">
+                                                            </v-text-field>
+                                                        </v-col>
+                                                        <v-col class="py-0" md="6">
+                                                            <v-select
+                                                                prepend-inner-icon="mdi-map-marker"
+                                                                :rules="stateRules"
                                                                 v-model="stateId"
                                                                 :items="states"
                                                                 item-text="stateName"
                                                                 item-value="stateId"
                                                                 label="State"
+                                                                @change="activateBtn"
                                                                 chips>
-                                                        </v-select>
-                                                    </v-col>
-                                                
-                                                    <v-col class="py-0" md="6">
-                                                        <!-- <v-text-field 
-                                                            v-model="country" readonly class="mt-5" hint="Default country is preselected" color="green" label="Country">
-                                                        </v-text-field> -->
-                                                        <v-select
-                                                            readonly
-                                                            v-model="country"
-                                                            :items="countries"
-                                                            hint="Default country is preselected" color="green" label="Country" chips>
-                                                        </v-select>
-                                                    </v-col>
+                                                            </v-select>
+                                                        </v-col>
                                                     
-                                                    <v-col md="12">
-                                                        <div class="text-center">
-                                                            <!-- <v-btn @click="save" depressed prepend-inner-icon="mdi-map-marker" clearable
-                                                                class="white--text text-center rounded-0 mt-3 mb-4 px-8 py-5 text-capitalize"
-                                                                color="#009933" :loading="loading" :disabled="loading">
-                                                                Make Payment
-                                                                <v-icon right>mdi-send</v-icon>
-                                                                <template v-slot:loader>
-                                                                    <span class="custom-loader">
-                                                                        <v-icon light>mdi-cached</v-icon>
-                                                                    </span>
-                                                                </template>
-                                                            </v-btn> -->
+                                                        <v-col class="py-0" md="6">
+                                                            <v-select
+                                                                readonly
+                                                                :rules="countryRules"
+                                                                v-model="country"
+                                                                :items="countries"
+                                                                hint="Default country is preselected" color="green" label="Country" chips>
+                                                            </v-select>
+                                                        </v-col>
+                                                        
+                                                        <v-col md="12">
+                                                            <div class="text-center">
+                                                                <paystack
+                                                                    ref="paystack"
+                                                                    :disabled="disabled"
+                                                                    style="margin:auto;"
+                                                                    class="v-btn post-caption my-3 v-btn--contained theme--light v-size--large white--text"
+                                                                    :class="disabled ? 'no-shadow grey lighten-2' : 'green darken-2'"
+                                                                    :amount="cartTotal * 100"
+                                                                    :email="authEmail"
+                                                                    :paystackkey="PUBLIC_KEY"
+                                                                    :callback="processPayment"
+                                                                    :reference="genRef()"
+                                                                    :close="close"
+                                                                    :embed="false"
+                                                                >
+                                                                MAKE PAYMENT (N {{cartTotal}})</paystack>
 
-                                                             <paystack
-                                                                style="margin:auto;"
-                                                                class="v-btn my-3 v-btn--contained theme--light v-size--large green white--text"
-                                                                :amount="cartTotal * 100"
-                                                                :email="authEmail"
-                                                                :paystackkey="PUBLIC_KEY"
-                                                                :callback="processPayment"
-                                                                :reference="genRef()"
-                                                                :close="close"
-                                                                :embed="false"
-                                                            >
-                                                            MAKE PAYMENT (N {{cartTotal}})</paystack>
-
-                                                        </div>
-                                                    </v-col>
-                                                    
-                                                </v-row>
+                                                            </div>
+                                                        </v-col>
+                                                        
+                                                    </v-row>
+                                                </v-form>
+                                                </v-card>
 
                                             </v-card>
                                         </v-hover>
@@ -118,8 +131,8 @@
                             <v-container>
                                 <v-row>
                                     <v-hover v-slot:default="{hover}">
-                                        <v-card :elevation="hover ? 10 : ''" flat style="width: 100%">
-                                            <div class="font-weight-bold customm-caption text-center red--text pb-2 pt-6 px-6">Review Your Order</div>
+                                        <v-card :elevation="hover ? 0 : ''" flat style="width: 100%">
+                                            <div class="font-weight-bold customm-caption text-center green--text text--darken-2 pb-2 pt-10 px-6">Review Your Order</div>
                                             <v-container class="pt-0">
                                                 <v-hover v-for="product in cartProducts" :key="product.productId" v-slot:default="{hover}">
                                                     <v-row class="px-2 py-0" :class="hover ? 'grey lighten-3' : ''">
@@ -148,7 +161,7 @@
                                                                     </v-btn>
                                                                 </div>
                                                                 <div class="d-flex justify-space-between">
-                                                                    <div class="subtitle-2 mt-4"><v-icon small>mdi-currency-ngn</v-icon>{{ product.price * product.quantity }}</div>
+                                                                    <div class="subtitle-2 green--text text--darken-2 mt-4"><v-icon small>mdi-currency-ngn</v-icon>{{ product.price * product.quantity }}</div>
                                                                     <div class="mt-2">
                                                                         <v-btn @click="removeCartItem(product.productId)" fab x-small depressed color="transparent">
                                                                             <v-icon color="red">mdi-close</v-icon>
@@ -177,17 +190,17 @@
                                                         </v-expansion-panels>
                                                     </div> -->
 
-                                                    <div class="ml-9 mb-3 mt-2 pr-2" style="width: 50%; border: 10px solid #b6bbc6">
+                                                    <div class="ml-9 mb-6 mb-3 mt-2 pr-2" style="width: 50%; border: 8px solid #73AF75">
                                                         <v-simple-table fixed-header>
                                                             <template v-slot:default>
                                                                 <thead>
                                                                     <tr>
                                                                         <th style="" class="title font-weight-bold">
-                                                                            Total
+                                                                            <span class="">Total</span>
                                                                             <span>
-                                                                                <v-icon class="font-weight-thin" small right>mdi-currency-ngn</v-icon>
+                                                                                <v-icon class="font-weight-bold green--text text--darken-2" small right>mdi-currency-ngn</v-icon>
                                                                             </span>
-                                                                            <span class="title font-weight-light" v-text="cartTotal"></span>
+                                                                            <span class="amount-caption font-weight-light green--text text--darken-2" v-text="cartTotal"></span>
                                                                         </th>
                                                                     </tr>
                                                                 </thead>
@@ -249,25 +262,48 @@ export default {
         checkbox: true,
         radios: 'regularShipping',
         fullName: '',
+        fullNameRules: [
+            v => !!v || 'Full name is required',
+            v => (v && v.length >= 6) || 'Full name must not be less than 6 characters',
+        ],
         email: '',
+        emailRules: [
+            v => !!v || 'E-mail is required',
+            v => /.+@.+\..+/.test(v) || 'Email must be valid'
+        ],
         phoneNumber: '',
+        phoneRules: [
+            v => !!v || 'Phone is required',
+            v => (v && v.length <= 11 || v.length > 11) || 'Phone must be 11 characters',
+        ],
         address: '',
-        states: [],
+        addressRules: [
+            v => !!v || 'Address is required'
+        ],
+        stateRules: [
+            v => !!v || 'State is required'
+        ],
         stateId: '',
+        countryRules: [
+            v => !!v || 'Country is required'
+        ],
         stateName: '',
         town: '',
         country: 'Nigeria',
         countries: ['Nigeria'],
         loading: false,
+        valid: true,
         PUBLIC_KEY: 'pk_test_c19414215f1bee0bd8d754fc85c30e216b2b5ae9',
-        fullPage: false
+        fullPage: false,
+        disabled: true,
     }),
 
     computed: {
          ...mapGetters({
             cartProducts: 'productss/cartProducts',
             cartTotal: 'productss/cartTotal',
-            isLoading: 'filters/getLoader'
+            isLoading: 'filters/getLoader',
+            states: 'allStates'
         }),
         authEmail(){
             return this.$store.state.auths.authUser.email
@@ -280,14 +316,24 @@ export default {
             updateCartQuantity: 'productss/updateCartQuantity',
             removeCartItem: 'productss/removeCartItem'
         }),
+        activateBtn(){
+            if(this.$refs.form.validate()){
+                this.disabled = false
+            }
+        },
+        processCheckout(){
+            this.$refs.paystack;
+        },
         close() {
             this.$toast.error("User cancelled payment").goAway(3000);
         },
         genRef() {
             return uniqid("pstk-");
         },
-        processPayment() {
-            let data = {
+        processPayment(response) {
+            console.log(response)
+            debugger
+            let billInfo = {
                 fullName: this.fullName,
                 email: this.email,
                 phoneNumber: this.phoneNumber,
@@ -295,16 +341,17 @@ export default {
                 stateId: this.stateId,
                 country: this.country,
             }
-            this.$store.dispatch('setBillInfo', data)
+            let data = { bill: billInfo, cart: this.cartProducts }
+            this.$store.dispatch('setPreview', data)
             this.$toast.success("User successfully made payment").goAway(4000);
-            this.$router.push({ path: '/' });
+            this.$router.push({ path: '/preview' });
             this.clearCart();
         },
         async resetUser(){
             await this.$store.dispatch('auths/resetUser');
         },
         async initialise(){
-            //await this.$store.dispatch('productss/persistCart')
+            await this.$store.dispatch('getAllStates');
         }
     },
 
@@ -320,5 +367,16 @@ export default {
         font-family: light-font(family) !important;
         font-weight: 100 !important;
         font-size: 24px;
+    }
+    .amount-caption {
+        font-family: font(family) !important;
+        font-size: 24px;
+    }
+    .post-caption {
+        font-family: light-font(family) !important;
+        font-weight: 100 !important;
+    }
+    .no-shadow {
+        box-shadow: none !important;
     }
 </style>

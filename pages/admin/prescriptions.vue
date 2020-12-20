@@ -62,7 +62,7 @@
         </modal>
 
 
-        <v-data-table :headers="headers" :items="prescriptions" sort-by="calories" class="px-8 py-4">
+        <v-data-table :headers="headers" :items="prescriptions" sort-by="calories" class="mx-4 py-4">
             <template v-slot:top>
                 <v-toolbar flat color="white">
                     <v-toolbar-title class="list-color custom-style">All Prescriptions</v-toolbar-title>

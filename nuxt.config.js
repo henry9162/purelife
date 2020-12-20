@@ -44,7 +44,8 @@ export default {
     { src: '~/plugins/vue-carousel', ssr: false },
     { src: '~/plugins/paystack.client.js', ssr: false },
     { src: '~/plugins/loader.client.js', ssr: false },
-    { src: '~/plugins/doc.client.js', ssr: false }
+    { src: '~/plugins/doc.client.js', ssr: false },
+    { src: '~/plugins/vue-html-pdf.client.js', ssr: false }
     //{ src: '~/plugins/vue-scanner.client.js'},
   ],
 
@@ -67,7 +68,8 @@ export default {
     '@nuxtjs/style-resources',
     '@nuxtjs/toast',
     '@nuxtjs/auth',
-    '@nuxtjs/moment'
+    '@nuxtjs/moment',
+    '@nuxtjs/dotenv'
   ],
 
   toast: {

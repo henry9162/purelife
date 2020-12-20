@@ -1,7 +1,12 @@
 <template>
 <div>
     <v-container class="grey lighten-5 mx-10 mt-14">
-        <v-row>
+        <v-row justify="end">
+            <v-col cols="12" xs="12" justify="end" style="text-align:right">
+                 <v-btn tile @click="openScanModal()" color="secondary" class="my-0 mt-4" dark small elevation="3">
+                    Open Scanning mode
+                </v-btn>
+            </v-col>
             <v-col cols="12" md="4">
                  <v-card color="blue">
                     <v-simple-table fixed-header color="blue" dark>
@@ -18,6 +23,35 @@
                             </tbody>
                         </template>
                     </v-simple-table>
+                </v-card>
+
+                <v-card class="mt-3" color="secondary" v-if="totalPriceBool">
+                    <div class="text-center">
+                        <v-btn @click="processCashPayment()" depressed prepend-inner-icon="mdi-map-marker" clearable
+                            class="white--text text-center rounded-0 text-capitalize"
+                            color="primary" :loading="loading" :disabled="loading">
+                            PAY (CASH N{{totalPrice}})
+                            <template v-slot:loader>
+                                <span class="custom-loader">
+                                    <v-icon light>mdi-cached</v-icon>
+                                </span>
+                            </template>
+                        </v-btn>
+
+                            <paystack
+                            style="margin:auto;"
+                            class="v-btn my-3 v-btn--contained theme--light v-size--large green white--text"
+                            :amount="totalPrice * 100"
+                            :email="email"
+                            :paystackkey="PUBLIC_KEY"
+                            :callback="processPayment"
+                            :reference="genRef()"
+                            :close="closePaystack"
+                            :embed="false"
+                        >
+                        PAY (ONLINE N {{totalPrice}})</paystack>
+
+                    </div>
                 </v-card>
             </v-col>
             <v-col cols="12" md="8">
@@ -86,6 +120,10 @@
             <div class="text-center" id="mdlText" style="display:none">
                 <span class="headline list-color custom-style">...Awaiting Scan</span>
             </div>
+            <div class="text-center" id="focusOutText" style="display:none">
+                <span class="list-color custom-style">Please select textbox to scan</span>
+            </div>
+            
             <div class="text-center" id="mdlSpinner" style="display:none">
                 <span class="headline list-color custom-style">
                     <v-progress-circular
@@ -102,7 +140,9 @@
                         ref="inputRef" type="text" 
                         @change="onBarcodeScanned($event)" 
                         id="scanInput" 
-                        data-barcode>
+                        data-barcode
+                        @blur="handleFocus(false)"
+                        @focus="handleFocus(true)">
                     </v-text-field>
                     </div>
                 </v-container>
@@ -114,14 +154,18 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import uniqid from 'uniqid';
 
 export default {
     layout: 'admin',
 
     data: () => ({
         scanning: false,
+        email:"test@gmail.com",
         scanNumber: 0,
-        barcode: ""
+        barcode: "",
+        loading: false,
+        PUBLIC_KEY: 'pk_test_c19414215f1bee0bd8d754fc85c30e216b2b5ae9',
     }),
 
     computed: {
@@ -130,6 +174,12 @@ export default {
         },
         totalPrice() {
             return this.$store.getters["pointOfSale/totalPrice"];
+        },
+        authEmail(){
+            return this.$store.state.auths.authUser.email
+        },
+        totalPriceBool() {
+            return this.totalPrice > 0 ? true : false;
         }
     },
 
@@ -137,7 +187,8 @@ export default {
         ...mapActions({
             updateQuantity: 'pointOfSale/updateQuantity',
             removeItem: 'pointOfSale/removeItem',
-            getProduct: 'pointOfSale/getProduct'
+            getProduct: 'pointOfSale/getProduct',
+            clearProducts: 'pointOfSale/clearProducts'
         }),
         openScanModal(){
             this.$modal.show('barcode-modal');
@@ -165,18 +216,10 @@ export default {
                 this.processBarCode(this.barcode);
             }
         },
-        processBarCode(barcode){
-            this.getProduct(barcode);
-            // setTimeout(() => {
-            //     this.scanning = false;
-            //     document.getElementById("scanInput").style.display = "block";
-            //     document.getElementById("mdlText").style.display = "block";
-            //     document.getElementById("mdlSpinner").style.display = "none";
-            //     document.querySelector("#barcoeMdl .v-input__append-inner button").click()
-            //     document.getElementById("scanInput").focus();
-            //     this.scanNumber = 0;
-            //     alert(barcode);
-            // }, 1000);
+        async processBarCode(barcode){
+            await this.getProduct(barcode).then(()=> {
+                this.scanNumber = 0
+            });
         },
         close () {
             this.$modal.hide('barcode-modal');
@@ -194,10 +237,33 @@ export default {
             }
 
             this.updateQuantity(data);
+        },
+        handleFocus(state) {
+            let inputBox = document.getElementById("focusOutText");
+            if (inputBox) {
+                state ? inputBox.style.display= "none" : inputBox.style.display= "block";
+            }
+        },
+        closePaystack() {
+            this.$toast.error("User cancelled payment").goAway(3000);
+        },
+        genRef() {
+            return uniqid("pstk-");
+        },
+        processCashPayment(){
+            let data = {
+                transactionId: this.uniqid()
+            }
+
+            this.processPayment(data);
+        },
+        processPayment(data) {
+            this.$toast.success("User successfully made payment").goAway(4000);
+            this.clearProducts();
         }
     },
     mounted(){
-        this.openScanModal()
+        this.openScanModal();
     }
 }
 </script>

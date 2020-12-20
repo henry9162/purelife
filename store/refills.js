@@ -65,6 +65,45 @@ export const actions = {
     },
     processError(context, error){
         this.$toast.error(error).goAway(3500)
+    },
+    addRefill(context, data){
+        return new Promise((resolve, reject) => {
+            this.$axios.post('/refillManagement', data).then(response => {
+                context.dispatch('processResponse', response);
+                context.dispatch('getAllRefills');
+                resolve(response);
+            })
+            .catch(error => {
+                context.dispatch('processError', error);
+                reject(error);
+            })
+        })
+    },
+    updateRefill(context, data){
+        return new Promise((resolve, reject) => {
+            this.$axios.put('/refillManagement/' + data.refillId, data).then(response => {
+                context.dispatch('processResponse', response);
+                context.dispatch('getAllRefills');
+                resolve(response);
+            })
+            .catch(error => {
+                context.dispatch('processError', error);
+                reject(error);
+            })
+        })
+    },
+    deleteRefill(context, id){
+        this.$axios.delete(`/refillManagement/${id}`).then(response => {
+            this.loading = false;
+            context.dispatch('processResponse', response);
+            context.dispatch('getAllRefills');
+        })
+        .catch(error => {
+            context.dispatch('processError', error);
+        })
+    },
+    processResponse(context, response){
+        this.$toast.success(response.data.message).goAway(3500)
     }
 }
 

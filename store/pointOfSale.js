@@ -20,9 +20,17 @@ export const mutations = {
             
         } else {
             delete data.type;
-            debugger
             state.products.push(data);
         }
+    },
+    removePOSItem(state, serial){
+        let productIndex = state.products.findIndex(product => product.serial == serial);
+        if (productIndex > -1) {
+            state.products.splice(productIndex, 1);
+        }
+    },
+    clearProducts(state) {
+        state.products = [];
     }
 }
 
@@ -35,41 +43,48 @@ export const actions = {
         context.commit("setProducts", item);
         
     },
-    removeItem(context, cartItemData) {
-        debugger
-        let cartItem = context.state.cart.find(cartItem => cartItem.productId == cartItemData.productId);
+    removeItem(context, serial) {
+        context.commit("removePOSItem", serial);
     },
     getProduct(context, payload){
-        this.$axios.get('/Products/GetPOSBySerialNumber/' + payload)
-            .then(response => {
-                let data = response.data.data;
-                if (data.quantity < 1){
-                    this.$toast.error("Product not in stock").goAway(5000)
-                } else {
-                    let dataToSend = {
-                        productName: data.productName,
-                        quantity: 1,
-                        serial: data.serialNumber,
-                        unitPrice: data.price,
-                        total: data.price
-                    };
+        return new Promise((resolve, reject) => {
+            this.$axios.get('/Products/GetPOSBySerialNumber/' + payload)
+                .then(response => {
+                    let data = response.data.data;
+                    if (data.quantity < 1){
+                        this.$toast.error("Product not in stock").goAway(5000)
+                    } else {
+                        let dataToSend = {
+                            productName: data.productName,
+                            quantity: 1,
+                            serial: data.serialNumber,
+                            unitPrice: data.price,
+                            total: data.price,
+                            type: "increase"
+                        };
 
-                    context.commit("setProducts", dataToSend);
-                }
+                        context.commit("setProducts", dataToSend);
+                    }
 
-                this.scanning = false;
-                document.getElementById("scanInput").style.display = "block";
-                document.getElementById("mdlText").style.display = "block";
-                document.getElementById("mdlSpinner").style.display = "none";
-                document.querySelector("#barcoeMdl .v-input__append-inner button").click()
-                document.getElementById("scanInput").focus();
-                this.scanNumber = 0;
+                    this.scanning = false;
+                    document.getElementById("scanInput").style.display = "block";
+                    document.getElementById("mdlText").style.display = "block";
+                    document.getElementById("mdlSpinner").style.display = "none";
+                    document.querySelector("#barcoeMdl .v-input__append-inner button").click()
+                    document.getElementById("scanInput").focus();
+                    this.scanNumber = 0;
+                    resolve(response);
             }).catch(error => {
-                context.dispatch('processError', error)
+                context.dispatch('processError', error);
+                reject(error);
             })
+        })
     },
     processError(context, error){
         this.$toast.error(error).goAway(3500)
+    },
+    clearProducts({commit}){
+        commit("clearProducts");
     }
 
 }

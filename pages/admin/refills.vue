@@ -8,7 +8,7 @@
 
     <v-card class="mx-10 mt-14" color="#22A64E">
         <modal
-            name="refill-modal" :min-width="600"
+            name="refill-modal" :min-width="800"
             :max-width="1000" :adaptive="true"
             :scrollable="true" height="auto"
             transition="fade-transition" :clickToClose="false">
@@ -28,20 +28,20 @@
                 <v-card-text>
                     <v-container>
                         <v-row class="px-4">
-                            <v-col cols="12" md="6" class="py-0 pr-8">
+                            <v-col cols="12" md="6">
                                 <v-select
-                                      v-model="refillForm.customer"
+                                      v-model="refillForm.customerId"
                                       :items="customers"
                                       item-text="firstName"
-                                      item-value="phoneNumber"
+                                      item-value="userId"
                                       label="Customer"
                                       chips dense>
                                 </v-select>
                             </v-col>
 
-                            <v-col cols="12" md="6" class="py-0 px-0">
+                            <v-col cols="12" md="6">
                                 <v-select
-                                      v-model="refillForm.product"
+                                      v-model="refillForm.productId"
                                       :items="products"
                                       item-text="productBrandName"
                                       item-value="productId"
@@ -52,7 +52,7 @@
 
                             <v-col cols="12" md="4">
                                 <v-select
-                                      v-model="refillForm.prescription"
+                                      v-model="refillForm.prescriptionId"
                                       :items="prescriptions"
                                       item-text="complaint"
                                       item-value="prescriptionId"
@@ -62,28 +62,33 @@
                             </v-col>
 
                             <v-col cols="12" md="4">
-                              <v-text-field v-model="refillForm.refilDuration" type="number" label="Quantity">
+                              <v-text-field v-model="refillForm.refillDuration" type="number" min="0" label="Quantity">
                               </v-text-field>
                             </v-col>
 
                             <v-col cols="12" md="4">
                               <v-menu ref="menu" v-model="menu" :close-on-content-click="false"
-                                 transition="scale-transition">
+                                 transition="scale-transition"  :return-value.sync="refillForm.nextRefillDate">
                                 <template v-slot:activator="{ on, attrs }">
-                                  <v-text-field v-model="date" label="Date"
+                                  <v-text-field v-model="refillForm.nextRefillDate" label="Next Date For Refill"
                                     readonly v-bind="attrs" v-on="on"></v-text-field>
                                 </template>
-                                <v-date-picker v-model="date" no-title scrollable>
+                                <v-date-picker v-model="refillForm.nextRefillDate" no-title scrollable :min="nowDate">
                                   <v-spacer></v-spacer>
                                   <v-btn text color="primary" @click="menu = false">
                                     Cancel
                                   </v-btn>
-                                  <v-btn text color="primary" @click="$refs.menu.save(date)">
+                                  <v-btn text color="primary" @click="$refs.menu.save(refillForm.nextRefillDate)">
                                     OK
                                   </v-btn>
                                 </v-date-picker>
                               </v-menu>
                             </v-col>
+
+                            <v-btn color="primary" elevation="2" :loading="loading" :disabled="loading" 
+                                raised v-text="btnText" @click="saveRefill">
+                                <v-icon right>mdi-send</v-icon>
+                            </v-btn>
                         </v-row>
                     </v-container>
                 </v-card-text>
@@ -99,7 +104,7 @@
                     <v-divider class="mx-4" inset vertical></v-divider>
                     <v-spacer></v-spacer>
 
-                    <v-btn @click="$modal.show('refill-modal')" depressed large color="#22A64E" dark class="rounded-0 post-caption">
+                    <v-btn @click="openRefillForm()" depressed large color="#22A64E" dark class="rounded-0 post-caption">
                         <v-icon left>mdi-plus-circle-outline</v-icon> Add Refill
                     </v-btn>
                 </v-toolbar>
@@ -128,8 +133,7 @@ export default {
     layout: 'admin',
 
     data: () => ({
-        formTitle: "Add Refill",
-        headers: [
+            headers: [
             {
                 text: 'Customer Name',
                 align: 'start',
@@ -144,11 +148,27 @@ export default {
         ],
         fullPage: true,
         refillForm: {
-            customer: "",
-            product: "",
-            prescription: ""
+            "serialNumber": "",
+            "productName": "",
+            "refillId": "",
+            "customerId": "",
+            "createdBy": "",
+            "productId": "",
+            "prescriptionId": "",
+            "refillDuration": "",
+            "nextRefillDate": "",
+            "createdOn": "",
+            "modifiedOn": "",
+            "isDeprecated": "",
+            "firstName": "",
+            "lastName": "",
+            "refillDurationName": ""
         },
-        menu: false
+        menu: false,
+        date: '',
+        nowDate: new Date().toISOString().slice(0,10),
+        editedIndex: -1,
+        loading: false
     }),
 
     computed: {
@@ -166,6 +186,12 @@ export default {
         },
         prescriptions() {
             return this.$store.getters['refills/getPrescription'];
+        },
+        btnText() {
+            return this.editedIndex == -1 ? "Update Refill" : "Add Refill";
+        },
+        formTitle() {
+            return this.editedIndex == -1 ? "Update Refill" : "Add Refill";
         }
     },
 
@@ -176,14 +202,73 @@ export default {
             getAllProducts: 'refills/getAllProducts',
             getAllPrescriptions: 'refills/getAllPrescriptions',
         }),
+        openRefillForm() {
+            this.$modal.show('refill-modal');
+            this.editedIndex = 1;
+        },
         close () {
+            this.editedIndex = -1;
             this.$modal.hide('refill-modal');
+        },
+        saveRefill(){
+            if (this.editedIndex == -1) {
+                this.updateRefill();
+            } else {
+                this.addRefill();
+            }
+        },
+        async addRefill() {
+            this.loading = true;
+            this.btnText = "loading...";
+            let data = {
+                customerId: this.refillForm.customer,
+                productId: this.refillForm.product,
+                prescriptionId: this.refillForm.prescription,
+                refillDuration: this.refillForm.refillDuration,
+                nextRefillDate: this.refillForm.nextDateForRefill,
+            }
+
+            await this.$store.dispatch('refills/addRefill', data).then(response => {
+                this.loading  = false;
+                this.close();
+            });
+
+        },
+        async updateRefill() {
+            this.loading = true;
+            this.btnText = "loading...";
+            let data = {
+                customerId: this.refillForm.customerId,
+                productId: this.refillForm.productId,
+                prescriptionId: this.refillForm.prescriptionId,
+                refillDuration: this.refillForm.refillDuration,
+                nextRefillDate: this.refillForm.nextRefillDate,
+                refillId : this.refillForm.refillId
+            }
+
+            await this.$store.dispatch('refills/updateRefill', data).then(response => {
+                this.loading  = false;
+                this.close();
+            });
+        },
+        deleteItem() {
+            confirm('Are you sure you want to delete this refill?') && this.deleteRefill(item);
+        },
+        deleteRefill(item){
+            this.loading = true;
+            this.$store.dispatch('refills/deleteRefill', item.refillId);
+        },
+        editItem(item) {
+            this.refillForm = Object.assign({}, item);
+            this.editedIndex = -1;
+            this.$modal.show('refill-modal');
         }
     },
     mounted(){
         this.getAllRefills();
         this.getAllCustomers();
         this.getAllProducts();
+        this.getAllPrescriptions();
     }
 }
 </script>

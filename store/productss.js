@@ -63,6 +63,7 @@ export const mutations = {
     increaseCartItemQuantity(state, data) {
         data.cartItem.quantity += data.quantity;
         state.quantity = 1;
+        localStorage.setItem('cartItem', JSON.stringify(state.cart))
     }
 }
 
@@ -74,13 +75,37 @@ export const actions = {
         context.commit('toggleShow', id)
     },
     persistCart(context) {
-        
+        if(this.$auth.loggedIn){
+            this.$axios.get(`/Cart/GetCartByUserId/${this.$auth.user.userId}`)
+            .then(response => {
+                console.log(response.data)
+            }).catch(error => {
+                console.log(error)
+            })
+        }
+
         if(process.client){
             let storedCartItems = JSON.parse(localStorage.getItem('cartItem'));
             if (storedCartItems) {
                 context.commit('persistCart', storedCartItems);
             }
         }
+    },
+    persistToDb(context, cartData){
+        if(this.$auth.loggedIn){
+            let data = {
+                productId: cartData.productId,
+                inventory: cartData.inventory,
+                quantity: cartData.quantity,
+                price: cartData.price,
+                userId: this.$auth.user.userId
+            }
+            this.$axios.post('/Cart', data).then(response => {
+               console.log(response)
+            }).catch(error => {
+                console.log(error)
+            })
+        } 
     },
     addToCart(context, cartItemData) {
         let cartItem = context.state.cart.find(cartItem => cartItem.productId == cartItemData.productId);
@@ -92,11 +117,17 @@ export const actions = {
             } else {
                 context.commit('addToCart', cartItemData)
                 context.dispatch('activateSnackbar');
+                context.dispatch('persistToDb', cartItemData)
             }
         } else {
-            context.commit('increaseCartItemQuantity', { cartItem: cartItem, quantity: cartItemData.quantity })
-            let info = { message: 'Product quantity was increased', color: 'info' }
-            context.dispatch('activateSnackbar', info);
+            if(cartItemData.inventory < 1){
+                let info = { message: 'This product is out of stock', color: 'red' }
+                context.dispatch('activateSnackbar', info);
+            } else {
+                context.commit('increaseCartItemQuantity', { cartItem: cartItem, quantity: cartItemData.quantity })
+                let info = { message: 'Product quantity was increased', color: 'info' }
+                context.dispatch('activateSnackbar', info);
+            } 
         }
     },
     removeCartItem(context, cartId) {
@@ -118,7 +149,6 @@ export const actions = {
         context.commit('updateQuantity', data);
     },
     getAllProducts(context){
-        
         context.commit('setLoader', true)
         this.$axios.get('/Products/GetAllProducts')
             .then(response => {

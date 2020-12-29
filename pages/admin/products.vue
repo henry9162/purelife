@@ -284,6 +284,7 @@ export default {
             //     createdOn: new Date(),
             // }
             // console.log(this.editedItem.productImage);
+
             await this.$store.dispatch('productss/addProduct', formData).then(response => {
                 this.loading = false
                 this.refreshTable()

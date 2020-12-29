@@ -48,6 +48,7 @@
                     </v-btn>
                 </template>
 
+                <client-only>
                 <div v-if="cartItem" class="menu-container">
                     <div class="arrow-up"></div>
                     <v-card tile class="mx-auto">
@@ -65,7 +66,6 @@
                                                 <v-list-item-subtitle class="caption pa-0 ma-0 grey--text text--darken-2 font-weight-regular">
                                                     Quantity - x {{ product.quantity }}
                                                 </v-list-item-subtitle>
-                                                <!-- <v-list-item-subtitle class="caption pa-0 ma-0">Size - </v-list-item-subtitle> -->
                                             </v-list-item-content>
                                             <v-spacer></v-spacer>
 
@@ -117,9 +117,10 @@
                 </div>
 
                 <div v-else class="pa-4 white red--text font-weight-bold">You have no item in cart</div>
+                </client-only>
             </v-menu>
 
-            
+            <client-only>
             <v-btn v-if="!$auth.loggedIn" href="/auth" large text
                 class="custom-red post-caption text-capitalize px-3 mr-2 d-none d-sm-flex">
                     Log In
@@ -129,12 +130,7 @@
                 class="custom-red post-caption text-capitalize px-3 mr-2 d-none d-sm-flex">
                     Create Account
             </v-btn>
-
-            <!-- <v-btn large text @click="openScanModal"
-                class="custom-red post-caption text-capitalize px-3 mr-2 d-none d-sm-flex">
-                    Scan BarCode
-            </v-btn> -->
-
+            
             <div v-if="$auth.loggedIn">
                 <v-menu v-model="userMenu" close-delay="200" 
                     max-width="200" :close-on-content-click="false" 
@@ -176,7 +172,7 @@
                                     </v-list-item>
                                 </div> -->
 
-                                <!-- <v-divider></v-divider> -->
+                                <v-divider></v-divider>
 
                                 <v-list-item @click="logout">
                                     <v-list-item-icon class="mr-4">
@@ -192,9 +188,8 @@
                     </v-card>
                 </v-menu>
             </div>
+            </client-only>
             
-           
-            <!-- <v-btn @click="logout" depressed outlined rounded class="custom-green custom-h6 px-8 py-3 text-capitalize">SignIn/Logout</v-btn> -->
         </v-app-bar>
 
         <div class="sub-nav">

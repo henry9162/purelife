@@ -10,11 +10,13 @@
 
         <!-- checkout forms section -->
         <div class="mt-2">
-            <loading 
-                :active.sync="isLoading" 
-                :can-cancel="true" 
-                :is-full-page="fullPage">
-            </loading>
+            <client-only>
+                <loading 
+                    :active.sync="isLoading" 
+                    :can-cancel="true" 
+                    :is-full-page="fullPage">
+                </loading>
+            </client-only>
 
             <v-container class="pt-0">
                 <v-row>
@@ -94,14 +96,13 @@
                                                         <v-col md="12">
                                                             <div class="text-center">
                                                                 <paystack
-                                                                    ref="paystack"
                                                                     :disabled="disabled"
                                                                     style="margin:auto;"
                                                                     class="v-btn post-caption my-3 v-btn--contained theme--light v-size--large white--text"
                                                                     :class="disabled ? 'no-shadow grey lighten-2' : 'green darken-2'"
                                                                     :amount="cartTotal * 100"
                                                                     :email="authEmail"
-                                                                    :paystackkey="PUBLIC_KEY"
+                                                                    :paystackkey="paystackkey"
                                                                     :callback="processPayment"
                                                                     :reference="genRef()"
                                                                     :close="close"
@@ -143,7 +144,6 @@
                                                             <div class="subtitle-2" v-text="product.title"></div>
                                                             <div class="d-flex justify-space-between">
                                                                 <div class="d-flex mt-2">
-                                                                    <!-- <v-text-field value="1" class="my-0 mr-4" style="width: 35px" outlined></v-text-field> -->
                                                                     <input disabled :value="product.quantity" class="my-0 mr-4 text-center" style="width: 35px; border: 1px solid grey">
                                                                     <v-btn 
                                                                         @click="updateCartQuantity({ product: product, type: 'decrease' })"
@@ -247,9 +247,6 @@
 </template>
 
 <script>
-import billingform from '../components/checkout/BillingForm'
-import shippingform from '../components/checkout/ShippingForm'
-import orderReview from '../components/checkout/OrderReview'
 import titleParalax from '../components/TitleParalax'
 import { mapState, mapGetters, mapActions } from 'vuex'
 
@@ -257,7 +254,7 @@ import uniqid from 'uniqid';
 
 export default {
     layout: 'home',
-    components: { billingform, shippingform, orderReview, titleParalax },
+    components: { titleParalax },
     data: () => ({
         checkbox: true,
         radios: 'regularShipping',
@@ -293,7 +290,7 @@ export default {
         countries: ['Nigeria'],
         loading: false,
         valid: true,
-        PUBLIC_KEY: 'pk_test_c19414215f1bee0bd8d754fc85c30e216b2b5ae9',
+        paystackkey: 'pk_test_c19414215f1bee0bd8d754fc85c30e216b2b5ae9',
         fullPage: false,
         disabled: true,
     }),
@@ -306,7 +303,7 @@ export default {
             states: 'allStates'
         }),
         authEmail(){
-            return this.$store.state.auths.authUser.email
+            return this.$auth.user.email
         }
     },
 
@@ -321,18 +318,14 @@ export default {
                 this.disabled = false
             }
         },
-        processCheckout(){
-            this.$refs.paystack;
-        },
         close() {
             this.$toast.error("User cancelled payment").goAway(3000);
         },
         genRef() {
-            return uniqid("pstk-");
+           return uniqid("pstk-");
         },
         processPayment(response) {
             console.log(response)
-            debugger
             let billInfo = {
                 fullName: this.fullName,
                 email: this.email,

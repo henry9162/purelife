@@ -39,17 +39,18 @@
                         </v-btn>
 
                             <paystack
-                            style="margin:auto;"
-                            class="v-btn my-3 v-btn--contained theme--light v-size--large green white--text"
-                            :amount="totalPrice * 100"
-                            :email="email"
-                            :paystackkey="PUBLIC_KEY"
-                            :callback="processPayment"
-                            :reference="genRef()"
-                            :close="closePaystack"
-                            :embed="false"
-                        >
-                        PAY (ONLINE N {{totalPrice}})</paystack>
+                                style="margin:auto;"
+                                class="v-btn my-3 v-btn--contained theme--light v-size--large green white--text"
+                                :amount="totalPrice * 100"
+                                :email="email"
+                                :paystackkey="PUBLIC_KEY"
+                                :callback="processPayment"
+                                :reference="genRef()"
+                                :close="closePaystack"
+                                :embed="false"
+                            >
+                                PAY (ONLINE N {{totalPrice}})
+                            </paystack>
 
                     </div>
                 </v-card>

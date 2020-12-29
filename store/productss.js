@@ -173,7 +173,11 @@ export const actions = {
     },
     addProduct(context, data){
         return new Promise((resolve, reject) => {
-            this.$axios.post('/Products', data).then(response => {
+            this.$axios.post('/Products', data, {
+                'headers': {
+                    'Content-type': 'multipart/form-data'
+                } 
+            }).then(response => {
                 context.dispatch('processResponse', response)
                 resolve(response)
             })
@@ -188,7 +192,7 @@ export const actions = {
         return new Promise((resolve, reject) => {
             this.$axios.put(`/Products/${data.id}`, data.data, {
                 'headers': {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'multipart/form-data'
                 }
             }).then(response => {
                 context.dispatch('processResponse', response)

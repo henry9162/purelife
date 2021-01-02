@@ -107,73 +107,6 @@
                                 <v-row>
                                     <v-hover v-slot:default="{hover}">
                                         <v-card :elevation="hover ? 10 : ''" flat style="width: 100%">
-<<<<<<< HEAD
-                                            <div class="font-weight-bold customm-caption text-center red--text pb-2 pt-6 px-6">Review Your Order</div>
-                                            <v-container class="pt-0">
-                                                <v-hover v-for="product in cartProducts" :key="product.productId" v-slot:default="{hover}">
-                                                    <v-row class="px-2 py-0" :class="hover ? 'grey lighten-3' : ''">
-                                                        <v-col md="4">
-                                                            <v-img :aspect-ratio="16/9" :src="product.image_front"></v-img>
-                                                        </v-col>
-                                                        <v-col md="8">
-                                                            <div class="subtitle-2" v-text="product.title"></div>
-                                                            <div class="d-flex justify-space-between">
-                                                                <div class="d-flex mt-2">
-                                                                    <!-- <v-text-field value="1" class="my-0 mr-4" style="width: 35px" outlined></v-text-field> -->
-                                                                    <input value="1" class="my-0 mr-4 text-center" style="width: 35px; border: 1px solid grey">
-                                                                    <v-btn class="title font-weight-thin" depressed x-small fab color="grey lighten-3">-</v-btn>
-                                                                    <v-btn class="ml-2 title font-weight-thin" depressed x-small fab color="grey lighten-3">+</v-btn>
-                                                                </div>
-                                                                <div class="d-flex justify-space-between">
-                                                                    <div class="subtitle-2 mt-4"><v-icon small>mdi-currency-ngn</v-icon>{{ product.price }}</div>
-                                                                    <div class="mt-2">
-                                                                        <v-btn fab x-small depressed color="transparent">
-                                                                            <v-icon color="red">mdi-close</v-icon>
-                                                                        </v-btn>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </v-col>
-                                                    </v-row>
-                                                </v-hover>
-                                            </v-container>
-
-                                            <v-container fluid>
-                                                <v-row>
-                                                    <!-- <div class="mx-4" style="border: 10px solid #b6bbc6; width: 100%">
-                                                        <v-expansion-panels flat focusable>
-                                                            <v-expansion-panel>
-                                                                <v-expansion-panel-header>Use Loyalty Point</v-expansion-panel-header>
-                                                                <v-expansion-panel-content>
-                                                                    <div class="d-flex pt-8">
-                                                                        <v-text-field label="" hint="Enter Loyalty Point" clearable outlined></v-text-field>
-                                                                        <v-btn class="ml-2 mt-2" tile depressed color="primary" dark>Apply</v-btn>  
-                                                                    </div> 
-                                                                </v-expansion-panel-content>
-                                                            </v-expansion-panel>
-                                                        </v-expansion-panels>
-                                                    </div> -->
-
-                                                    <div class="ml-9 mb-3 mt-2 pr-2" style="width: 50%; border: 10px solid #b6bbc6">
-                                                        <v-simple-table fixed-header>
-                                                            <template v-slot:default>
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th style="" class="title font-weight-bold">
-                                                                            Total
-                                                                            <span>
-                                                                                <v-icon class="font-weight-thin" small right>mdi-currency-ngn</v-icon>
-                                                                            </span>
-                                                                            <span class="title font-weight-light" v-text="cartTotal"></span>
-                                                                        </th>
-                                                                    </tr>
-                                                                </thead>
-                                                            </template>
-                                                        </v-simple-table>
-                                                    </div>                         
-                                                </v-row>
-                                            </v-container>
-=======
                                             <v-card-title class="font-weight-bold text--grey text--darken-2 title orange--text pb-4 pt-6" >PAYMENT METHOD</v-card-title>
 
                                             <v-card-actions>
@@ -191,7 +124,6 @@
                                                 >
                                                 PAYSTACK (PAY N {{cartTotal}})</paystack>
                                             </v-card-actions>
->>>>>>> 34032a1762b4269e861ced824270671aa6fb4d0b
                                         </v-card>
                                     </v-hover>
                                 </v-row>
@@ -256,19 +188,6 @@ export default {
         genRef() {
             return uniqid("pstk-");
         },
-<<<<<<< HEAD
-        processPayment() {
-            let data = {
-                fullName: this.fullName,
-                email: this.email,
-                phoneNumber: this.phoneNumber,
-                address: this.address,
-                stateId: this.stateId,
-                country: this.country,
-            }
-            this.$store.dispatch('setBillInfo', data)
-            this.$toast.success("User successfully made payment").goAway(4000);
-=======
         processPayment(data) {
             debugger
             this.$toast.success("successfully made payment").goAway(4000);
@@ -277,7 +196,6 @@ export default {
         },
         processCashPayment(){
             this.$toast.success("successfully made payment").goAway(4000);
->>>>>>> 34032a1762b4269e861ced824270671aa6fb4d0b
             this.$router.push({ path: '/' });
             this.clearCart();
         },

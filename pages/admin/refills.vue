@@ -274,5 +274,22 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-    
+    .viewImage {
+        position: relative
+    }
+    .viewImageBtn {
+        position: absolute;
+        bottom: -15px;
+        right: -12px
+    }
+    .list-color { color: #22A64E !important}
+
+    .post-caption {
+        font-family: light-font(family);
+        font-weight: 100;
+    }
+
+    .custom-style {
+        font-family: font(family) !important;
+    }
 </style>

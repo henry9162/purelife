@@ -38,7 +38,7 @@
                 <!-- Zoomable Image -->
                 <v-col md="6">
                     <v-card v-if="product.productImage" tile color="white">
-                        <zoom :img-normal="product.productImage" :scale="2"></zoom>
+                        <zoom :img-normal="product.imageSrc" :scale="2"></zoom>
                     </v-card>
                     <v-card tile color="inherit" v-else>
                         <v-img :src="defaultImage"></v-img>

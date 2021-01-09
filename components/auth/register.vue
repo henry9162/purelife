@@ -1,7 +1,7 @@
 <template>
-    <v-card elevation="12" color="#fff" width="60%" height="565px" class="auth">
+    <v-card elevation="12" color="#fff" :width="width" height="565px" class="authDiv">
         <div class="div-context">
-            <div class="login-form px-12 py-4">
+            <div class="login-form px-12 pt-12 pb-6">
                 <div class="login-header d-flex justify-center mb-4">
                     <div class="login-header-content">
                         <div class="login-header-logo">
@@ -14,7 +14,7 @@
                 <div class="form-fields">
                     <v-form ref="form" class="text-center" v-model="valid" lazy-validation>
                         <v-row>
-                            <v-col cols="12" md="6">
+                            <v-col cols="12" sm="12" md="6">
                                 <v-text-field 
                                     v-model="firstName" prepend-inner-icon="mdi-account" :rules="firstNameRules" filled
                                     dense rounded label="First Name" color="green" required>
@@ -50,7 +50,7 @@
                                 </v-menu>
                             </v-col>
 
-                            <v-col cols="12" md="6">
+                            <v-col cols="12" sm="12" md="6">
                                <v-text-field 
                                     v-model="email" 
                                     prepend-inner-icon="mdi-email" type="email" color="green"
@@ -74,7 +74,7 @@
                          
                         
                         <v-btn @click="register" depressed large prepend-inner-icon="mdi-map-marker" clearable 
-                            class="white--text mt-4 rounded-0 px-8 py-5 text-capitalize" 
+                            class="white--text mt-2 rounded-0 px-8 py-5 text-capitalize" 
                             color="#009933" :loading="loading" :disabled="loading">Register 
                             <v-icon right>mdi-send</v-icon>
                             <template v-slot:loader>
@@ -135,7 +135,8 @@ export default {
         ],
         show1: false,
         valid: true,
-        loading: false
+        loading: false,
+        width: ''
     }),
 
     methods: {
@@ -164,20 +165,75 @@ export default {
             } else {
                 this.loading = false
             }
+        },
+        myEventHandler(e) {
+            let screenWidth = e.target.innerWidth
+            console.log(screenWidth);
+            if(screenWidth <= 425){
+                this.width = '90%'
+            } else if (screenWidth > 425 && screenWidth <= 768) {
+                this.width = '80%'
+            } else {
+                this.width = '40%'
+            }
+        },
+        setWidth(){
+            let screenWidth = screen.width
+            if(screenWidth <= 425){
+                this.width = '90%'
+            } else if (screenWidth > 425 && screenWidth <= 768) {
+                this.width = '80%'
+            } else {
+                this.width = '50%'
+            }
         }
+    },
+
+     mounted(){
+        this.setWidth()
+    },
+
+    created() {
+        if(process.client) {
+            window.addEventListener("resize", this.myEventHandler);
+        }  
+    },
+    destroyed() {
+        if(process.client) {
+            window.removeEventListener("resize", this.myEventHandler);
+        } 
     }
 }
 </script>
 
 <style lang="scss" scoped>
-    
+@import "../../assets/variables.scss";
+
+.authDiv {
+    @include media("<tablet"){
+        overflow: scroll !important;
+    }
+}
+
 .div-context {
     width: 100%;
     height: 100%;
 
-    .login-form .login-header .login-header-content .custom-light-h2 {
-        font-size: 24px;
-        color: #009933;
-    }
+    .login-form {
+        @include media("<=tablet"){
+            padding-left: 1.5rem !important;
+            padding-right: 1.5rem !important;
+        }
+
+        @include media(">=tablet"){
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+
+        .login-header .login-header-content .custom-light-h2 {
+            font-size: 24px;
+            color: #009933;
+        }
+    } 
 }   
 </style>

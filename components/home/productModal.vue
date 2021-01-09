@@ -1,8 +1,8 @@
 <template>
-    <modal :classes="classes" name="product-modal" :min-width="800" :max-width="900" :adaptive="true" :scrollable="true" height="auto" transition="fade-transition" @before-open="productDetails">
+    <modal :classes="classes" name="product-modal" :max-width="900" :adaptive="true" :scrollable="true" height="auto" transition="fade-transition" @before-open="productDetails">
             <v-container class="pt-0" fluid>
                 <v-row class="mx-0 py-4 px-4">
-                    <v-col>
+                    <v-col cols="12" sm="12" md="6">
                         <v-row>
                             <v-card color="grey lighten-3" flat>
                                 <v-card-title v-text="product.productName" class="pt-0 blue--text font-weight-bold title pl-0"></v-card-title>
@@ -28,9 +28,14 @@
                             </v-col> -->
                         </v-row>
                     </v-col>
-                    <v-col class="pl-8">
-                        <div class="mt-15">
-                            <div class="text-right">
+                    <v-col cols="12" sm="12" md="6" class="pl-8">
+                        <div class="mt-1">
+                            <div class="text-left d-md-flex d-lg-none">
+                                <v-btn @click="$router.push({ path: '/ProductPage', query: {productId: product.productId} })" class="mb-3" small depressed dark color="orange darken-1">
+                                    More Details <v-icon small right>mdi-arrow-right</v-icon>
+                                </v-btn>
+                            </div>
+                            <div class="d-none d-sm-flex text-right">
                                 <v-btn @click="$router.push({ path: '/ProductPage', query: {productId: product.productId} })" class="mb-3" small depressed dark color="orange darken-1">
                                     More Details <v-icon small right>mdi-arrow-right</v-icon>
                                 </v-btn>
@@ -79,7 +84,7 @@
                                     quantity: quantity,
                                     price: product.price * quantity
                                 })" 
-                                class="ml-6 mt-1" depressed color="primary" dark>
+                                class="mt-1" depressed color="primary" dark>
                                 <v-icon left>mdi-cart-arrow-down</v-icon> Add to Cart
                             </v-btn>
                         </div>
@@ -123,7 +128,7 @@ export default {
         },
         productDetails(event) {
             this.product = event.params.product;
-            this.imageSelected = event.params.product.productImage
+            this.imageSelected = event.params.product.imageSrc
         },
     }
 }

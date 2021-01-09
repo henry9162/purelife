@@ -335,6 +335,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+    @import "../../assets/variables.scss";
+
     .v-list-item__icon.v-list__group__header__prepend-icon .v-icon {
         color: #22A64E !important;
     } 
@@ -351,21 +353,23 @@ export default {
             cursor: pointer;
         }
 
-        @include phone {
-            padding-left: 0px !important;
+        @include media("<=phone"){
+			padding-left: 0px !important;
         }
-        @include tablet {
-            padding-left: 16px !important;
+
+        @include media("<=tablet"){
+			padding-left: 16px !important;
         }
     }
     .navLinkColor {
         color: $navLinkColor !important;
 
-        @include phone {
-            margin-right: 0px !important;
+        @include media("<=phone"){
+			margin-right: 0px !important;
         }
-        @include tablet {
-            margin-right: 24px !important;
+
+        @include media("<=tablet"){
+			margin-right: 24px !important;
         }
     }
     .custom-h4.home {

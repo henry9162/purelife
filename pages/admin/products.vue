@@ -158,12 +158,13 @@ export default {
         fullPage: false,
         headers: [
             {
-                text: 'Name',
+                text: 'Image',
                 align: 'start',
                 sortable: false,
-                value: 'productName',
+                value: 'imageSrc',
                 class: ['text-button', 'grey--text text--darken-3']
             },
+            { text: 'Name', value: 'productName', class: ['text-button', 'grey--text text--darken-3']},
             { text: 'Quantity', value: 'quantity', class: ['text-button', 'grey--text text--darken-3'] },
             { text: 'Price', value: 'price', class: ['text-button', 'grey--text text--darken-3'] },
             { text: 'Packaging', value: 'productPackageName', class: ['text-button', 'grey--text text--darken-3']},
@@ -187,6 +188,7 @@ export default {
             productGroupId: '',
             productImage: '',
             createdOn: '',
+            imageSrc: ''
         },
         defaultItem: {
             productId: '',
@@ -199,6 +201,7 @@ export default {
             productGroupId: '',
             productImage: '',
             createdOn: '',
+            imageSrc: ''
         },
         file: '',
         threadImage: '',
@@ -256,7 +259,7 @@ export default {
         editItem (item) {
             this.editedIndex = this.products.indexOf(item);
             this.editedItem = Object.assign({}, item);
-            this.threadImage = item.productImage;
+            this.threadImage = item.imageSrc;
             this.$modal.show('products-modal')
         },
         async addProduct(){

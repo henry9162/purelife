@@ -1,8 +1,8 @@
 <template>
-    <v-card elevation="12" color="#fff" width="40%" height="570px" class="auth">
+    <v-card elevation="12" color="#fff" :width="width" height="570px" class="authDiv">
         <div class="div-context">
-            <div class="login-form px-12 py-4">
-                <div class="login-header d-flex justify-center mb-4">
+            <div class="login-form py-4">
+                <div class="login-header d-flex justify-center pb-8">
                     <div class="login-header-content">
                         <div class="login-header-logo">
                             <img src="~assets/logos/logo1.png" alt="" width="60px" height="60px">
@@ -76,7 +76,8 @@ export default {
         ],
         show1: false,
         valid: true,
-        loading: false
+        loading: false,
+        width: ''
     }),
 
     methods: {
@@ -102,21 +103,69 @@ export default {
             } else {
                 this.loading = false
             }
+        },
+        myEventHandler(e) {
+            let screenWidth = e.target.innerWidth
+            if(screenWidth <= 425){
+                this.width = '90%'
+            } else if (screenWidth > 425 && screenWidth <= 768) {
+                this.width = '80%'
+            } else {
+                this.width = '40%'
+            }
+        },
+        setWidth(){
+            let screenWidth = screen.width
+            if(screenWidth <= 425){
+                this.width = '90%'
+            } else if (screenWidth > 425 && screenWidth <= 768) {
+                this.width = '80%'
+            } else {
+                this.width = '40%'
+            }
         }
+    },
+
+    mounted(){
+        this.setWidth()
+    },
+
+    created() {
+        if(process.client) {
+            window.addEventListener("resize", this.myEventHandler);
+        }  
+    },
+    destroyed() {
+        if(process.client) {
+            window.removeEventListener("resize", this.myEventHandler);
+        } 
     }
 }
 </script>
 
 <style lang="scss" scoped>
-    
+@import "../../assets/variables.scss";
+
 .div-context {
     width: 100%;
     height: 100%;
-    margin-top: 130px;
+    margin-top: 70px;
 
-    .login-form .login-header .login-header-content .custom-light-h2 {
-        font-size: 24px;
-        color: #009933;
-    }
+    .login-form {
+        @include media("<=tablet"){
+            padding-left: 1.5rem !important;
+            padding-right: 1.5rem !important;
+        }
+
+        @include media(">=tablet"){
+            padding-left: 3rem;
+            padding-right: 3rem;
+        }
+
+        .login-header .login-header-content .custom-light-h2 {
+            font-size: 24px;
+            color: #009933;
+        }
+    } 
 }   
 </style>

@@ -255,7 +255,7 @@ export const getters = {
                     productId: product.productId,
                     title: product.productName,
                     price: product.price,
-                    image_front: product.productImage,
+                    image_front: product.imageSrc,
                     quantity: cartItem.quantity,
                     inventory: cartItem.inventory,
                     packageName: product.productPackageName,

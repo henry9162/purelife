@@ -17,7 +17,7 @@
         <v-container class="white px-0 pt-0 pb-0" fluid>
             <v-row class="white mx-0 px-0 pb-0">
                 <transition enter-active-class="animated pulse" mode="out-in">
-                    <v-col v-if="visible" class="px-0" md="3" style="border-right: 1px solid lightgrey">
+                    <v-col v-if="visible" class="px-0" xs="1" md="3" style="border-right: 1px solid lightgrey">
                         <div class="px-4 pt-2">
                             <div class="post-caption font-weight-bold text-uppercase">Filters</div>
                             <v-divider class="mt-2"></v-divider>
@@ -123,7 +123,7 @@
                 </transition>
 
                 <!-- Products lists -->
-                <v-col :md="visible ? '9' : '12'">
+                <v-col xs="11" :md="visible ? '9' : '12'">
                     <div class="header mt-5 mb-2">
                         <div class="d-flex px-2 justify-space-between">
                             <div>
@@ -135,7 +135,7 @@
                                 </v-btn>
                             </div>
                             <div class="d-flex">
-                                <div class="blue--text mt-1 mr-2">Change Layout</div>
+                                <div class="blue--text d-none d-sm-flex mt-1 mr-2">Change Layout</div>
                                 <div class="d-flex">
                                     <v-tooltip color="primary" top>
                                         <template v-slot:activator="{ on }">                                   
@@ -245,11 +245,20 @@ export default {
             } else {
                 this.$store.commit('filters/emptyFilteredProduct');
             }
+        },
+        setWidth(){
+            let screenWidth = screen.width
+            if(screenWidth <= 600){
+                this.visible = false
+            } else {
+                this.visible = true
+            }
         }
     },
 
     mounted() {
         this.initialise()
+        this.setWidth()
     }
 }
 

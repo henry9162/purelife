@@ -142,7 +142,7 @@ export default {
   // },
 
   styleResources: {
-    scss: ['assets/styles/*.scss']
+    scss: ['assets/styles/*.scss', 'assets/variables.scss']
   },
 
   // Vuetify module configuration (https://go.nuxtjs.dev/config-vuetify)

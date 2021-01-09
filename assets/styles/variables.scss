@@ -7,20 +7,20 @@ $post-title-home-weight: 500;
 $post-title-font-family: "gotham-black", sans-serif;
 $post-body-font-family: "gotham-light", sans-serif;
 
-$phone: 320px;
-$tablet: 768px;
+// $phone: 320px;
+// $tablet: 768px;
 
-@mixin phone {
-    @media screen and (min-width: #{$phone}), screen and (min-height: 640px) {
-        @content;
-    }
-}
+// @mixin phone {
+//     @media screen and (min-width: #{$phone}), screen and (min-height: 640px) {
+//         @content;
+//     }
+// }
 
-@mixin tablet {
-    @media (min-width: #{$tablet}) {
-        @content;
-    }
-}
+// @mixin tablet {
+//     @media (min-width: #{$tablet}) {
+//         @content;
+//     }
+// }
 
 @font-face {
     font-family: 'gotham-black';

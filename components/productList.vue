@@ -5,7 +5,7 @@
                 <v-col class="px-3 py-4" v-for="product in products" :key="product.productId" :md="gridValue == 3 ? '4' : gridValue == 4 ? '3' : '4'">
                     <v-hover v-slot:default="{ hover }">
                         <v-card color="white" max-width="400" :elevation="hover ? 20 : '4'">
-                            <v-img :aspect-ratio="16/12" :src="product.productImage">
+                            <v-img :aspect-ratio="16/12" :src="product.imageSrc">
                                 <v-expand-transition>
                                     <div v-if="hover"
                                         class="d-flex transition-fast-in-fast-out darken-2 font-weight-bold v-card--reveal display-3 white--text"
@@ -81,7 +81,7 @@
             </v-row>
 
             <v-row v-else>
-                <v-col v-for="n in 9" :key="n" md="4">
+                <v-col cols="12" v-for="n in 9" :key="n" sm="12" md="4">
                     <v-skeleton-loader type="card"></v-skeleton-loader>
                 </v-col>
             </v-row>

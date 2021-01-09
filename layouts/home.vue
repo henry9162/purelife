@@ -1,138 +1,41 @@
 <template>
-    <v-app>
-        <!-- SnackBar -->
-        <v-snackbar :color="color" :timeout=3000 top right v-model="snackBar">
-            <span v-text="alertMessage"></span>
-            <v-btn color="white" text @click="deactivateSnackbar">
-                <v-icon>mdi-close-outline</v-icon>
-            </v-btn>
-        </v-snackbar>
-
-        <v-app-bar elevation="3" color="#fff" class="custom-bar" height="90px" fixed app>
-            <v-toolbar-title class="custom-h4 navLink" @click="$router.push({path: '/'})">
-                <img src="~assets/logos/newLogo.png" height="60px">
-            </v-toolbar-title>
-
-            <v-spacer />
-
-            <v-autocomplete
-                v-model="select"
-                :loading="loading"
-                :items="items"
-                :search-input.sync="search"
-                cache-items
-                class="mx-4"
-                flat
-                hide-no-data
-                hide-details
-                rounded
-                label="Search products?"
-                solo-inverted>
-            </v-autocomplete>
-
-            <v-spacer />
-
-            <v-menu z-index="99999999999999999999999999999999999" tile v-model="menu2" close-delay="200" 
-                max-width="380" :close-on-content-click="false" nudge-bottom="16" nudge-left="55" 
-                open-on-hover :nudge-width="400" offset-y>
-
-                <template v-slot:activator="{ on }">
-                    <v-btn icon class="mx-4" v-on="on">
-                        <span class="custom-red post-caption text-capitalize">Cart</span>
-                        <v-badge class="title" overlap color="750C0D">
-                            <template v-if="cartItem" class="cart-notification" v-slot:badge>
-                                <span dark v-text="cartItem"></span>
-                            </template>
-                            <v-icon class="text-h6 custom-red">mdi-cart-outline</v-icon>
-                        </v-badge>
-                    </v-btn>
-                </template>
-
-                <client-only>
-                <div v-if="cartItem" class="menu-container">
-                    <div class="arrow-up"></div>
-                    <v-card tile class="mx-auto">
-                        <v-list class="pb-0">
-                            <v-list-item-group>
-                                <template v-for="(product, index) in cartProducts">
-                                    <v-list-item :key="product.title">
-                                        
-                                            <v-list-item-avatar class="mr-4" style="border-radius: 0px">
-                                                <v-img :aspect-ratio="16/9" :src="product.image_front"></v-img>
-                                            </v-list-item-avatar>
-                                    
-                                            <v-list-item-content>
-                                                <v-list-item-title class="subtitle-2 font-weight-regular custom-red" v-text="product.title"></v-list-item-title>
-                                                <v-list-item-subtitle class="caption pa-0 ma-0 grey--text text--darken-2 font-weight-regular">
-                                                    Quantity - x {{ product.quantity }}
-                                                </v-list-item-subtitle>
-                                            </v-list-item-content>
-                                            <v-spacer></v-spacer>
-
-                                            <v-list-item-action> 
-                                                <v-list-item-title class="subtitle-2 green--text ml-4 font-weight-thin">
-                                                    <v-icon color="success" class="font-weight-thin" x-small right>mdi-currency-ngn</v-icon>{{ product.price * product.quantity }}
-                                                </v-list-item-title>
-                                            </v-list-item-action>
-
-                                            <v-list-item-action>
-                                                <v-icon @click="removeCartItem(product.id)" color="red">mdi-close</v-icon>
-                                            </v-list-item-action>
-                                        
-                                    </v-list-item>
-
-                                    <v-divider v-if="index <= cartProducts.length" :key="index"></v-divider>
-                                </template>
-                            </v-list-item-group>
-                        </v-list>
-
-                        <v-divider></v-divider>
-
-                        <v-list-item class="blue lighten-5">
-                            <template>
-                                <v-list-item-content></v-list-item-content>
-                                <v-list-item-action>
-                                    <v-list-item-title class="grey--text font-weight-bold">Total</v-list-item-title>
-                                </v-list-item-action>
-                                <v-list-item-action>
-                                    <v-list-item-title class="green--text">
-                                        <v-icon color="success" class="font-weight-thin" small right>mdi-currency-ngn</v-icon>{{ cartTotal }}
-                                    </v-list-item-title>
-                                </v-list-item-action>
-                            </template>
-                        </v-list-item>
-
-                        <v-divider></v-divider>
-                        <v-list-item class="custom-red">
-                            <div class="d-flex justify-center py-4">
-                                <v-btn @click="$router.push({ path: '/ShowCart' })" color="success" depressed tile dark class="mr-1">
-                                    <v-icon small>mdi-cart</v-icon> Show Cart
-                                </v-btn>
-                                <v-btn @click="$router.push({ path: '/checkOut' })" depressed tile dark color="#ED0000" class="ml-1">
-                                    Check Out <v-icon small right>mdi-arrow-right</v-icon>
-                                </v-btn>
-                            </div>
-                        </v-list-item>
-                    </v-card>
-                </div>
-
-                <div v-else class="pa-4 white red--text font-weight-bold">You have no item in cart</div>
-                </client-only>
-            </v-menu>
+    <div>
+        <v-navigation-drawer width="300" v-model="drawer" absolute temporary>
+            
+            <div style="margin: 20px 15px 10px 15px">
+                <v-autocomplete
+                    v-model="selectt"
+                    :loading="loading"
+                    :items="items"
+                    :search-input.sync="search"
+                    cache-items
+                    class="px-4"
+                    flat
+                    hide-no-data
+                    hide-details
+                    rounded
+                    label="Search products?"
+                    solo-inverted>
+                </v-autocomplete>
+            </div>
 
             <client-only>
-            <v-btn v-if="!$auth.loggedIn" href="/auth" large text
-                class="custom-red post-caption text-capitalize px-3 mr-2 d-none d-sm-flex">
-                    Log In
-            </v-btn>
+            <div>
+                <v-btn v-if="!$auth.loggedIn" href="/auth" large text
+                    class="custom-red post-caption text-capitalize px-3 mr-2 d-none d-sm-flex">
+                        Log In
+                </v-btn>
+            </div>
 
-            <v-btn v-if="!$auth.loggedIn" href="/auth" large text 
-                class="custom-red post-caption text-capitalize px-3 mr-2 d-none d-sm-flex">
-                    Create Account
-            </v-btn>
+            <div>
+                <v-btn v-if="!$auth.loggedIn" href="/auth" large text 
+                    class="custom-red post-caption text-capitalize px-3 mr-2 d-none d-sm-flex">
+                        Create Account
+                </v-btn>
+            </div>
             
             <div v-if="$auth.loggedIn">
-                <v-menu v-model="userMenu" close-delay="200" 
+                <v-menu v-model="userMenu1" close-delay="200" 
                     max-width="200" :close-on-content-click="false" 
                     nudge-bottom="13" nudge-right="20" open-on-hover 
                     :nudge-width="200" offset-y>
@@ -141,7 +44,7 @@
                             <v-avatar class="mr-4" size="36">
                                 <img :src="$auth.user != null ? $auth.user.image ? url+$auth.user.image.image : defaultImage : defaultImage" :alt="$auth.user != null ? $auth.user.firstName: ''">
                             </v-avatar>
-                            <span v-text="$auth.user != null ? $auth.user.firstName: ''"></span> <v-icon>mdi-chevron-down</v-icon>
+                            <span style="margin-left: 10px" v-text="$auth.user != null ? $auth.user.firstName: ''"></span> <v-icon>mdi-chevron-down</v-icon>
                         </v-btn>
                     </template>
 
@@ -189,68 +92,337 @@
                 </v-menu>
             </div>
             </client-only>
-            
-        </v-app-bar>
 
-        <div class="sub-nav">
-            <v-card class="d-flex justify-center align-center" color="rgb(237,0,0)" elevation="6" width="100%" height="70px">
-                <div class="text-center d-flex">
-                    <!-- <v-btn href="/" large text
-                        class="white--text post-caption text--darken-5 text-capitalize px-3 mr-2 d-none d-sm-flex">
-                            Home
-                    </v-btn> -->
 
-                    <v-btn @click="$router.push({ path: '/', query: { name: '' } })" large text 
-                        class="white--text post-caption text-capitalize px-3 mr-2 d-none d-sm-flex">
-                            Shop/Order
-                    </v-btn>
 
-                    <!-- <v-menu z-index="99999999999999999999999999999" transition="slide-x-transition" open-on-hover nudge-bottom="60" bottom right>
-                        <template v-slot:activator="{ on, attrs }">
-                            <v-btn class="post-caption white--text text-capitalize" large text v-bind="attrs" v-on="on">
-                                Pharmacy
+
+            <!-- <div class="mx-8 mt-6">
+                <client-only>
+                <div v-if="$auth.loggedIn">
+                    <v-menu v-model="userMenuDrawer" close-delay="200" 
+                        max-width="200" :close-on-content-click="false" 
+                        nudge-bottom="13" nudge-right="20" open-on-hover 
+                        :nudge-width="200" offset-y>
+                        <template v-slot:activator="{ on }">
+                            <v-btn class="post-caption" text color="#FF1493" style="height: 57px" v-on="on">
+                                <v-avatar class="mr-4" size="36">
+                                    <img :src="$auth.user.image ? url+$auth.user.image.image : defaultImage" alt="John">
+                                </v-avatar>
+                                <span v-text="$auth.user.username"></span> <v-icon>mdi-chevron-down</v-icon>
                             </v-btn>
                         </template>
 
-                        <v-list>
-                            <v-list-item v-for="(item, i) in itemss" :key="i" link>
-                                <v-list-item-title class="post-caption custom-green">{{ item.text }}</v-list-item-title>
-                            </v-list-item>
-                        </v-list>
-                    </v-menu> -->
+                        <v-card>
+                            <v-list nav dense>
+                                <v-list-item-group color="primary">
+                                    <div v-if="$auth.user.isAdmin">
+                                        <v-list-item v-for="(item, i) in itemss" :key="i" :to="item.url">
+                                            <v-list-item-icon class="mr-4">
+                                                <v-icon v-text="item.icon"></v-icon>
+                                            </v-list-item-icon>
 
-                    <!-- <v-menu z-index="9999999999999999999999999999999" transition="scale-transition" close-delay="1000" open-on-hover nudge-bottom="60" bottom origin="center right">
-                        <template v-slot:activator="{ on, attrs }">
-                            <v-btn class="post-caption white--text text-capitalize" large text v-bind="attrs" v-on="on">
-                                Book Consultations/Appointment
-                            </v-btn>
-                        </template>
+                                            <v-list-item-content>
+                                                <v-list-item-title v-text="item.text"></v-list-item-title>
+                                            </v-list-item-content>
+                                        </v-list-item>
+                                    </div>
 
-                        <v-list>
-                            <v-list-item v-for="(item, i) in appointments" :key="i" link>
-                                <v-list-item-title class="post-caption custom-green">{{ item.text }}</v-list-item-title>
-                            </v-list-item>
-                        </v-list>
-                    </v-menu> -->
+                                    <div v-else>
+                                        <v-list-item v-for="(item, i) in itemsss" :key="i" :to="item.url">
+                                            <v-list-item-icon class="mr-4">
+                                                <v-icon v-text="item.icon"></v-icon>
+                                            </v-list-item-icon>
 
-                    <!-- <v-btn href="/" large text
-                        class="white--text post-caption text-capitalize px-3 mr-2 d-none d-sm-flex">
-                            Loyalty Cards/Rewards
-                    </v-btn> -->
+                                            <v-list-item-content>
+                                                <v-list-item-title v-text="item.text"></v-list-item-title>
+                                            </v-list-item-content>
+                                        </v-list-item>
+                                    </div>
+
+                                    <v-divider></v-divider>
+
+                                    <v-list-item @click="logout">
+                                        <v-list-item-icon class="mr-4">
+                                            <v-icon>mdi-logout</v-icon>
+                                        </v-list-item-icon>
+
+                                        <v-list-item-content>
+                                            <v-list-item-title>Logout</v-list-item-title>
+                                        </v-list-item-content>
+                                    </v-list-item>
+                                </v-list-item-group>
+                            </v-list>
+                        </v-card>
+                    </v-menu>
                 </div>
-            </v-card>
-        </div>
 
-        <v-main style="background: #f4f0ec; padding-top: 0px">
-            <div>
-                <nuxt />
+                <div v-else>
+                    <v-btn  href="/auth" depressed outlined rounded 
+                        class="navLinkColor custom-h6 px-8 py-5 text-capitalize" 
+                        color="#49AEAA">
+                        Sign Up/Login
+                    </v-btn>
+                </div>  
+                </client-only> 
+            </div> -->
+        </v-navigation-drawer>
+        <v-app>
+            <!-- SnackBar -->
+            <v-snackbar :color="color" :timeout=3000 top right v-model="snackBar">
+                <span v-text="alertMessage"></span>
+                <v-btn color="white" text @click="deactivateSnackbar">
+                    <v-icon>mdi-close-outline</v-icon>
+                </v-btn>
+            </v-snackbar>
+
+            <v-app-bar elevation="3" color="#fff" class="custom-bar" height="90px" fixed app>
+                <v-app-bar-nav-icon  
+                    class="d-flex d-md-none text--darken-2" 
+                    @click.stop="drawer = !drawer" />
+
+                <v-toolbar-title class="custom-h4 navLink" @click="$router.push({path: '/'})">
+                    <img src="~assets/logos/newLogo.png" height="60px">
+                </v-toolbar-title>
+
+                <v-spacer />
+
+                <v-autocomplete
+                    v-model="select"
+                    :loading="loading"
+                    :items="items"
+                    :search-input.sync="search"
+                    cache-items
+                    class="d-none d-sm-flex mx-4"
+                    flat
+                    hide-no-data
+                    hide-details
+                    rounded
+                    label="Search products?"
+                    solo-inverted>
+                </v-autocomplete>
+
+                <v-spacer />
+
+                <v-menu z-index="99999999999999999999999999999999999" tile v-model="menu2" close-delay="200" 
+                    max-width="380" :close-on-content-click="false" nudge-bottom="16" nudge-left="55" 
+                    open-on-hover :nudge-width="400" offset-y>
+
+                    <template v-slot:activator="{ on }">
+                        <v-btn icon class="mx-4" v-on="on">
+                            <span class="custom-red post-caption text-capitalize">Cart</span>
+                            <v-badge class="title" overlap color="750C0D">
+                                <template v-if="cartItem" class="cart-notification" v-slot:badge>
+                                    <span dark v-text="cartItem"></span>
+                                </template>
+                                <v-icon class="text-h6 custom-red">mdi-cart-outline</v-icon>
+                            </v-badge>
+                        </v-btn>
+                    </template>
+
+                    <client-only>
+                    <div v-if="cartItem" class="menu-container">
+                        <div class="arrow-up"></div>
+                        <v-card tile class="mx-auto">
+                            <v-list class="pb-0">
+                                <v-list-item-group>
+                                    <template v-for="(product, index) in cartProducts">
+                                        <v-list-item :key="product.title">
+                                            
+                                                <v-list-item-avatar class="mr-4" style="border-radius: 0px">
+                                                    <v-img :aspect-ratio="16/9" :src="product.image_front"></v-img>
+                                                </v-list-item-avatar>
+                                        
+                                                <v-list-item-content>
+                                                    <v-list-item-title class="subtitle-2 font-weight-regular custom-red" v-text="product.title"></v-list-item-title>
+                                                    <v-list-item-subtitle class="caption pa-0 ma-0 grey--text text--darken-2 font-weight-regular">
+                                                        Quantity - x {{ product.quantity }}
+                                                    </v-list-item-subtitle>
+                                                </v-list-item-content>
+                                                <v-spacer></v-spacer>
+
+                                                <v-list-item-action> 
+                                                    <v-list-item-title class="subtitle-2 green--text ml-4 font-weight-thin">
+                                                        <v-icon color="success" class="font-weight-thin" x-small right>mdi-currency-ngn</v-icon>{{ product.price * product.quantity }}
+                                                    </v-list-item-title>
+                                                </v-list-item-action>
+
+                                                <v-list-item-action>
+                                                    <v-icon @click="removeCartItem(product.id)" color="red">mdi-close</v-icon>
+                                                </v-list-item-action>
+                                            
+                                        </v-list-item>
+
+                                        <v-divider v-if="index <= cartProducts.length" :key="index"></v-divider>
+                                    </template>
+                                </v-list-item-group>
+                            </v-list>
+
+                            <v-divider></v-divider>
+
+                            <v-list-item class="blue lighten-5">
+                                <template>
+                                    <v-list-item-content></v-list-item-content>
+                                    <v-list-item-action>
+                                        <v-list-item-title class="grey--text font-weight-bold">Total</v-list-item-title>
+                                    </v-list-item-action>
+                                    <v-list-item-action>
+                                        <v-list-item-title class="green--text">
+                                            <v-icon color="success" class="font-weight-thin" small right>mdi-currency-ngn</v-icon>{{ cartTotal }}
+                                        </v-list-item-title>
+                                    </v-list-item-action>
+                                </template>
+                            </v-list-item>
+
+                            <v-divider></v-divider>
+                            <v-list-item class="custom-red">
+                                <div class="d-flex justify-center py-4">
+                                    <v-btn @click="$router.push({ path: '/ShowCart' })" color="success" depressed tile dark class="mr-1">
+                                        <v-icon small>mdi-cart</v-icon> Show Cart
+                                    </v-btn>
+                                    <v-btn @click="$router.push({ path: '/checkOut' })" depressed tile dark color="#ED0000" class="ml-1">
+                                        Check Out <v-icon small right>mdi-arrow-right</v-icon>
+                                    </v-btn>
+                                </div>
+                            </v-list-item>
+                        </v-card>
+                    </div>
+
+                    <div v-else class="pa-4 white red--text font-weight-bold">You have no item in cart</div>
+                    </client-only>
+                </v-menu>
+
+                <client-only>
+                <v-btn v-if="!$auth.loggedIn" href="/auth" large text
+                    class="custom-red post-caption text-capitalize px-3 mr-2 d-none d-sm-flex">
+                        Log In
+                </v-btn>
+
+                <v-btn v-if="!$auth.loggedIn" href="/auth" large text 
+                    class="custom-red post-caption text-capitalize px-3 mr-2 d-none d-sm-flex">
+                        Create Account
+                </v-btn>
+                
+                <div class="d-none d-sm-flex" v-if="$auth.loggedIn">
+                    <v-menu v-model="userMenu" close-delay="200" 
+                        max-width="200" :close-on-content-click="false" 
+                        nudge-bottom="13" nudge-right="20" open-on-hover 
+                        :nudge-width="200" offset-y>
+                        <template v-slot:activator="{ on }">
+                            <v-btn class="post-caption" text style="height: 57px" v-on="on">
+                                <v-avatar class="mr-4" size="36">
+                                    <img :src="$auth.user != null ? $auth.user.image ? url+$auth.user.image.image : defaultImage : defaultImage" :alt="$auth.user != null ? $auth.user.firstName: ''">
+                                </v-avatar>
+                                <span v-text="$auth.user != null ? $auth.user.firstName: ''"></span> <v-icon>mdi-chevron-down</v-icon>
+                            </v-btn>
+                        </template>
+
+                        <v-card>
+                            <v-list nav dense>
+                                <v-list-item-group color="primary">
+                                    <div>
+                                        <v-list-item v-for="(item, i) in itemsss" :key="i" :to="item.url">
+                                            <v-list-item-icon class="mr-4">
+                                                <v-icon small v-text="item.icon"></v-icon>
+                                            </v-list-item-icon>
+
+                                            <v-list-item-content>
+                                                <v-list-item-title v-text="item.text"></v-list-item-title>
+                                            </v-list-item-content>
+                                        </v-list-item>
+                                    </div>
+
+                                    <!-- <div v-else>
+                                        <v-list-item v-for="(item, i) in itemsss" :key="i" :to="item.url">
+                                            <v-list-item-icon class="mr-4">
+                                                <v-icon v-text="item.icon"></v-icon>
+                                            </v-list-item-icon>
+
+                                            <v-list-item-content>
+                                                <v-list-item-title v-text="item.text"></v-list-item-title>
+                                            </v-list-item-content>
+                                        </v-list-item>
+                                    </div> -->
+
+                                    <v-divider></v-divider>
+
+                                    <v-list-item @click="logout">
+                                        <v-list-item-icon class="mr-4">
+                                            <v-icon small>mdi-logout</v-icon>
+                                        </v-list-item-icon>
+
+                                        <v-list-item-content>
+                                            <v-list-item-title>Logout</v-list-item-title>
+                                        </v-list-item-content>
+                                    </v-list-item>
+                                </v-list-item-group>
+                            </v-list>
+                        </v-card>
+                    </v-menu>
+                </div>
+                </client-only>
+                
+            </v-app-bar>
+
+            <div class="sub-nav">
+                <v-card class="d-flex justify-center align-center" color="rgb(237,0,0)" elevation="6" width="100%" height="70px">
+                    <div class="text-center d-flex">
+                        <!-- <v-btn href="/" large text
+                            class="white--text post-caption text--darken-5 text-capitalize px-3 mr-2 d-none d-sm-flex">
+                                Home
+                        </v-btn> -->
+
+                        <v-btn @click="$router.push({ path: '/', query: { name: '' } })" large text 
+                            class="white--text post-caption text-capitalize px-3 mr-2">
+                                Shop/Order
+                        </v-btn>
+
+                        <!-- <v-menu z-index="99999999999999999999999999999" transition="slide-x-transition" open-on-hover nudge-bottom="60" bottom right>
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-btn class="post-caption white--text text-capitalize" large text v-bind="attrs" v-on="on">
+                                    Pharmacy
+                                </v-btn>
+                            </template>
+
+                            <v-list>
+                                <v-list-item v-for="(item, i) in itemss" :key="i" link>
+                                    <v-list-item-title class="post-caption custom-green">{{ item.text }}</v-list-item-title>
+                                </v-list-item>
+                            </v-list>
+                        </v-menu> -->
+
+                        <!-- <v-menu z-index="9999999999999999999999999999999" transition="scale-transition" close-delay="1000" open-on-hover nudge-bottom="60" bottom origin="center right">
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-btn class="post-caption white--text text-capitalize" large text v-bind="attrs" v-on="on">
+                                    Book Consultations/Appointment
+                                </v-btn>
+                            </template>
+
+                            <v-list>
+                                <v-list-item v-for="(item, i) in appointments" :key="i" link>
+                                    <v-list-item-title class="post-caption custom-green">{{ item.text }}</v-list-item-title>
+                                </v-list-item>
+                            </v-list>
+                        </v-menu> -->
+
+                        <!-- <v-btn href="/" large text
+                            class="white--text post-caption text-capitalize px-3 mr-2 d-none d-sm-flex">
+                                Loyalty Cards/Rewards
+                        </v-btn> -->
+                    </div>
+                </v-card>
             </div>
 
-        </v-main>
+            <v-main style="background: #f4f0ec; padding-top: 0px">
+                <div>
+                    <nuxt />
+                </div>
 
-        <!-- Newsletter and Footer -->
-        <newsletter-footer />
-    </v-app>      
+            </v-main>
+
+            <!-- Newsletter and Footer -->
+            <newsletter-footer />
+        </v-app>     
+    </div> 
 </template>
 
 <script>
@@ -264,7 +436,10 @@ export default {
         defaultImage: 'https://via.placeholder.com/150',
         loading: false,
         menu2: false,
+        menu3: false,
         userMenu: false,
+        userMenu1: false,
+        drawer: false,
         items: [],
         categories: [ { title: 'MEN' }, { title: 'WOMEN'}, { title: 'KIDS'} ],
         categories2: [ { title: 'ACCESORIES' }, { title: 'BAGS'}, { title: 'MORE'} ],
@@ -284,6 +459,7 @@ export default {
         ],
         search: null,
         select: null,
+        selectt: null,
         states: [
           'Paracetamol',
           'Buscopan',
@@ -430,6 +606,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+    @import "../assets/variables.scss";
+
     .v-list-item__icon.v-list__group__header__prepend-icon .v-icon {
         color: #22A64E !important;
     } 
@@ -460,12 +638,20 @@ export default {
             cursor: pointer;
         }
 
-        @include phone {
-            padding-left: 0px !important;
+        @include media("<=phone"){
+			padding-left: 0px !important;
         }
-        @include tablet {
-            padding-left: 16px !important;
+        
+        @include media("<=tablet"){
+			padding-left: 16px !important;
         }
+        
+        // @include phone {
+        //     padding-left: 0px !important;
+        // }
+        // @include tablet {
+        //     padding-left: 16px !important;
+        // }
     }
     .custom-green {
         color: #009933 !important;

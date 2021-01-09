@@ -1,5 +1,11 @@
 <template>
 <div>
+    <loading 
+        :active.sync="isPageLoading" 
+        :can-cancel="true" 
+        :is-full-page="true">
+    </loading>
+
     <v-container class="grey lighten-5 mx-10 mt-14">
         <v-row justify="end">
             <v-col cols="12" xs="12" justify="end" style="text-align:right">
@@ -38,19 +44,18 @@
                             </template>
                         </v-btn>
 
-                            <paystack
-                                style="margin:auto;"
-                                class="v-btn my-3 v-btn--contained theme--light v-size--large green white--text"
-                                :amount="totalPrice * 100"
-                                :email="email"
-                                :paystackkey="PUBLIC_KEY"
-                                :callback="processPayment"
-                                :reference="genRef()"
-                                :close="closePaystack"
-                                :embed="false"
-                            >
-                                PAY (ONLINE N {{totalPrice}})
-                            </paystack>
+                        <paystack
+                            style="margin:auto;"
+                            class="v-btn my-3 v-btn--contained theme--light v-size--large green white--text"
+                            :amount="totalPrice * 100"
+                            :email="email"
+                            :paystackkey="PUBLIC_KEY"
+                            :callback="processCardPayment"
+                            :reference="genRef()"
+                            :close="closePaystack"
+                            :embed="false"
+                        >
+                        PAY (ONLINE N {{totalPrice}})</paystack>
 
                     </div>
                 </v-card>
@@ -167,6 +172,16 @@ export default {
         barcode: "",
         loading: false,
         PUBLIC_KEY: 'pk_test_c19414215f1bee0bd8d754fc85c30e216b2b5ae9',
+        methodOfPayment: {
+            cash: 1,
+            online: 2
+        },
+        transactionStatus: {
+            pending: 1,
+            success: 2,
+            declined: 3
+        },
+        isPageLoading: false
     }),
 
     computed: {
@@ -181,6 +196,9 @@ export default {
         },
         totalPriceBool() {
             return this.totalPrice > 0 ? true : false;
+        },
+        totalQuantity(){
+            return this.$store.getters["pointOfSale/totalQuantity"];
         }
     },
 
@@ -189,7 +207,8 @@ export default {
             updateQuantity: 'pointOfSale/updateQuantity',
             removeItem: 'pointOfSale/removeItem',
             getProduct: 'pointOfSale/getProduct',
-            clearProducts: 'pointOfSale/clearProducts'
+            clearProducts: 'pointOfSale/clearProducts',
+            processPayment: 'pointOfSale/processPayment'
         }),
         openScanModal(){
             this.$modal.show('barcode-modal');
@@ -251,16 +270,45 @@ export default {
         genRef() {
             return uniqid("pstk-");
         },
-        processCashPayment(){
+        async processCashPayment(){
+
             let data = {
-                transactionId: this.uniqid()
+                "transactionStatusId": this.transactionStatus.success,
+                "totalSum": this.totalPrice,
+                "methodOfPaymentId": this.methodOfPayment.cash,
+                "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                "itemsCount": this.totalQuantity,
+                "isRemoved": false,
+                transactionId: this.genRef()
             }
 
-            this.processPayment(data);
+            this.processPOSPayment(data, "cash");
+
         },
-        processPayment(data) {
-            this.$toast.success("User successfully made payment").goAway(4000);
-            this.clearProducts();
+        processCardPayment(data) {
+
+            let payload = {
+                "transactionStatusId": this.transactionStatus.success,
+                "totalSum": this.totalPrice,
+                "methodOfPaymentId": this.methodOfPayment.online,
+                "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                "itemsCount": this.totalQuantity,
+                "isRemoved": false,
+                transactionId: data.trxref
+            }
+
+            this.processPOSPayment(payload);
+        },
+        async processPOSPayment(data, mode = ""){
+            this.isPageLoading = true;
+            
+            let message = mode == 'cash' ? 'Successfully made payment with cash' : 'Successfully made payment online';
+
+            await this.processPayment(data).then(payload => {
+                this.isPageLoading = false;
+                this.$toast.success(message).goAway(4000);
+                this.clearProducts();
+            });
         }
     },
     mounted(){

@@ -1,5 +1,13 @@
 export const state = () => ({
-    products: [],
+    products: [
+        {
+            productName: "test",
+            serial: 2345323,
+            unitPrice: 20,
+            total: 10,
+            quantity: 5
+        }
+    ],
     totalQuantity: 0
 })
 
@@ -80,6 +88,19 @@ export const actions = {
             })
         })
     },
+    processPayment(context, payload){
+        return new Promise((resolve, reject) => {
+            this.$axios.post('/Transaction/AddTransaction', payload)
+                .then(response => {
+                    let data = response.data.data;
+                    console.log(data);
+                    resolve(response);
+            }).catch(error => {
+                context.dispatch('processError', error);
+                reject(error);
+            })
+        })
+    },
     processError(context, error){
         this.$toast.error(error).goAway(3500)
     },
@@ -100,5 +121,13 @@ export const getters = {
         });
 
         return price;
+    },
+    totalQuantity(state){
+        let quantity = 0;
+        state.products.map(el => {
+            quantity += el["quantity"];
+        });
+
+        return quantity;
     }
 }

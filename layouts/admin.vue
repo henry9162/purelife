@@ -60,6 +60,16 @@
                     </v-list-item>
                 </v-list-group>
 
+                <v-list-group color="#22A64E" class="post-caption list-color" no-action prepend-icon="mdi-point-of-sale">
+                    <template v-slot:activator>
+                        <v-list-item-title class="list-color">Point of Sale</v-list-item-title>
+                    </template>
+
+                    <v-list-item @click="$router.push({path: transaction.url})" v-for="(transaction, i) in transactionList" :key="i" link class="post-caption">
+                        <v-list-item-title class="list-color" v-text="transaction.name"></v-list-item-title>
+                    </v-list-item>
+                </v-list-group>
+
                 <v-list-group color="#22A64E" class="post-caption list-color" no-action prepend-icon="mdi-shape">
                     <template v-slot:activator>
                         <v-list-item-title class="list-color">Disease Management</v-list-item-title>

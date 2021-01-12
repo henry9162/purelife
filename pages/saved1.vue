@@ -107,7 +107,6 @@
                                 <v-row>
                                     <v-hover v-slot:default="{hover}">
                                         <v-card :elevation="hover ? 10 : ''" flat style="width: 100%">
-<<<<<<< HEAD
                                             <div class="font-weight-bold customm-caption text-center red--text pb-2 pt-6 px-6">Review Your Order</div>
                                             <v-container class="pt-0">
                                                 <v-hover v-for="product in cartProducts" :key="product.productId" v-slot:default="{hover}">
@@ -173,25 +172,6 @@
                                                     </div>                         
                                                 </v-row>
                                             </v-container>
-=======
-                                            <v-card-title class="font-weight-bold text--grey text--darken-2 title orange--text pb-4 pt-6" >PAYMENT METHOD</v-card-title>
-
-                                            <v-card-actions>
-                                                <v-btn tile depressed x-large color="orange" dark @click="processCashPayment()">CASH</v-btn>
-                                                <paystack
-                                                    style="margin:auto;"
-                                                    class="v-btn v-btn--contained theme--light v-size--large green white--text"
-                                                    :amount="cartTotal * 100"
-                                                    email="folake@gmail.com"
-                                                    :paystackkey="PUBLIC_KEY"
-                                                    :callback="processPayment"
-                                                    :reference="genRef()"
-                                                    :close="close"
-                                                    :embed="false"
-                                                >
-                                                PAYSTACK (PAY N {{cartTotal}})</paystack>
-                                            </v-card-actions>
->>>>>>> 95cb512cf42fbfdda24b2d93f96162575157c6c0
                                         </v-card>
                                     </v-hover>
                                 </v-row>
@@ -255,7 +235,6 @@ export default {
         genRef() {
             return uniqid("pstk-");
         },
-<<<<<<< HEAD
         processPayment() {
             let data = {
                 fullName: this.fullName,
@@ -267,16 +246,6 @@ export default {
             }
             this.$store.dispatch('setBillInfo', data)
             this.$toast.success("User successfully made payment").goAway(4000);
-=======
-        processPayment(data) {
-            debugger
-            this.$toast.success("successfully made payment").goAway(4000);
-            this.$router.push({ path: '/' });
-            this.clearCart();
-        },
-        processCashPayment(){
-            this.$toast.success("successfully made payment").goAway(4000);
->>>>>>> 95cb512cf42fbfdda24b2d93f96162575157c6c0
             this.$router.push({ path: '/' });
             this.clearCart();
         },

@@ -37,7 +37,8 @@
                                             productName: product.productName,
                                             quantity: quantity, 
                                             inventory: product.quantity,
-                                            price: product.price * quantity 
+                                            price: product.price * quantity,
+                                            isRefill: false 
                                         })">
                                         <v-icon>mdi-cart</v-icon>
                                     </v-btn>

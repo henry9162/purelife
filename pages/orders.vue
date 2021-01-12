@@ -37,6 +37,13 @@
                                         color="green darken-2">
                                         Buy Again
                                     </v-btn>
+                                    <v-btn 
+                                        @click="$router.push({path: '/preview'})"
+                                        class="white--text"
+                                        depressed tile 
+                                        color="red darken-2">
+                                        View <v-icon right>mdi-arrow-right</v-icon>
+                                    </v-btn>
                                 </div>
                             </div>
                         </v-col>
@@ -67,6 +74,13 @@
                                         color="green darken-2">
                                         Buy Again
                                     </v-btn>
+                                    <v-btn 
+                                        @click="$router.push({path: '/preview'})"
+                                        class="white--text"
+                                        depressed tile 
+                                        color="red darken-2">
+                                        View <v-icon right>mdi-arrow-right</v-icon>
+                                    </v-btn>
                                 </div>
                             </div>
                         </v-col>
@@ -89,7 +103,30 @@ export default {
 
     data: () => ({
         defaultImage: 'https://via.placeholder.com/150'
-    })
+    }),
+
+    computed: {
+        ...mapGetters({
+            transProducts: 'productss/transProductsByUser',
+            // stateName: 'productss/stateName',
+            // transSummary: 'productss/transactionSummary'
+        })
+    },
+
+    methods: {
+        init(){
+            let userId = this.$auth.user.userId
+            this.$store.dispatch('productss/getTransactionByUserId', userId)
+        },
+        async setUser(){
+            await this.$store.dispatch('auths/setUser');
+        },
+    },
+
+    mounted(){
+        this.setUser()
+        this.init()
+    }
 }
 </script>
 

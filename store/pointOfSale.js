@@ -88,6 +88,17 @@ export const actions = {
             })
         })
     },
+    getProductByCode(context, payload){
+        return new Promise((resolve, reject) => {
+            this.$axios.get(`/Products/GetProductsBySerialNumber/${payload}`)
+                .then(response => {
+                    resolve(response);
+                }).catch(error => {
+                    context.dispatch('processError', error);
+                    reject(error);
+                })
+        })
+    },
     processPayment(context, payload){
         return new Promise((resolve, reject) => {
             this.$axios.post('/Transaction/AddTransaction', payload)

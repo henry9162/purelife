@@ -82,7 +82,8 @@
                                     productName: product.productName, 
                                     inventory: product.quantity,
                                     quantity: quantity,
-                                    price: product.price * quantity
+                                    price: product.price * quantity,
+                                    isRefill: false
                                 })" 
                                 class="mt-1" depressed color="primary" dark>
                                 <v-icon left>mdi-cart-arrow-down</v-icon> Add to Cart

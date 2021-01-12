@@ -29,92 +29,93 @@
                                         <v-hover v-slot:default="{ hover }">
                                             <v-card color="green darken-2" :elevation="hover ? 15 : ''" flat>  
                                                 <v-card class="mx-4">
-                                                <div class="font-weight-bold customm-caption pb-2 text-center green--text text-darken-2 pt-10 px-6">Billing Details</div>
+                                                    <div class="font-weight-bold customm-caption pb-2 text-center green--text text-darken-2 pt-10 px-6">Billing Details</div>
 
-                                                <v-form ref="form" class="text-center" v-model="valid" lazy-validation>
-                                                    <v-row class="px-12 pb-4">
-                                                        <v-col md="6">
-                                                            <v-text-field 
-                                                                @keyup="activateBtn"
-                                                                v-model="fullName" 
-                                                                :rules="fullNameRules"
-                                                                prepend-inner-icon="mdi-account" 
-                                                                color="green" label="Full Name">
-                                                            </v-text-field>
-                                                        </v-col>
-                                                        <v-col md="6">
-                                                            <v-text-field 
-                                                                @keyup="activateBtn"
-                                                                v-model="email" 
-                                                                :rules="emailRules"
-                                                                prepend-inner-icon="mdi-email"  
-                                                                color="green" label="Email">
-                                                            </v-text-field>
-                                                        </v-col>
-                                                        <v-col class="py-0 my-0" md="6">
-                                                            <v-text-field 
-                                                                @keyup="activateBtn"
-                                                                v-model="phoneNumber" 
-                                                                :rules="phoneRules"
-                                                                prepend-inner-icon="mdi-cellphone" 
-                                                                color="green" label="Phone Number">
-                                                            </v-text-field>
-                                                        </v-col>
-                                                        <v-col class="py-0 my-0" md="6">
-                                                            <v-text-field 
-                                                                @keyup="activateBtn"
-                                                                v-model="address" 
-                                                                prepend-inner-icon="mdi-map-marker"
-                                                                :rules="addressRules" 
-                                                                color="green" label="Address">
-                                                            </v-text-field>
-                                                        </v-col>
-                                                        <v-col class="py-0" md="6">
-                                                            <v-select
-                                                                prepend-inner-icon="mdi-map-marker"
-                                                                :rules="stateRules"
-                                                                v-model="stateId"
-                                                                :items="states"
-                                                                item-text="stateName"
-                                                                item-value="stateId"
-                                                                label="State"
-                                                                @change="activateBtn"
-                                                                chips>
-                                                            </v-select>
-                                                        </v-col>
-                                                    
-                                                        <v-col class="py-0" md="6">
-                                                            <v-select
-                                                                readonly
-                                                                :rules="countryRules"
-                                                                v-model="country"
-                                                                :items="countries"
-                                                                hint="Default country is preselected" color="green" label="Country" chips>
-                                                            </v-select>
-                                                        </v-col>
+                                                    <v-form ref="form" class="text-center" v-model="valid" lazy-validation>
+                                                        <v-row class="px-12 pb-4">
+                                                            <v-col md="6">
+                                                                <v-text-field 
+                                                                    @keyup="activateBtn"
+                                                                    v-model="fullName" 
+                                                                    :rules="fullNameRules"
+                                                                    prepend-inner-icon="mdi-account" 
+                                                                    color="green" label="Full Name">
+                                                                </v-text-field>
+                                                            </v-col>
+                                                            <v-col md="6">
+                                                                <v-text-field 
+                                                                    @keyup="activateBtn"
+                                                                    v-model="email" 
+                                                                    :rules="emailRules"
+                                                                    prepend-inner-icon="mdi-email"  
+                                                                    color="green" label="Email">
+                                                                </v-text-field>
+                                                            </v-col>
+                                                            <v-col class="py-0 my-0" md="6">
+                                                                <v-text-field 
+                                                                    @keyup="activateBtn"
+                                                                    v-model="phoneNumber" 
+                                                                    :rules="phoneRules"
+                                                                    prepend-inner-icon="mdi-cellphone" 
+                                                                    color="green" label="Phone Number">
+                                                                </v-text-field>
+                                                            </v-col>
+                                                            <v-col class="py-0 my-0" md="6">
+                                                                <v-text-field 
+                                                                    @keyup="activateBtn"
+                                                                    v-model="address" 
+                                                                    prepend-inner-icon="mdi-map-marker"
+                                                                    :rules="addressRules" 
+                                                                    color="green" label="Address">
+                                                                </v-text-field>
+                                                            </v-col>
+                                                            <v-col class="py-0" md="6">
+                                                                <v-select
+                                                                    prepend-inner-icon="mdi-map-marker"
+                                                                    :rules="stateRules"
+                                                                    v-model="stateId"
+                                                                    :items="states"
+                                                                    item-text="stateName"
+                                                                    item-value="stateId"
+                                                                    label="State"
+                                                                    @change="activateBtn"
+                                                                    chips>
+                                                                </v-select>
+                                                            </v-col>
                                                         
-                                                        <v-col md="12">
-                                                            <div class="text-center">
-                                                                <paystack
-                                                                    :disabled="disabled"
-                                                                    style="margin:auto;"
-                                                                    class="v-btn post-caption my-3 v-btn--contained theme--light v-size--large white--text"
-                                                                    :class="disabled ? 'no-shadow grey lighten-2' : 'green darken-2'"
-                                                                    :amount="cartTotal * 100"
-                                                                    :email="authEmail"
-                                                                    :paystackkey="paystackkey"
-                                                                    :callback="processPayment"
-                                                                    :reference="genRef()"
-                                                                    :close="close"
-                                                                    :embed="false"
-                                                                >
-                                                                MAKE PAYMENT (N {{cartTotal}})</paystack>
+                                                            <v-col class="py-0" md="6">
+                                                                <v-select
+                                                                    readonly
+                                                                    :rules="countryRules"
+                                                                    v-model="country"
+                                                                    :items="countries"
+                                                                    hint="Default country is preselected" color="green" label="Country" chips>
+                                                                </v-select>
+                                                            </v-col>
+                                                        </v-row>
+                                                    </v-form>
 
-                                                            </div>
-                                                        </v-col>
-                                                        
-                                                    </v-row>
-                                                </v-form>
+                                                    <v-col md="12">
+                                                        <div class="text-center">
+                                                            <paystack
+                                                                :disabled="disabled"
+                                                                style="margin:auto;"
+                                                                class="v-btn post-caption my-3 v-btn--contained theme--light v-size--large white--text"
+                                                                :class="disabled ? 'no-shadow grey lighten-2' : 'green darken-2'"
+                                                                :amount="cartTotal * 100"
+                                                                :email="authEmail"
+                                                                :paystackkey="PUBLIC_KEY"
+                                                                :callback="processPayment"
+                                                                :reference="genRef()"
+                                                                :close="close"
+                                                                :embed="false"
+                                                            >
+                                                            MAKE PAYMENT (N {{cartTotal}})</paystack>
+
+                                                        </div>
+                                                        <!-- authEmail -->
+                                                    </v-col>
+
                                                 </v-card>
 
                                             </v-card>
@@ -168,6 +169,40 @@
                                                                         </v-btn>
                                                                     </div>
                                                                 </div>
+                                                            </div>
+                                                            <div>
+                                                                <v-checkbox :input-value="product.isRefil"  @click="updateCartRefill({ product: product})" color="green">
+                                                                    <template v-slot:label>
+                                                                        <div @click.stop="">
+                                                                            Want a refill?
+                                                                        </div>
+                                                                    </template>
+                                                                </v-checkbox>
+                                                            </div>
+                                                            <div v-if="showDate">
+                                                                <v-menu
+                                                                    ref="menu" v-model="menu" :close-on-content-click="false" :return-value.sync="date"
+                                                                    transition="scale-transition" offset-y min-width="290px">
+
+                                                                    <template v-slot:activator="{ on, attrs }">
+                                                                        <v-text-field
+                                                                            v-model="date"
+                                                                            label="Date Of Birth"
+                                                                            prepend-inner-icon="mdi-calendar"
+                                                                            readonly
+                                                                            v-bind="attrs"
+                                                                            v-on="on"
+                                                                            filled dense rounded 
+                                                                        ></v-text-field>
+                                                                    </template>
+
+                                                                    <v-date-picker v-model="date" no-title scrollable>
+                                                                        <v-spacer></v-spacer>
+
+                                                                        <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
+                                                                        <v-btn text color="primary" @click="$refs.menu.save(date)">OK</v-btn>
+                                                                    </v-date-picker>
+                                                                </v-menu>
                                                             </div>
                                                         </v-col>
                                                     </v-row>
@@ -249,13 +284,14 @@
 <script>
 import titleParalax from '../components/TitleParalax'
 import { mapState, mapGetters, mapActions } from 'vuex'
-
 import uniqid from 'uniqid';
 
 export default {
     layout: 'home',
     components: { titleParalax },
     data: () => ({
+        date: new Date().toISOString().substr(0, 10),
+        menu: false,
         checkbox: true,
         radios: 'regularShipping',
         fullName: '',
@@ -290,17 +326,41 @@ export default {
         countries: ['Nigeria'],
         loading: false,
         valid: true,
-        paystackkey: 'pk_test_c19414215f1bee0bd8d754fc85c30e216b2b5ae9',
+        PUBLIC_KEY: 'pk_test_c19414215f1bee0bd8d754fc85c30e216b2b5ae9',
         fullPage: false,
         disabled: true,
+        refill: false,
+        showDate: false,
+        transactionStatus: {
+            pending: 1,
+            success: 2,
+            declined: 3
+        },
+        methodOfPayment: {
+            cash: 1,
+            online: 2
+        },
     }),
+
+    watch: {
+        refill(val){
+            if (val == true){
+                this.showDate = true
+            } else {
+                this.showDate = false
+                this.menu = false
+            }
+        }
+    },
 
     computed: {
          ...mapGetters({
             cartProducts: 'productss/cartProducts',
             cartTotal: 'productss/cartTotal',
             isLoading: 'filters/getLoader',
-            states: 'allStates'
+            states: 'allStates',
+            cartItem: 'productss/numberOfCartItems',
+            cartCheckout: 'productss/cartCheckout'
         }),
         authEmail(){
             return this.$auth.user.email
@@ -311,7 +371,8 @@ export default {
         ...mapActions({
             clearCart: 'productss/removeAllCartItems',
             updateCartQuantity: 'productss/updateCartQuantity',
-            removeCartItem: 'productss/removeCartItem'
+            removeCartItem: 'productss/removeCartItem',
+            updateCartRefill: 'productss/updateCartRefill'
         }),
         activateBtn(){
             if(this.$refs.form.validate()){
@@ -326,19 +387,29 @@ export default {
         },
         processPayment(response) {
             console.log(response)
-            let billInfo = {
+            debugger
+            let data = {
                 fullName: this.fullName,
                 email: this.email,
                 phoneNumber: this.phoneNumber,
                 address: this.address,
                 stateId: this.stateId,
-                country: this.country,
+                transactionStatusId: this.transactionStatus.success,
+                totalSum: this.cartTotal,
+                methodOfPaymentId: this.methodOfPayment.online,
+                userId: this.$auth.user.userId,
+                itemsCount: this.cartItem,
+                isRemoved: false,
+                transactionId: response.trxref,
+                products: this.cartCheckout
             }
-            let data = { bill: billInfo, cart: this.cartProducts }
-            this.$store.dispatch('setPreview', data)
-            this.$toast.success("User successfully made payment").goAway(4000);
-            this.$router.push({ path: '/preview' });
-            this.clearCart();
+
+            this.$store.dispatch('productss/addTransaction', data).then(response => {
+                let transSummaryId = response.data.data
+                this.$toast.success("User successfully made payment").goAway(4000);
+                this.clearCart();
+                this.$router.push({ path: '/preview', query: {trx: transSummaryId} });
+            })
         },
         async resetUser(){
             await this.$store.dispatch('auths/resetUser');

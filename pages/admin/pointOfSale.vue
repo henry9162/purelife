@@ -8,7 +8,15 @@
 
     <v-container class="grey lighten-5 mx-10 mt-14">
         <v-row justify="end">
-            <v-col cols="12" xs="12" justify="end" style="text-align:right">
+             <v-col cols="12" xs="12" md="6">
+                <div class="mt-4">
+                    <span class="green--text text--darken-2 font-weight-bold">Admin Staff:</span> <span class="post-caption">Faithful</span>
+                </div>
+                <!-- <div>
+                    Custom
+                </div> -->
+            </v-col>
+            <v-col cols="12" xs="12" md="6" justify="end" style="text-align:right">
                  <v-btn tile @click="openScanModal()" color="secondary" class="my-0 mt-4" dark small elevation="3">
                     Open Scanning mode
                 </v-btn>

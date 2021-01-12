@@ -29,6 +29,7 @@
                                             <th class="text-center green py-2 white--text post-caption">Qantity</th>
                                             <th class="text-center green py-2 white--text post-caption">Unit Price</th>
                                             <th class="text-center green py-2 white--text post-caption">Total</th>
+                                            <th class="text-center green py-2 white--text post-caption">Refill</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -69,6 +70,15 @@
                                             </td>
                                             <td class="text-center py-4">
                                                 <v-icon class="font-weight-thin" small right>mdi-currency-ngn</v-icon>{{ product.price * product.quantity }}
+                                            </td>
+                                            <td>
+                                                <v-checkbox :input-value="product.isRefil" @click="updateCartRefill({ product: product})" color="green">
+                                                    <template v-slot:label>
+                                                        <div @click.stop="">
+                                                            Want a refill? 
+                                                        </div>
+                                                    </template>
+                                                </v-checkbox>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -358,6 +368,7 @@ export default {
     methods: {
         ...mapActions({
             updateCartQuantity: 'productss/updateCartQuantity',
+            updateCartRefill: 'productss/updateCartRefill',
             addToCart: 'productss/addToCart',
             removeCartItem: 'productss/removeCartItem'
         }),

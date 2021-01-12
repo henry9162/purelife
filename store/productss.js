@@ -7,7 +7,12 @@ export const state = () => ({
     quantity: 1,
     productId: '',
     show: false,
-    loader: false
+    loader: false,
+    billInfo: '',
+    transSummary: '',
+    stateName: '',
+    transProducts: [],
+    transProductsByUser: []
 })
 
 export const mutations = {
@@ -40,6 +45,17 @@ export const mutations = {
             }
         }
     },
+    updateCartRefill(state, data){
+        if(state.cart.length > 0){
+            const cartItem = state.cart.find(item => data.product.productId == item.productId)
+            const index = state.cart.indexOf(cartItem)
+            if(state.cart[index].isRefill == false){
+                state.cart[index].isRefill = true
+            } else {
+                state.cart[index].isRefill = false
+            }
+        }
+    },
     updateQuantity(state, data) {
         if ( data.type == 'increase') state.quantity < data.product.quantity ? state.quantity++ : '';
         if ( data.type == 'decrease') state.quantity != 1 ? state.quantity-- : state.quantity = 1;    
@@ -59,18 +75,25 @@ export const mutations = {
     },
     removeAllItems (state) {
         state.cart = [];
+        localStorage.removeItem('cartItem');
     },
     increaseCartItemQuantity(state, data) {
         data.cartItem.quantity += data.quantity;
         state.quantity = 1;
         localStorage.setItem('cartItem', JSON.stringify(state.cart))
+    },
+    setTransaction(state, data){
+        state.billInfo = data.billingInfo
+        state.transSummary = data.transSummary
+        state.transProducts = data.products
+        state.stateName = data.state.stateName
+    },
+    setTransactionByUserId(state, data){
+        state.transProductsByUser = data
     }
 }
 
 export const actions = {
-    // getAllProducts(context){
-    //     context.commit('setProducts', products);
-    // },
     toggleProductDropdown(context, id) {
         context.commit('toggleShow', id)
     },
@@ -145,6 +168,9 @@ export const actions = {
     updateCartQuantity(context, data) {
         context.commit('updateCartQuantity', data);
     },
+    updateCartRefill(context, data){
+        context.commit('updateCartRefill', data);
+    },
     updateQuantity(context, data) {
         context.commit('updateQuantity', data);
     },
@@ -216,9 +242,50 @@ export const actions = {
             })
         })
     },
-    setPreview(context, data){
-        context.commit('setPreview', data)
+    getTransactionById(context, id){
+        this.$axios.get(`/Transaction/GetTransactionSummaryById/${id}`)
+            .then(response => {
+                context.commit('setTransaction', response.data.data)
+            }).catch(error => {
+                context.dispatch('processError', error)
+            })
     },
+    getTransactionByUserId(context, userId){
+        this.$axios.get(`/Transaction/GetAllTransactionsByUserId/${userId}`)
+            .then(response => {
+                context.commit('setTransactionByUserId', response.data.data)
+            }).catch(error => {
+                context.dispatch('processError', error)
+            })
+    },
+    addTransaction(context, data){
+        return new Promise((resolve, reject) => {
+            let payload = {
+                transactionStatusId: data.transactionStatusId,
+                totalSum: data.totalSum,
+                methodOfPaymentId: data.methodOfPaymentId,
+                userId: data.userId,
+                itemsCount: data.itemsCount,
+                transactionId: data.transactionId,
+                isRemoved: data.isRemoved,
+                billingInformation: {
+                    fullName: data.fullName,
+                    email: data.email,
+                    address: data.address,
+                    stateId: data.stateId,
+                    userId: data.userId
+                },
+                products: data.products
+            }
+            this.$axios.post('/Transaction/AddTransaction', payload)
+                .then(response => {
+                    resolve(response)
+                }).catch(error => {
+                    context.dispatch('processError', error)
+                    reject(error)
+                })
+        })
+    },  
     processError(context, error){
         this.$toast.error(error).goAway(3500)
     },
@@ -246,7 +313,6 @@ export const getters = {
     numberOfCartItems(state) { 
         return state.cart.length 
     },
-
     cartProducts(state) {
         if (state.cart.length > 0) {
             return state.cart.map(cartItem => {
@@ -259,12 +325,12 @@ export const getters = {
                     quantity: cartItem.quantity,
                     inventory: cartItem.inventory,
                     packageName: product.productPackageName,
-                    brandName: product.productBrandName
+                    brandName: product.productBrandName,
+                    isRefill: cartItem.isRefill
                 };
             })
         }
     },
-
     cartTotal(state, getters) {
         let total = 0
         if (getters.cartProducts){
@@ -274,6 +340,19 @@ export const getters = {
         }
         return total;
     },
+    cartCheckout(state){
+        if (state.cart.length > 0) {
+            return state.cart.map(cartItem => {
+                const product = state.products.find(product => product.productId == cartItem.productId);
+                return {
+                    productId: product.productId,
+                    price: product.price,
+                    quantity: cartItem.quantity,
+                    isRefil: cartItem.isRefill
+                };
+            })
+        }
+    },
     getLoader(state){
         return state.loader
     },
@@ -282,5 +361,20 @@ export const getters = {
     },
     productPreview(state){
         return state.productPreview
+    },
+    transactionBillInfo(state){
+        return state.billInfo
+    },
+    transactionSummary(state){
+        return state.transSummary
+    },
+    transactionProducts(state){
+        return state.transProducts
+    },
+    stateName(state){
+        return state.stateName
+    },
+    transProductsByUser(state){
+        return state.transProductsByUser
     }
 }

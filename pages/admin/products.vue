@@ -1,10 +1,10 @@
 <template>
 <div>
-    <loading 
+    <!-- <loading 
         :active.sync="isLoading" 
         :can-cancel="true" 
         :is-full-page="fullPage">
-    </loading>
+    </loading> -->
 
     <v-card class="mx-10 mt-14" color="#22A64E">
         <modal
@@ -133,9 +133,16 @@
                     <v-btn @click="$modal.show('products-modal')" depressed large color="#22A64E" dark class="rounded-0 post-caption">
                         <v-icon left>mdi-plus-circle-outline</v-icon> Add Product
                     </v-btn>
+                    
+                    <v-btn @click="openScanModal()" depressed large color="#22A64E" dark class="rounded-0 ml-2 post-caption">
+                        <v-icon left>mdi-plus-circle-outline</v-icon> Open Scanner
+                    </v-btn>
                 </v-toolbar>
             </template>
 
+            <template v-slot:item.imageSrc="{ item }">
+                <img :src="item.imageSrc" :alt="item.productName" height="80px" width="90px">
+            </template>
             <template v-slot:item.actions="{ item }">
                 <v-icon small class="mr-2 green--text" @click="editItem(item)">mdi-pencil</v-icon>
                 <v-icon small class="red--text" @click="deleteItem(item)">mdi-delete</v-icon>
@@ -145,6 +152,53 @@
             </template>
         </v-data-table>
     </v-card>
+
+     <modal
+        name="barcode-modal" :min-width="500"
+        :max-width="100" :adaptive="true"
+        :scrollable="true" height="auto"
+        transition="fade-transition" :clickToClose="false" id="barcoeMdl">
+
+        <v-card>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="red" text @click="closeBarcode()">
+                    <v-icon>mdi-window-close</v-icon>
+                </v-btn>
+            </v-card-actions>
+
+            <div class="text-center" id="mdlText" style="display:none">
+                <span class="headline list-color custom-style">...Awaiting Scan</span>
+            </div>
+            <div class="text-center" id="focusOutText" style="display:none">
+                <span class="list-color custom-style">Please select textbox to scan</span>
+            </div>
+            
+            <div class="text-center" id="mdlSpinner" style="display:none">
+                <span class="headline list-color custom-style">
+                    <v-progress-circular
+                        indeterminate
+                        color="deep-orange lighten-2"
+                    ></v-progress-circular>
+                </span>
+            </div>
+
+            <v-card-text>
+                <v-container>
+                    <div>
+                        <v-text-field clearable 
+                            ref="inputRef" type="text" 
+                            @change="onBarcodeScanned($event)" 
+                            id="scanInput" 
+                            data-barcode
+                            @blur="handleFocus(false)"
+                            @focus="handleFocus(true)">
+                        </v-text-field>
+                    </div>
+                </v-container>
+            </v-card-text>
+        </v-card>
+    </modal>
 </div>
 </template>
 
@@ -206,7 +260,10 @@ export default {
         file: '',
         threadImage: '',
         tempImage: '',
-        defaultImage: 'https://via.placeholder.com/150'
+        defaultImage: 'https://via.placeholder.com/150',
+        scanNumber: 0,
+        scanning: false,
+        barcode: ''
     }),
 
     watch: {
@@ -248,12 +305,75 @@ export default {
             }
             this.setImage(imageFile)
         },
+        openScanModal(){
+            this.$modal.show('barcode-modal');
+
+            setTimeout(function (){
+                document.getElementById("mdlText").style.display = "block";
+                document.getElementById("mdlSpinner").style.display = "none";
+                document.getElementById("scanInput").focus();
+            }, 500)
+        },
+        onBarcodeScanned(barcode){
+            this.scanNumber = ++this.scanNumber;
+            
+            if (this.scanNumber < 2){
+                this.barcode = barcode;
+                this.scanning = true;
+                document.getElementById("scanInput").style.display = "none";
+                document.getElementById("mdlText").style.display = "none";
+                document.getElementById("mdlSpinner").style.display = "block";
+                document.querySelector("#barcoeMdl .v-input__append-inner button").click()
+                this.processBarCode(this.barcode);
+            }
+        },
+        async processBarCode(barcode){
+            await this.getProductByCode(barcode).then(()=> {
+                this.scanNumber = 0
+            });
+        },
+        getProductByCode(barcode){
+            this.$store.dispatch('pointOfSale/getProductByCode', barcode).then(response => {
+                let data = response.data.data;
+                if(data) {
+                    this.editedItem.productId = data.productId
+                    this.editedItem.productName = data.productName
+                    this.editedItem.quantity = data.quantity
+                    this.editedItem.price = data.price
+                    this.editedItem.serialNumber = data.serialNumber
+                    this.editedItem.expiryDate = data.expiryDate
+                    this.editedItem.productBranchId = data.productBranchId
+                    this.editedItem.productGroupId = data.productGroupId
+                    this.editedItem.imageSrc = data.imageSrc
+                    this.threadImage = data.imageSrc;
+                    this.editedIndex = 1
+                    this.$modal.hide('barcode-modal');
+                    this.$modal.show('products-modal');
+                } else {
+                    this.editedItem.productId = ''
+                    this.editedItem.productName = ''
+                    this.editedItem.quantity = ''
+                    this.editedItem.price = ''
+                    this.editedItem.serialNumber = barcode
+                    this.editedItem.expiryDate = ''
+                    this.editedItem.productBranchId = ''
+                    this.editedItem.productGroupId = ''
+                    this.editedItem.imageSrc = ''
+                    this.threadImage = '';
+                    this.editedIndex = -1
+                    this.$modal.hide('barcode-modal');
+                    this.$modal.show('products-modal');
+                }
+                
+            })
+        },
         setImage(imageFile){
             let reader = new FileReader();
             reader.readAsDataURL(imageFile);
             reader.onload = e => {
                 this.tempImage = e.target.result;
                 this.editedItem.productImage = imageFile
+                this.editedItem.imageSrc = imageFile
             };
         },
         editItem (item) {
@@ -297,7 +417,6 @@ export default {
         async updateProduct(){
             this.loading = true
             const formData = new FormData();
-            // formData.append('productId', this.products[this.editedIndex].productId)
             formData.append('productName', this.editedItem.productName)
             formData.append('quantity', this.editedItem.quantity)
             formData.append('price', this.editedItem.price)
@@ -312,21 +431,6 @@ export default {
                 id: this.products[this.editedIndex].productId,
                 data: formData
             }
-            // let data = {
-            //     productId: this.products[this.editedIndex].productId,
-            //     productName: this.editedItem.productName,
-            //     quantity: this.editedItem.quantity,
-            //     price: this.editedItem.price,
-            //     serialNumber: this.editedItem.serialNumber,
-            //     expiryDate: this.editedItem.expiryDate,
-            //     productBranchId: this.editedItem.productBranchId,
-            //     productGroupId: this.editedItem.productGroupId,
-            //     Image: this.editedItem.productImage,
-            //     modifiedOn: new Date(),
-            //     isDeprecated: this.products[this.editedIndex].isDeprecated
-            // }
-            //console.log(data)
-           // debugger
 
             await this.$store.dispatch('productss/updateProduct', data1).then(response => {
                 this.loading  = false
@@ -343,6 +447,12 @@ export default {
                 this.refreshTable()
             })
         },
+        handleFocus(state) {
+            let inputBox = document.getElementById("focusOutText");
+            if (inputBox) {
+                state ? inputBox.style.display= "none" : inputBox.style.display= "block";
+            }
+        },
         refreshTable(){
             this.$store.dispatch('productss/getAllProducts');
         },
@@ -353,6 +463,9 @@ export default {
                 this.loading = false
             })
             this.$modal.hide('products-modal');
+        },
+        closeBarcode(){
+            this.$modal.hide('barcode-modal');
         },
 
         save () {

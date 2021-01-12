@@ -320,6 +320,16 @@
                             <v-list nav dense>
                                 <v-list-item-group color="primary">
                                     <div>
+                                        <v-list-item v-if="$auth.user.accountType != 2" to="/admin/dashboard">
+                                            <v-list-item-icon class="mr-4">
+                                                <v-icon small>mdi-view-dashboard-outline</v-icon>
+                                            </v-list-item-icon>
+
+                                            <v-list-item-content>
+                                                <v-list-item-title>Dashboard</v-list-item-title>
+                                            </v-list-item-content>
+                                        </v-list-item>
+
                                         <v-list-item v-for="(item, i) in itemsss" :key="i" :to="item.url">
                                             <v-list-item-icon class="mr-4">
                                                 <v-icon small v-text="item.icon"></v-icon>
@@ -470,9 +480,8 @@ export default {
           'Amaterm Soft Gel'
         ],
         itemsss: [
-            { text: 'Dashboard', icon: 'mdi-view-dashboard-outline', url: '/admin/dashboard' },
-            { text: 'Orders', icon: 'mdi-sale', url: '/orders' },
-            { text: 'Profile', icon: 'mdi-face-profile', url: '/profile' }
+            { text: 'Profile', icon: 'mdi-face-profile', url: '/profile' },
+            { text: 'Orders', icon: 'mdi-sale', url: '/orders' }
         ],
         scanning: false,
         scanNumber: 0,
@@ -552,50 +561,50 @@ export default {
         async setUser(){
             await this.$store.dispatch('auths/setUser');
         },
-        openScanModal(){
-            this.$modal.show('barcode-modal');
+        // openScanModal(){
+        //     this.$modal.show('barcode-modal');
 
-            setTimeout(function (){
-                document.getElementById("mdlText").style.display = "block";
-                document.getElementById("mdlSpinner").style.display = "none";
-                document.getElementById("scanInput").focus();
-                // this.$refs.barcodeInput.focus();
-            }, 1000)
+        //     setTimeout(function (){
+        //         document.getElementById("mdlText").style.display = "block";
+        //         document.getElementById("mdlSpinner").style.display = "none";
+        //         document.getElementById("scanInput").focus();
+        //         // this.$refs.barcodeInput.focus();
+        //     }, 1000)
             
-            // this.addEventForBarcode()
-            //document.getElementById("scanInput").focus();
-        },
-        onBarcodeScanned (barcode) {
-            this.scanNumber = ++this.scanNumber;
-            console.log(this.scanNumber)
-            if (this.scanNumber < 2){
-                this.barcode = barcode;
-                this.scanning = true;
-                document.getElementById("scanInput").style.display = "none";
-                document.getElementById("mdlText").style.display = "none";
-                document.getElementById("mdlSpinner").style.display = "block";
-                document.querySelector("#barcoeMdl .v-input__append-inner button").click()
-                this.processBarCode(this.barcode);
-            }
-        },
-        BarcodeEvent(e){
-            console.log("ww", e)
-        },
-        processBarCode(barcode){
-            setTimeout(() => {
-                this.scanning = false;
-                document.getElementById("scanInput").style.display = "block";
-                document.getElementById("mdlText").style.display = "block";
-                document.getElementById("mdlSpinner").style.display = "none";
-                document.querySelector("#barcoeMdl .v-input__append-inner button").click()
-                document.getElementById("scanInput").focus();
-                this.scanNumber = 0;
-                alert(barcode);
-            }, 1000);
-        },
-        close () {
-            this.$modal.hide('barcode-modal');
-        }
+        //     // this.addEventForBarcode()
+        //     //document.getElementById("scanInput").focus();
+        // },
+        // onBarcodeScanned (barcode) {
+        //     this.scanNumber = ++this.scanNumber;
+        //     console.log(this.scanNumber)
+        //     if (this.scanNumber < 2){
+        //         this.barcode = barcode;
+        //         this.scanning = true;
+        //         document.getElementById("scanInput").style.display = "none";
+        //         document.getElementById("mdlText").style.display = "none";
+        //         document.getElementById("mdlSpinner").style.display = "block";
+        //         document.querySelector("#barcoeMdl .v-input__append-inner button").click()
+        //         this.processBarCode(this.barcode);
+        //     }
+        // },
+        // BarcodeEvent(e){
+        //     console.log("ww", e)
+        // },
+        // processBarCode(barcode){
+        //     setTimeout(() => {
+        //         this.scanning = false;
+        //         document.getElementById("scanInput").style.display = "block";
+        //         document.getElementById("mdlText").style.display = "block";
+        //         document.getElementById("mdlSpinner").style.display = "none";
+        //         document.querySelector("#barcoeMdl .v-input__append-inner button").click()
+        //         document.getElementById("scanInput").focus();
+        //         this.scanNumber = 0;
+        //         alert(barcode);
+        //     }, 1000);
+        // },
+        // close () {
+        //     this.$modal.hide('barcode-modal');
+        // }
     },    
 
     mounted(){

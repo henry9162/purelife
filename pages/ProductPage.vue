@@ -150,7 +150,8 @@
                                     productName:  product.productName,
                                     inventory: product.quantity,
                                     quantity: quantity,
-                                    price: product.price * quantity 
+                                    price: product.price * quantity,
+                                    isRefill: false 
                                 })" 
                                 tile class="ml-6 mt-1" depressed color="success" dark>
 

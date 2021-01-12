@@ -8,6 +8,8 @@ export default {
             { name: 'Product Packages', icon: 'mdi-account-supervisor', url: '/admin/packages' },
             { name: 'Product Groups', icon: 'mdi-shape', url: '/admin/groups' },
             { name: 'Products', icon: 'mdi-post-outline', url: '/admin/products' },
+            { name: 'Expired Products', icon: 'mdi-post-outline', url: '/admin/expiredProducts' },
+            { name: 'About to Expire ', icon: 'mdi-post-outline', url: '/admin/aboutExpiring' },
             
         ],
         refillList: [

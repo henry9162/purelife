@@ -480,7 +480,7 @@ export default {
           'Amaterm Soft Gel'
         ],
         itemsss: [
-            { text: 'Profile', icon: 'mdi-face-profile', url: '/profile' },
+            //{ text: 'Profile', icon: 'mdi-face-profile', url: '/profile' },
             { text: 'Orders', icon: 'mdi-sale', url: '/orders' }
         ],
         scanning: false,

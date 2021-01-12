@@ -122,23 +122,23 @@
 
             <v-tooltip bottom>
                 <template v-slot:activator="{ on, attrs }">
-                    <v-btn icon class="" v-bind="attrs" v-on="on">
-                        <v-badge class="title" overlap color="red">
+                    <v-btn @click="$router.push({path: '/admin/expiredProducts'})" icon class="" v-bind="attrs" v-on="on">
+                        <v-badge @click="$router.push({path: '/admin/expiredProducts'})" class="title" overlap color="red">
                             <template class="cart-notification" v-slot:badge>
-                                <span dark>0</span>
+                                <span dark v-text="expiredProductsCount"></span>
                             </template>
                             <v-icon class="custom-red pt-2">mdi-atom</v-icon>
                         </v-badge>
                     </v-btn>
                 </template>
-                <span>Items to expire</span>
+                <span>Expired items</span>
             </v-tooltip>
             <v-tooltip bottom>
                 <template v-slot:activator="{ on, attrs }">
-                    <v-btn icon class="" v-bind="attrs" v-on="on">
-                        <v-badge class="title" overlap color="red">
+                    <v-btn @click="$router.push({path: '/admin/aboutExpiring'})" icon class="" v-bind="attrs" v-on="on">
+                        <v-badge @click="$router.push({path: '/admin/aboutExpiring'})" class="title" overlap color="red">
                             <template class="cart-notification" v-slot:badge>
-                                <span dark>0</span>
+                                <span dark v-text="productsAboutToExpireCount"></span>
                             </template>
                             <v-icon class="custom-red pt-2">mdi-atom-variant</v-icon>
                         </v-badge>
@@ -167,6 +167,16 @@
                         <v-list nav dense>
                             <v-list-item-group color="primary">
                                 <div>
+                                    <v-list-item v-if="$auth.user.accountType != 2" to="/admin/dashboard">
+                                        <v-list-item-icon class="mr-4">
+                                            <v-icon small>mdi-view-dashboard-outline</v-icon>
+                                        </v-list-item-icon>
+
+                                        <v-list-item-content>
+                                            <v-list-item-title>Dashboard</v-list-item-title>
+                                        </v-list-item-content>
+                                    </v-list-item>
+
                                     <v-list-item v-for="(item, i) in itemsss" :key="i" :to="item.url">
                                         <v-list-item-icon class="mr-4">
                                             <v-icon small v-text="item.icon"></v-icon>
@@ -234,9 +244,8 @@ export default {
             src: 'logo1.png'
         },
         itemsss: [
-            { text: 'Dashboard', icon: 'mdi-view-dashboard-outline', url: '/admin/dashboard' },
             { text: 'Orders', icon: 'mdi-sale', url: '/orders' },
-            { text: 'Profile', icon: 'mdi-face-profile', url: '/profile' }
+            //{ text: 'Profile', icon: 'mdi-face-profile', url: '/profile' }
         ],
         defaultImage: 'https://via.placeholder.com/150'
     }),
@@ -254,6 +263,12 @@ export default {
         },
         authEmail(){
             return this.$store.getters['auths/authEmail']
+        },
+        expiredProductsCount(){
+            return this.$store.getters['productss/expiredProductsCount']
+        },
+        productsAboutToExpireCount(){
+            return this.$store.getters['productss/productsAboutToExpireCount']
         }
     },
 
@@ -273,6 +288,8 @@ export default {
             this.$store.dispatch('diseases/getAllDiseases');
             this.$store.dispatch('roles/getAllRoles');
             this.$store.dispatch('loyalties/getLoyaltySetUp');
+            this.$store.dispatch('productss/getExpiredProducts');
+            this.$store.dispatch('productss/getProductsAboutToExpire');
         },
         navEvent(){
             if(this.imgSrc.state == false){

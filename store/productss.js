@@ -12,12 +12,17 @@ export const state = () => ({
     transSummary: '',
     stateName: '',
     transProducts: [],
-    transProductsByUser: []
+    transProductsByUser: [],
+    expiredProducts: [],
+    productsAboutToExpire: []
 })
 
 export const mutations = {
     setProducts(state, data){
         state.products = data
+    },
+    setexpiredProducts(state, data){
+        state.expiredProducts = data
     },
     setLoader(state, value){
         value == true ? state.loader = true : state.loader = false
@@ -39,9 +44,11 @@ export const mutations = {
             const index = state.cart.indexOf(cartItem)
             if(data.type == 'increase'){
                 state.cart[index].quantity < state.cart[index].inventory ? state.cart[index].quantity++ : ''
+                localStorage.setItem('cartItem', JSON.stringify(state.cart))
             } 
             else if(data.type == 'decrease'){
                 state.cart[index].quantity != 1 ? state.cart[index].quantity-- : state.cart[index].quantity = 1
+                localStorage.setItem('cartItem', JSON.stringify(state.cart))
             }
         }
     },
@@ -51,8 +58,10 @@ export const mutations = {
             const index = state.cart.indexOf(cartItem)
             if(state.cart[index].isRefill == false){
                 state.cart[index].isRefill = true
+                localStorage.setItem('cartItem', JSON.stringify(state.cart))
             } else {
                 state.cart[index].isRefill = false
+                localStorage.setItem('cartItem', JSON.stringify(state.cart))
             }
         }
     },
@@ -90,6 +99,9 @@ export const mutations = {
     },
     setTransactionByUserId(state, data){
         state.transProductsByUser = data
+    },
+    setProductsAboutToExpire(state, data){
+        state.productsAboutToExpire = data
     }
 }
 
@@ -181,6 +193,29 @@ export const actions = {
                 context.commit('setProducts', response.data.data)
                 context.commit('setLoader', false)
                 context.dispatch('persistCart')
+            }).catch(error => {
+                context.dispatch('processError', error)
+            })
+    },
+    getExpiredProducts(context){
+        context.commit('setLoader', true)
+        this.$axios.get('/Products/GetExpiredProducts')
+            .then(response => {
+                context.commit('setexpiredProducts', response.data.data)
+                context.commit('setLoader', false)
+            }).catch(error => {
+                context.dispatch('processError', error)
+            })
+    },
+    getProductsAboutToExpire(context){
+        let date1 = new Date().toISOString().substr(0, 10);
+        var date2 = new Date(); 
+        date2.setDate(date2.getDate() + 30);
+
+        this.$axios.get(`/Products/GetProductsAboutToExpire/${date1}/${date2.toISOString().substr(0, 10)}`)
+            .then(response => {
+                context.commit('setProductsAboutToExpire', response.data.data)
+                context.commit('setLoader', false)
             }).catch(error => {
                 context.dispatch('processError', error)
             })
@@ -376,5 +411,17 @@ export const getters = {
     },
     transProductsByUser(state){
         return state.transProductsByUser
+    },
+    expiredProducts(state){
+        return state.expiredProducts
+    },
+    expiredProductsCount(state){
+        return state.expiredProducts.length
+    },
+    productsAboutToExpire(state){
+        return state.productsAboutToExpire
+    },
+    productsAboutToExpireCount(state){
+        return state.productsAboutToExpire.length
     }
 }

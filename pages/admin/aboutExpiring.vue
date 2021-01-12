@@ -122,21 +122,12 @@
             </v-card>
         </modal>
 
-
-        <v-data-table :headers="headers" :items="products" sort-by="calories" class="mx-4 py-4">
+        <v-data-table :headers="headers" :items="productsAboutExpiring" sort-by="calories" class="mx-4 py-4">
             <template v-slot:top>
                 <v-toolbar flat color="white">
-                    <v-toolbar-title class="list-color custom-style">All Products</v-toolbar-title>
+                    <v-toolbar-title class="list-color custom-style">Products About to Expire</v-toolbar-title>
                     <v-divider class="mx-4" inset vertical></v-divider>
                     <v-spacer></v-spacer>
-
-                    <v-btn @click="$modal.show('products-modal')" depressed large color="#22A64E" dark class="rounded-0 post-caption">
-                        <v-icon left>mdi-plus-circle-outline</v-icon> Add Product
-                    </v-btn>
-                    
-                    <v-btn @click="openScanModal()" depressed large color="#22A64E" dark class="rounded-0 ml-2 post-caption">
-                        <v-icon left>mdi-plus-circle-outline</v-icon> Open Scanner
-                    </v-btn>
                 </v-toolbar>
             </template>
 
@@ -153,52 +144,7 @@
         </v-data-table>
     </v-card>
 
-     <modal
-        name="barcode-modal" :min-width="500"
-        :max-width="100" :adaptive="true"
-        :scrollable="true" height="auto"
-        transition="fade-transition" :clickToClose="false" id="barcoeMdl">
-
-        <v-card>
-            <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="red" text @click="closeBarcode()">
-                    <v-icon>mdi-window-close</v-icon>
-                </v-btn>
-            </v-card-actions>
-
-            <div class="text-center" id="mdlText" style="display:none">
-                <span class="headline list-color custom-style">...Awaiting Scan</span>
-            </div>
-            <div class="text-center" id="focusOutText" style="display:none">
-                <span class="list-color custom-style">Please select textbox to scan</span>
-            </div>
-            
-            <div class="text-center" id="mdlSpinner" style="display:none">
-                <span class="headline list-color custom-style">
-                    <v-progress-circular
-                        indeterminate
-                        color="deep-orange lighten-2"
-                    ></v-progress-circular>
-                </span>
-            </div>
-
-            <v-card-text>
-                <v-container>
-                    <div>
-                        <v-text-field clearable 
-                            ref="inputRef" type="text" 
-                            @change="onBarcodeScanned($event)" 
-                            id="scanInput" 
-                            data-barcode
-                            @blur="handleFocus(false)"
-                            @focus="handleFocus(true)">
-                        </v-text-field>
-                    </div>
-                </v-container>
-            </v-card-text>
-        </v-card>
-    </modal>
+     
 </div>
 </template>
 
@@ -266,9 +212,6 @@ export default {
         threadImage: '',
         tempImage: '',
         defaultImage: 'https://via.placeholder.com/150',
-        scanNumber: 0,
-        scanning: false,
-        barcode: ''
     }),
 
     watch: {
@@ -281,8 +224,8 @@ export default {
     },
 
     computed: {
-        products(){
-            return this.$store.getters["productss/allProducts"];
+        productsAboutExpiring(){
+            return this.$store.getters["productss/productsAboutToExpire"];
         },
         isLoading(){
             return this.$store.getters['productss/getLoader']
@@ -310,67 +253,10 @@ export default {
             }
             this.setImage(imageFile)
         },
-        openScanModal(){
-            this.$modal.show('barcode-modal');
-
-            setTimeout(function (){
-                document.getElementById("mdlText").style.display = "block";
-                document.getElementById("mdlSpinner").style.display = "none";
-                document.getElementById("scanInput").focus();
-            }, 500)
-        },
-        onBarcodeScanned(barcode){
-            this.scanNumber = ++this.scanNumber;
-            
-            if (this.scanNumber < 2){
-                this.barcode = barcode;
-                this.scanning = true;
-                document.getElementById("scanInput").style.display = "none";
-                document.getElementById("mdlText").style.display = "none";
-                document.getElementById("mdlSpinner").style.display = "block";
-                document.querySelector("#barcoeMdl .v-input__append-inner button").click()
-                this.processBarCode(this.barcode);
-            }
-        },
         async processBarCode(barcode){
             await this.getProductByCode(barcode).then(()=> {
                 this.scanNumber = 0
             });
-        },
-        getProductByCode(barcode){
-            this.$store.dispatch('pointOfSale/getProductByCode', barcode).then(response => {
-                let data = response.data.data;
-                if(data) {
-                    this.editedItem.productId = data.productId
-                    this.editedItem.productName = data.productName
-                    this.editedItem.quantity = data.quantity
-                    this.editedItem.price = data.price
-                    this.editedItem.serialNumber = data.serialNumber
-                    this.editedItem.expiryDate = data.expiryDate
-                    this.editedItem.productBranchId = data.productBranchId
-                    this.editedItem.productGroupId = data.productGroupId
-                    this.editedItem.imageSrc = data.imageSrc
-                    this.threadImage = data.imageSrc;
-                    this.editedIndex = 1
-                    this.$modal.hide('barcode-modal');
-                    this.$modal.show('products-modal');
-                } else {
-                    this.editedItem.productId = ''
-                    this.editedItem.productName = ''
-                    this.editedItem.quantity = ''
-                    this.editedItem.price = ''
-                    this.editedItem.serialNumber = barcode
-                    this.editedItem.expiryDate = ''
-                    this.editedItem.productBranchId = ''
-                    this.editedItem.productGroupId = ''
-                    this.editedItem.imageSrc = ''
-                    this.threadImage = '';
-                    this.editedIndex = -1
-                    this.$modal.hide('barcode-modal');
-                    this.$modal.show('products-modal');
-                }
-                
-            })
         },
         setImage(imageFile){
             let reader = new FileReader();
@@ -382,42 +268,10 @@ export default {
             };
         },
         editItem (item) {
-            this.editedIndex = this.products.indexOf(item);
+            this.editedIndex = this.expiredProducts.indexOf(item);
             this.editedItem = Object.assign({}, item);
             this.threadImage = item.imageSrc;
             this.$modal.show('products-modal')
-        },
-        async addProduct(){
-            this.loading = true
-            const formData = new FormData();
-            formData.append('productName', this.editedItem.productName)
-            formData.append('quantity', this.editedItem.quantity)
-            formData.append('price', this.editedItem.price)
-            formData.append('serialNumber', this.editedItem.serialNumber)
-            formData.append('expiryDate', this.editedItem.expiryDate)
-            formData.append('productBranchId', this.editedItem.productBranchId)
-            formData.append('productGroupId', this.editedItem.productGroupId)
-            formData.append('image', this.editedItem.productImage)
-            formData.append('createdOn', new Date())
-
-            // let data = {
-            //     productName: this.editedItem.productName,
-            //     quantity: this.editedItem.quantity,
-            //     price: this.editedItem.price,
-            //     serialNumber: this.editedItem.serialNumber,
-            //     expiryDate: this.editedItem.expiryDate,
-            //     productBranchId: this.editedItem.productBranchId,
-            //     productGroupId: this.editedItem.productGroupId,
-            //     image: formData,
-            //     createdOn: new Date(),
-            // }
-            // console.log(this.editedItem.productImage);
-
-            await this.$store.dispatch('productss/addProduct', formData).then(response => {
-                this.loading = false
-                this.refreshTable()
-                this.close();
-            })
         },
         async updateProduct(){
             this.loading = true
@@ -431,9 +285,9 @@ export default {
             formData.append('productGroupId', this.editedItem.productGroupId)
             formData.append('image', this.editedItem.productImage)
             formData.append('modifiedOn', new Date())
-            formData.append('isDeprecated', this.products[this.editedIndex].isDeprecated)
+            formData.append('isDeprecated', this.expiredProducts[this.editedIndex].isDeprecated)
             let data1 = {
-                id: this.products[this.editedIndex].productId,
+                id: this.expiredProducts[this.editedIndex].productId,
                 data: formData
             }
 
@@ -452,12 +306,6 @@ export default {
                 this.refreshTable()
             })
         },
-        handleFocus(state) {
-            let inputBox = document.getElementById("focusOutText");
-            if (inputBox) {
-                state ? inputBox.style.display= "none" : inputBox.style.display= "block";
-            }
-        },
         refreshTable(){
             this.$store.dispatch('productss/getAllProducts');
         },
@@ -469,17 +317,13 @@ export default {
             })
             this.$modal.hide('products-modal');
         },
-        closeBarcode(){
-            this.$modal.hide('barcode-modal');
-        },
-
         save () {
             if (this.editedIndex > -1) {
                 this.updateProduct();
             } else {
                 this.addProduct();
             }
-        },
+        }
     }
 }
 </script>

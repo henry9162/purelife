@@ -171,7 +171,7 @@
                                                                 </div>
                                                             </div>
                                                             <div>
-                                                                <v-checkbox :input-value="product.isRefil"  @click="updateCartRefill({ product: product})" color="green">
+                                                                <v-checkbox :input-value="product.isRefill"  @click="updateCartRefill({ product: product})" color="green">
                                                                     <template v-slot:label>
                                                                         <div @click.stop="">
                                                                             Want a refill?

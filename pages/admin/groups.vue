@@ -117,6 +117,11 @@
 <script>
 export default {
     layout: 'admin',
+    middleware({ store, redirect }) {
+        if (store.state.auths.authUser.accountType != 2) {
+            return redirect('/')
+        }
+    },
 
     data: () => ({
         loading: false,

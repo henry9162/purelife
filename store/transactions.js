@@ -58,6 +58,7 @@ export const actions = {
 
 export const getters = {
     allTransactions(state){
+        console.log(state)
         return state.transactions;
     },
     getLoader(state){

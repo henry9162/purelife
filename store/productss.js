@@ -314,10 +314,13 @@ export const actions = {
             }
             this.$axios.post('/Transaction/AddTransaction', payload)
                 .then(response => {
-                    resolve(response)
+                    if(response.data.state === -3){
+                        this.$toast.error(response.data.message).goAway(4000); 
+                    } else {
+                        resolve(response)
+                    }
                 }).catch(error => {
                     context.dispatch('processError', error)
-                    reject(error)
                 })
         })
     },  

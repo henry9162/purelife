@@ -112,8 +112,8 @@ export const getters = {
     topCategories(state){
         return state.dashboard.top5SellingProductCategories
     },
-    topDiseases(state){
-        return state.dashboard.top5DiseasesByPatients
+    top5LeastSellingProducts(state){
+        return state.dashboard.top5LeastSellingProducts
     },
     topBranches(state){
         return state.dashboard.top5BranchesbyPerformance

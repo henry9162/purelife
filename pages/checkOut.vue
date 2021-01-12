@@ -326,7 +326,7 @@ export default {
         countries: ['Nigeria'],
         loading: false,
         valid: true,
-        PUBLIC_KEY: 'pk_test_c19414215f1bee0bd8d754fc85c30e216b2b5ae9',
+        PUBLIC_KEY: 'pk_test_f0e1384d623ed0499d138aefbc60c8063992fa2f',
         fullPage: false,
         disabled: true,
         refill: false,
@@ -340,6 +340,7 @@ export default {
             cash: 1,
             online: 2
         },
+        transSummaryId: ''
     }),
 
     watch: {
@@ -386,8 +387,7 @@ export default {
            return uniqid("pstk-");
         },
         processPayment(response) {
-            console.log(response)
-            debugger
+            this.loading = true
             let data = {
                 fullName: this.fullName,
                 email: this.email,
@@ -405,11 +405,15 @@ export default {
             }
 
             this.$store.dispatch('productss/addTransaction', data).then(response => {
-                let transSummaryId = response.data.data
+                this.transSummaryId = response.data.data
                 this.$toast.success("User successfully made payment").goAway(4000);
                 this.clearCart();
-                this.$router.push({ path: '/preview', query: {trx: transSummaryId} });
+                this.loading = false
+                setTimeout(() => {
+                    this.$router.push({ path: '/preview', query: {trx: this.transSummaryId} });
+                }, 1000);
             })
+            
         },
         async resetUser(){
             await this.$store.dispatch('auths/resetUser');

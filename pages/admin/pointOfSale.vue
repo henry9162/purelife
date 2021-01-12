@@ -184,7 +184,7 @@ export default {
         scanNumber: 0,
         barcode: "",
         loading: false,
-        PUBLIC_KEY: 'pk_test_c19414215f1bee0bd8d754fc85c30e216b2b5ae9',
+        PUBLIC_KEY: 'pk_test_f0e1384d623ed0499d138aefbc60c8063992fa2f',
         methodOfPayment: {
             cash: 1,
             online: 2

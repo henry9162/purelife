@@ -132,20 +132,7 @@
                         </v-data-table>
                     </div>
 
-                    <div class="top-diseases mt-6">
-                        <v-data-table :headers="diseaseHeaders" :items="topDiseases" sort-by="" class="elevation-1">
-                            <template v-slot:top>
-                                <v-toolbar flat color="white">
-                                    <v-toolbar-title class="custom-style list-color">Top diseases by patients</v-toolbar-title>
-                                    <v-spacer></v-spacer>
-                                </v-toolbar>
-                            </template>
-                        </v-data-table>
-                    </div>
-                </v-col>
-
-                <v-col cols="12" md="6">
-                    <div class="selling-categories">
+                     <div class="selling-categories mt-6">
                         <v-data-table :headers="categoryHeaders" :items="topCategories" sort-by="" class="elevation-1">
                             <template v-slot:top>
                                 <v-toolbar flat color="white">
@@ -155,6 +142,20 @@
                             </template>
                         </v-data-table>
                     </div>
+                </v-col>
+
+                <v-col cols="12" md="6">
+                    <div class="top-diseases">
+                        <v-data-table :headers="leastProductHeaders" :items="top5LeastSellingProducts" sort-by="" class="elevation-1">
+                            <template v-slot:top>
+                                <v-toolbar flat color="white">
+                                    <v-toolbar-title class="custom-style list-color">Least Selling Products</v-toolbar-title>
+                                    <v-spacer></v-spacer>
+                                </v-toolbar>
+                            </template>
+                        </v-data-table>
+                    </div>
+                   
                     <!-- <div class="selling-branch">
                         <v-data-table :headers="headers" :items="drugs" sort-by="" class="elevation-1">
                             <template v-slot:top>
@@ -207,11 +208,11 @@
 <script>
 export default {
     layout: 'admin',
-    middleware({ store, redirect }) {
-        if (store.state.auths.authUser.accountType != 2) {
-            return redirect('/')
-        }
-    },
+    // middleware({ store, redirect }) {
+    //     if (store.state.auths.authUser.accountType != 2) {
+    //         return redirect('/')
+    //     }
+    // },
 
     data: () => ({
         drawer: false,
@@ -252,10 +253,10 @@ export default {
                 text: 'Name',
                 align: 'start',
                 sortable: false,
-                value: 'productName',
+                value: 'product.productName',
             },
-            { text: 'Price', value: 'price' },
-            { text: 'Inventory', value: 'quantity' },
+            { text: 'Price', value: 'product.price' },
+            { text: 'Inventory', value: 'product.quantity' },
         ],
         brandHeaders: [
             {
@@ -275,15 +276,15 @@ export default {
             },
             { text: 'Description', value: 'description', }
         ],
-        diseaseHeaders: [
+        leastProductHeaders: [
             {
                 text: 'Name',
                 align: 'start',
                 sortable: false,
-                value: 'diseaseName',
-                class: ['text-button', 'grey--text text--darken-1']
+                value: 'product.productName',
             },
-            { text: 'Severity', value: 'severity' },
+            { text: 'Price', value: 'product.price' },
+            { text: 'Inventory', value: 'product.quantity' },
         ]
     }),
 
@@ -310,8 +311,8 @@ export default {
         topBranches(){
             return this.$store.getters['topBranches']
         },
-        topDiseases(){
-            return this.$store.getters['topDiseases']
+        top5LeastSellingProducts(){
+            return this.$store.getters['top5LeastSellingProducts']
         },
         topSales(){
             return this.$store.getters['topSales']

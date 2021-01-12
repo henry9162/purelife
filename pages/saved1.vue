@@ -235,6 +235,7 @@ export default {
         genRef() {
             return uniqid("pstk-");
         },
+<<<<<<< HEAD
         processPayment(data) {
             debugger
             this.$toast.success("successfully made payment").goAway(4000);
@@ -243,6 +244,19 @@ export default {
         },
         processCashPayment(){
             this.$toast.success("successfully made payment").goAway(4000);
+=======
+        processPayment() {
+            let data = {
+                fullName: this.fullName,
+                email: this.email,
+                phoneNumber: this.phoneNumber,
+                address: this.address,
+                stateId: this.stateId,
+                country: this.country,
+            }
+            this.$store.dispatch('setBillInfo', data)
+            this.$toast.success("User successfully made payment").goAway(4000);
+>>>>>>> 7b544c7f72638f78a378cb4f471606cfc90d0dd2
             this.$router.push({ path: '/' });
             this.clearCart();
         },

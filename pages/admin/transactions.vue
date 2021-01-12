@@ -80,15 +80,15 @@
                 </v-toolbar>
             </template>
 
-            <template v-slot:[`item.methodOfPaymentId`]="{ item }">
-                <span v-text="getMethodOfPayment(item.methodOfPaymentId)"></span>
+            <template v-slot:[`item.transSummary.methodOfPaymentId`]="{ item }">
+                <span v-text="getMethodOfPayment(item.transSummary.methodOfPaymentId)"></span>
             </template>
-            <template v-slot:[`item.transactionStatusId`]="{ item }">
-                <span>{{item.transactionStatusId == 1 ? 'Pending' : item.transactionStatusId == 2 ? 'Success' : 'Declined'}}</span>
+            <template v-slot:[`item.transSummary.transactionStatusId`]="{ item }">
+                <span>{{item.transSummary.transactionStatusId == 1 ? 'Pending' : item.transSummary.transactionStatusId == 2 ? 'Success' : 'Declined'}}</span>
             </template>
             <template v-slot:[`item.actions`]="{ item }">
                 <v-icon small class="mr-2 green--text" @click="viewItem(item)">mdi-eye</v-icon>
-                <v-icon small class="mr-2 red--text" @click="cancelTransaction(item.transactionSummaryId)">mdi-cancel</v-icon>
+                <v-icon small class="mr-2 red--text" @click="cancelTransaction(item.transSummary.transactionSummaryId)">mdi-cancel</v-icon>
             </template>
         </v-data-table>
     </v-card>
@@ -109,16 +109,17 @@ export default {
     data: () => ({
         headers: [
             {
-                text: 'Customer Name',
+                text: 'Customer',
                 align: 'start',
                 sortable: false,
-                value: 'customer',
+                value: 'billingInfo.fullName',
                 class: ['text-button', 'grey--text text--darken-3']
             },
-            { text: 'ItemsCount', value: 'itemsCount', class: ['text-button', 'grey--text text--darken-3'] },
-            { text: 'TotalSUm', value: 'totalSum', class: ['text-button', 'grey--text text--darken-3'] },
-            { text: 'Method of payment', value: 'methodOfPaymentId', class: ['text-button', 'grey--text text--darken-3'] },
-            { text: 'Transaction Status', value: 'transactionStatusId', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Address', value: 'billingInfo.address', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'ItemsCount', value: 'transSummary.itemsCount', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'TotalSUm', value: 'transSummary.totalSum', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Method of payment', value: 'transSummary.methodOfPaymentId', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Transaction Status', value: 'transSummary.transactionStatusId', class: ['text-button', 'grey--text text--darken-3'] },
             { text: 'Actions', value: 'actions', class: ['text-button', 'grey--text text--darken-3'] }
         ],
         fullPage: true,
@@ -174,8 +175,11 @@ export default {
             });
         },
         viewItem(item) {
-            let data = {...item}
-            data.transactionStatusId = item.transactionStatusId == 1 ? 'Pending' : item.transactionStatusId == 2 ? 'Success' : 'Declined';
+            let data = {...item.transSummary};
+            let customer = item.billingInfo.fullName;
+            data.customer = customer;
+            
+            data.transactionStatusId = item.transSummary.transactionStatusId == 1 ? 'Pending' : item.transSummary.transactionStatusId == 2 ? 'Success' : 'Declined';
             
             this.transactionForm = Object.assign({}, data);
             this.$modal.show('transaction-modal');

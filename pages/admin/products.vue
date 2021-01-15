@@ -206,7 +206,7 @@
 export default {
     layout: 'admin',
     middleware({ store, redirect }) {
-        if (store.state.auths.authUser.accountType != 2) {
+        if (store.state.auths.authUser.accountType == 2) {
             return redirect('/')
         }
     },
@@ -441,7 +441,7 @@ export default {
                 this.loading  = false
                 this.refreshTable();
                 this.close();
-            })
+            }).catch(error => this.loading = false)
         },
         deleteItem (item) {
             confirm('Are you sure you want to delete this product?') && this.deleteProduct(item)

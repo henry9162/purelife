@@ -123,5 +123,17 @@ export const getters = {
     },
     billIfo(state){
         return state.billIfo
+    },
+    weeklySales(state){
+        return state.dashboard.thisWeekSales
+    },
+    monthlySales(state){
+        return state.dashboard.thisMonthSales
+    },
+    yearlySales(state){
+        return state.dashboard.thisYearSales
+    },
+    todaySales(state){
+        return state.dashboard.todaySales
     }
 }

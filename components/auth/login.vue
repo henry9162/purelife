@@ -92,16 +92,26 @@ export default {
                     password: this.password
                 }
 
-                await this.$store.dispatch("auths/login", data).then(response => {
-                    if(response) {
-                        if(response.data.data) this.$auth.setUser(response.data.data)
-                        this.loading = false
-                        this.$toast.success(response.data.message).goAway(3000)
-                        this.$router.push({path: '/'})
-                    } 
+                this.$axios.post('/Account/Login', data).then(response => {
+                if(response.data.state == -3){
+                    this.$toast.error(response.data.message).goAway(4000)
+                    this.loading = false
+                    return
+                    } else {
+                        let user = response.data.data
+                        if(user) {
+                            this.$auth.setUserToken(response.data.loginToken)
+                            this.$auth.setUser(user)
+                            process.client ? localStorage.setItem('signedInUser', JSON.stringify(user)) : '';
+                            this.loading = false
+                            this.$toast.success(response.data.message).goAway(4000)
+                            this.$router.push({path: '/'})
+                        }   
+                }
+            }).catch(error => {
+                context.dispatch('processError', error);
+                    reject(error)   
                 })
-            } else {
-                this.loading = false
             }
         },
         myEventHandler(e) {

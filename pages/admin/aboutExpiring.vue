@@ -152,7 +152,7 @@
 export default {
     layout: 'admin',
     middleware({ store, redirect }) {
-        if (store.state.auths.authUser.accountType != 2) {
+        if (store.state.auths.authUser.accountType == 2) {
             return redirect('/')
         }
     },
@@ -175,7 +175,7 @@ export default {
             { text: 'Packaging', value: 'productPackageName', class: ['text-button', 'grey--text text--darken-3']},
             { text: 'Expiry', value: 'expiryDate', class: ['text-button', 'grey--text text--darken-3'] },
             { text: 'Serial Number', value: 'serialNumber', class: ['text-button', 'grey--text text--darken-3'] },
-            { text: 'Branch', value: 'productBrandName', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Branch', value: 'pharmacyBranchName', class: ['text-button', 'grey--text text--darken-3'] },
             { text: 'Group', value: 'productGroupName', class: ['text-button', 'grey--text text--darken-3'] },
             { text: 'Created On', value: 'createdOn', class: ['text-button', 'grey--text text--darken-3'] },
             { text: 'Actions', value: 'actions', sortable: false, class: ['text-button', 'grey--text text--darken-3'] },

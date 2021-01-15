@@ -480,7 +480,7 @@ export default {
           'Amaterm Soft Gel'
         ],
         itemsss: [
-            //{ text: 'Profile', icon: 'mdi-face-profile', url: '/profile' },
+            { text: 'Profile', icon: 'mdi-face-profile', url: '/profile' },
             { text: 'Orders', icon: 'mdi-sale', url: '/orders' }
         ],
         scanning: false,
@@ -542,7 +542,7 @@ export default {
             //this.$store.dispatch('productss/persistCart');
             this.$store.dispatch('categories/getAllCategories');
             this.$store.dispatch('filters/getAllProducts');
-            
+            this.$store.dispatch('roles/getAllRoles');
             this.$store.dispatch('brands/getAllBrands');
             this.$store.dispatch('classifications/getAllClassifications');
             this.$store.dispatch('packages/getAllPackages');

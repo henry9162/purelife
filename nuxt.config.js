@@ -87,11 +87,16 @@ export default {
 
   auth: {
     redirect: {
-      login: '/Account/Login',
+      login: '/login',
       // logout: '​/Account​/LogOut',
-      callback: '/Account/Login',
+      callback: '/login',
       home: '/'
     },
+    // cookie: false,
+    // localStorage: false,
+    // token: {
+    //     prefix: 'token.'
+    // },
     strategies: {
       local: {
         endpoints: {

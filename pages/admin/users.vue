@@ -146,11 +146,11 @@
 <script>
 export default {
     layout: 'admin',
-    // middleware({ store, redirect }) {
-    //     if (store.state.auths.authUser.accountType != 2) {
-    //         return redirect('/')
-    //     }
-    // },
+    middleware({ store, redirect }) {
+        if (store.state.auths.authUser.accountType == 2) {
+            return redirect('/')
+        }
+    },
 
     data: () => ({
         dialog: true,
@@ -270,7 +270,7 @@ export default {
                 createdOn: new Date(),
                 createdBy: this.$auth.user.userId
             }
-            //console.log(this.$auth.user);
+            
             this.$store.dispatch('users/addUser', data).then(response => {
                 this.loading = false
                 this.refreshTable()
@@ -283,7 +283,7 @@ export default {
                 userId: this.users[this.editedIndex].userId,
                 firstName: this.editedItem.firstName,
                 lastName: this.editedItem.lastName,
-                email: this.editedItem.lastName,
+                email: this.editedItem.email,
                 phoneNumber: this.editedItem.phoneNumber,
                 dob: this.editedItem.dob,
                 roleId: this.editedItem.roleId,

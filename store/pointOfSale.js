@@ -1,13 +1,5 @@
 export const state = () => ({
-    products: [
-        {
-            productName: "test",
-            serial: 2345323,
-            unitPrice: 20,
-            total: 10,
-            quantity: 5
-        }
-    ],
+    products: [],
     totalQuantity: 0
 })
 

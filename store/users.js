@@ -1,5 +1,5 @@
 export const state = () => ({
-    users: [],
+    users: []
 })
 
 export const mutations = {
@@ -28,6 +28,17 @@ export const actions = {
                 reject(error)
             })
         })
+    },
+    getUserById(context, userId){
+        return new Promise((resolve, reject) => {
+            this.$axios.get(`/ManageUser/GetUser/${userId}`).then(response => {
+                resolve(response)
+            })
+            .catch(error => {
+                context.dispatch('processError', error)
+                reject(error)
+            })
+        }) 
     },
     updateUser(context, data){
         return new Promise((resolve, reject) => {
@@ -64,5 +75,8 @@ export const actions = {
 export const getters = {
     allUsers(state){
         return state.users;
+    },
+    userProfile(state){
+        return state.userProfile
     }
 }

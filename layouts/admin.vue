@@ -144,7 +144,7 @@
                         </v-badge>
                     </v-btn>
                 </template>
-                <span>Items to expire in a month</span>
+                <span>Items to expire in 4 month</span>
             </v-tooltip>
 
             <v-spacer />

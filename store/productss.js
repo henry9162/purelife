@@ -210,7 +210,7 @@ export const actions = {
     getProductsAboutToExpire(context){
         let date1 = new Date().toISOString().substr(0, 10);
         var date2 = new Date(); 
-        date2.setDate(date2.getDate() + 30);
+        date2.setDate(date2.getDate() + 120);
 
         this.$axios.get(`/Products/GetProductsAboutToExpire/${date1}/${date2.toISOString().substr(0, 10)}`)
             .then(response => {

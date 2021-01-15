@@ -15,7 +15,8 @@
                         <div class="amount-caption pt-10 pb-10 text-center green--text text--darken-2">
                             My Orders
                         </div>
-                        <div v-for="(transaction, i) in transactions" :key="i" class="pb-8">
+                        <div v-if="transactions.length > 0">
+                            <div v-for="(transaction, i) in transactions" :key="i" class="pb-8">
                                 <div v-for="product in transaction.products" :key="product.productId">
                                     <v-row class="pb-8">
                                         <v-col class="pb-0" cols="12" md="5" offset="1">
@@ -62,6 +63,17 @@
                                         </v-col> -->
                                     </v-row>
                                 </div> 
+                            </div>
+                        </div>
+                        <div v-else>
+                            <div class="d-flex justify-center post-caption red--text grey lighten-2 pa-5 mt-4">
+                                <div class="text-center">
+                                    <div>You have not made any orders yet!</div>
+                                    <div class="mt-2">
+                                        <v-btn @click="$router.push({path: '/'})" color="green lighten-2" depressed small class="white--text">Continue shopping</v-btn>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </v-card>
                 </v-card>

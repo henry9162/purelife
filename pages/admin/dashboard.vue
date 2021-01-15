@@ -16,15 +16,15 @@
                                     <div class="content mt-3">
                                         <div class="text-uppercase d-flex justify-end grey--text text--lighten-1 subtitle-2">Today Sales</div>
                                         <div class="green--text d-flex justify-end text-h5">
-                                            <v-icon class="green--text">mdi-currency-ngn</v-icon> <span>0</span>
+                                            <v-icon class="green--text">mdi-currency-ngn</v-icon> <span v-text="todaySales"></span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="baseline px-4 mt-7">
                                     <div class="d-flex mr-4">
-                                        <v-icon color="green">mdi-arrow-up</v-icon>
-                                        <div class="green--text subtitle-1 mt-1 mr-4">0%</div>
-                                        <div class="grey--text text--darken-1 post-caption mt-2">Since today</div>
+                                        <!-- <v-icon color="green">mdi-arrow-up</v-icon> -->
+                                        <!-- <div class="green--text subtitle-1 mt-1 mr-4">0%</div> -->
+                                        <div class="grey--text text--darken-1 post-caption mt-2">Today</div>
                                     </div>
                                 </div>
                             </v-card>
@@ -42,17 +42,17 @@
                                         </v-btn>
                                     </div>
                                     <div class="content mt-3">
-                                        <div class="text-uppercase d-flex justify-end grey--text text--lighten-1 subtitle-2">Week Sales</div>
+                                        <div class="text-uppercase d-flex justify-end grey--text text--lighten-1 subtitle-2">Weekly Sales</div>
                                         <div class="green--text d-flex justify-end text-h5">
-                                            <v-icon class="green--text">mdi-currency-ngn</v-icon> <span>0</span>
+                                            <v-icon class="green--text">mdi-currency-ngn</v-icon> <span v-text="weeklySales"></span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="baseline px-4 mt-7">
                                     <div class="d-flex mr-4">
-                                        <v-icon color="red">mdi-arrow-down</v-icon>
-                                        <div class="red--text subtitle-1 mt-1 mr-4">0%</div>
-                                        <div class="grey--text text--darken-1 post-caption mt-2">Since this week</div>
+                                        <!-- <v-icon color="red">mdi-arrow-down</v-icon> -->
+                                        <!-- <div class="red--text subtitle-1 mt-1 mr-4">0%</div> -->
+                                        <div class="grey--text text--darken-1 post-caption mt-2">This week</div>
                                     </div>
                                 </div>
                             </v-card>
@@ -70,17 +70,17 @@
                                         </v-btn>
                                     </div>
                                     <div class="content mt-3">
-                                        <div class="text-uppercase d-flex justify-end grey--text text--lighten-1 subtitle-2">Month Sales</div>
+                                        <div class="text-uppercase d-flex justify-end grey--text text--lighten-1 subtitle-2">Monthly Sales</div>
                                         <div class="green--text text-h5">
-                                            <v-icon class="green--text">mdi-currency-ngn</v-icon> <span>0</span>
+                                            <v-icon class="green--text">mdi-currency-ngn</v-icon> <span v-text="monthlySales"></span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="baseline px-4 mt-7">
                                     <div class="d-flex mr-4">
-                                        <v-icon color="red">mdi-arrow-down</v-icon>
-                                        <div class="red--text subtitle-1 mt-1 mr-4">0%</div>
-                                        <div class="grey--text text--darken-1 post-caption mt-2">Since this month</div>
+                                        <!-- <v-icon color="red">mdi-arrow-down</v-icon> -->
+                                        <!-- <div class="red--text subtitle-1 mt-1 mr-4">0%</div> -->
+                                        <div class="grey--text text--darken-1 post-caption mt-2">This month</div>
                                     </div>
                                 </div>
                             </v-card>
@@ -98,17 +98,17 @@
                                         </v-btn>
                                     </div>
                                     <div class="content mt-3">
-                                        <div class="text-uppercase d-flex justify-end grey--text text--lighten-1 subtitle-2">Year Sales</div>
+                                        <div class="text-uppercase d-flex justify-end grey--text text--lighten-1 subtitle-2">Yearly Sales</div>
                                         <div class="green--text d-flex justify-end text-h5">
-                                            <v-icon class="green--text">mdi-currency-ngn</v-icon> <span>0</span>
+                                            <v-icon class="green--text">mdi-currency-ngn</v-icon> <span v-text="yearlySales"></span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="baseline px-4 mt-7">
                                     <div class="d-flex mr-4">
-                                        <v-icon color="green">mdi-arrow-up</v-icon>
-                                        <div class="green--text subtitle-1 mt-1 mr-4">0%</div>
-                                        <div class="grey--text text--darken-1 post-caption mt-2">Since this year</div>
+                                        <!-- <v-icon color="green">mdi-arrow-up</v-icon> -->
+                                        <!-- <div class="green--text subtitle-1 mt-1 mr-4">0%</div> -->
+                                        <div class="grey--text text--darken-1 post-caption mt-2">This year</div>
                                     </div>
                                 </div>
                             </v-card>
@@ -208,11 +208,11 @@
 <script>
 export default {
     layout: 'admin',
-    // middleware({ store, redirect }) {
-    //     if (store.state.auths.authUser.accountType != 2) {
-    //         return redirect('/')
-    //     }
-    // },
+    middleware({ store, redirect }) {
+        if (store.state.auths.authUser.accountType == 2) {
+            return redirect('/')
+        }
+    },
 
     data: () => ({
         drawer: false,
@@ -316,6 +316,18 @@ export default {
         },
         topSales(){
             return this.$store.getters['topSales']
+        },
+        todaySales(){
+            return this.$store.getters['todaySales']
+        },
+        weeklySales(){
+            return this.$store.getters['weeklySales']
+        },
+        monthlySales(){
+            return this.$store.getters['monthlySales']
+        },
+        yearlySales(){
+            return this.$store.getters['yearlySales']
         },
     },
 

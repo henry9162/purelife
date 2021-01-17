@@ -6,7 +6,20 @@
         :is-full-page="fullPage">
     </loading> -->
 
-    <v-card class="mx-10 mt-14" color="#22A64E">
+    <div class="d-flex justify-end mr-10 mt-12">
+        <div class="mr-4">
+            <v-btn @click="$modal.show('products-modal')" depressed large color="#22A64E" dark class="rounded-0 post-caption">
+                <v-icon left>mdi-plus-circle-outline</v-icon> Add Product
+            </v-btn>
+        </div>
+        <div>
+            <v-btn @click="openScanModal()" depressed large color="#22A64E" dark class="rounded-0 ml-2 post-caption">
+                <v-icon left>mdi-plus-circle-outline</v-icon> Open Scanner
+            </v-btn>
+        </div>
+    </div>
+
+    <v-card class="mx-10 mb-10 mt-6" color="#22A64E">
         <modal
             name="products-modal" :min-width="1000"
             :max-width="1000" :adaptive="true"
@@ -128,15 +141,6 @@
                 <v-toolbar flat color="white">
                     <v-toolbar-title class="list-color custom-style">All Products</v-toolbar-title>
                     <v-divider class="mx-4" inset vertical></v-divider>
-                    <v-spacer></v-spacer>
-
-                    <v-btn @click="$modal.show('products-modal')" depressed large color="#22A64E" dark class="rounded-0 post-caption">
-                        <v-icon left>mdi-plus-circle-outline</v-icon> Add Product
-                    </v-btn>
-                    
-                    <v-btn @click="openScanModal()" depressed large color="#22A64E" dark class="rounded-0 ml-2 post-caption">
-                        <v-icon left>mdi-plus-circle-outline</v-icon> Open Scanner
-                    </v-btn>
                 </v-toolbar>
             </template>
 
@@ -149,6 +153,9 @@
             </template>
             <template v-slot:item.createdOn="{ item }">
                 <span v-text="$moment(item.createdOn).format('DD/MM/YYYY')"></span>
+            </template>
+            <template v-slot:item.expiryDate="{ item }">
+                <span v-text="$moment(item.expiryDate).format('DD/MM/YYYY')"></span>
             </template>
         </v-data-table>
     </v-card>
@@ -421,6 +428,19 @@ export default {
         },
         async updateProduct(){
             this.loading = true
+
+            // let formData = {
+            //     productName: this.editedItem.productName,
+            //     quantity: this.editedItem.quantity,
+            //     price: this.editedItem.price,
+            //     serialNumber: this.editedItem.serialNumber,
+            //     expiryDate: this.editedItem.expiryDate,
+            //     productBranchId: this.editedItem.productBranchId,
+            //     productGroupId: this.editedItem.productGroupId,
+            //     productImage: this.editedItem.productImage,
+            //     isDeprecated: this.products[this.editedIndex].isDeprecated,
+            // }
+
             const formData = new FormData();
             formData.append('productName', this.editedItem.productName)
             formData.append('quantity', this.editedItem.quantity)
@@ -429,9 +449,10 @@ export default {
             formData.append('expiryDate', this.editedItem.expiryDate)
             formData.append('productBranchId', this.editedItem.productBranchId)
             formData.append('productGroupId', this.editedItem.productGroupId)
-            formData.append('image', this.editedItem.productImage)
+            formData.append('productImage', this.editedItem.productImage)
             formData.append('modifiedOn', new Date())
             formData.append('isDeprecated', this.products[this.editedIndex].isDeprecated)
+
             let data1 = {
                 id: this.products[this.editedIndex].productId,
                 data: formData
@@ -466,6 +487,7 @@ export default {
                 this.editedItem = Object.assign({}, this.defaultItem)
                 this.editedIndex = -1
                 this.loading = false
+                this.threadImage = ''
             })
             this.$modal.hide('products-modal');
         },

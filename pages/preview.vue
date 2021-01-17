@@ -1,11 +1,11 @@
 <template>
     <div>
         <div id="pdfDom" class="mt-2">
-            <!-- <loading 
+            <loading 
                 :active.sync="isLoading" 
                 :can-cancel="true" 
                 :is-full-page="fullPage">
-            </loading> -->
+            </loading>
 
             <v-container class="pt-0">
                 <v-card class="mt-8 mb-6 py-6 px-10" color="#fff" flat>

@@ -289,7 +289,7 @@ export default {
             this.$store.dispatch('roles/getAllRoles');
             this.$store.dispatch('loyalties/getLoyaltySetUp');
             this.$store.dispatch('productss/getExpiredProducts');
-            this.$store.dispatch('productss/getProductsAboutToExpire');
+            this.$store.dispatch('productss/getProductsAboutToExpire', null);
         },
         navEvent(){
             if(this.imgSrc.state == false){

@@ -1,12 +1,12 @@
 <template>
 <div>
-    <!-- <loading 
+    <loading 
         :active.sync="isLoading" 
         :can-cancel="true" 
         :is-full-page="fullPage">
-    </loading> -->
+    </loading>
 
-    <v-card class="mx-10 mt-14" color="#22A64E">
+    <v-card class="mx-10 mb-10 mt-14" color="#22A64E">
         <modal
             name="products-modal" :min-width="1000"
             :max-width="1000" :adaptive="true"

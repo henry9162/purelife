@@ -18,6 +18,14 @@
                 </loading>
             </client-only>
 
+            <client-only>
+                <loading 
+                    :active.sync="issLoading" 
+                    :can-cancel="true" 
+                    :is-full-page="fullPage">
+                </loading>
+            </client-only>
+
             <v-container class="pt-0">
                 <v-row>
                     <!-- Billing and Shipping address -->
@@ -326,7 +334,8 @@ export default {
         countries: ['Nigeria'],
         loading: false,
         valid: true,
-        PUBLIC_KEY: 'pk_live_3f9bd55ca82c67fa47f64d80490f14ac49c510e8',
+        PUBLIC_KEY: 'pk_test_f0e1384d623ed0499d138aefbc60c8063992fa2f',
+        PUBLIC_KEYY: 'pk_live_3f9bd55ca82c67fa47f64d80490f14ac49c510e8',
         fullPage: false,
         disabled: true,
         refill: false,
@@ -340,7 +349,8 @@ export default {
             cash: 1,
             online: 2
         },
-        transSummaryId: ''
+        transSummaryId: '',
+        issLoading: false
     }),
 
     watch: {
@@ -387,7 +397,7 @@ export default {
            return uniqid("pstk-");
         },
         processPayment(response) {
-            this.loading = true
+            this.issLoading = true
             let data = {
                 fullName: this.fullName,
                 email: this.email,
@@ -407,10 +417,10 @@ export default {
             this.$store.dispatch('productss/addTransaction', data).then(response => {
                 this.transSummaryId = response.data.data
                 this.$toast.success("User successfully made payment").goAway(4000);
-                this.clearCart();
-                this.loading = false
                 setTimeout(() => {
+                    this.issLoading = false
                     this.$router.push({ path: '/preview', query: {trx: this.transSummaryId} });
+                    this.clearCart();
                 }, 1000);
             })
             

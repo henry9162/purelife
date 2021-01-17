@@ -1,12 +1,75 @@
 <template>
 <div>
-    <!-- <loading 
+    <loading 
         :active.sync="isLoading" 
         :can-cancel="true" 
         :is-full-page="fullPage">
-    </loading> -->
+    </loading>
 
-    <v-card class="mx-10 mt-14" color="#22A64E">
+    <div class="d-flex mt-10 mx-10">
+        <div>
+            <v-menu
+                ref="menu1" v-model="menu1" :close-on-content-click="false" :return-value.sync="date1"
+                transition="scale-transition" offset-y min-width="290px">
+
+                <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                        v-model="date1"
+                        label="Start Date"
+                        prepend-inner-icon="mdi-calendar"
+                        v-bind="attrs"
+                        v-on="on"
+                        filled dense rounded 
+                    ></v-text-field>
+                </template>
+
+                <v-date-picker v-model="date1" no-title scrollable>
+                    <v-spacer></v-spacer>
+
+                    <v-btn text color="primary" @click="menu1 = false">Cancel</v-btn>
+                    <v-btn text color="primary" @click="$refs.menu1.save(date1)">OK</v-btn>
+                </v-date-picker>
+            </v-menu>
+        </div>
+
+        <div class="mx-4">
+            <v-menu
+                ref="menu2" v-model="menu2" :close-on-content-click="false" :return-value.sync="date2"
+                transition="scale-transition" offset-y min-width="290px">
+
+                <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                        v-model="date2"
+                        label="Start Date"
+                        prepend-inner-icon="mdi-calendar"
+                        :disabled="disabled"
+                        v-bind="attrs"
+                        v-on="on"
+                        filled dense rounded 
+                    ></v-text-field>
+                </template>
+
+                <v-date-picker v-model="date2" no-title scrollable>
+                    <v-spacer></v-spacer>
+
+                    <v-btn text color="primary" @click="menu2 = false">Cancel</v-btn>
+                    <v-btn text color="primary" @click="$refs.menu2.save(date2)">OK</v-btn>
+                </v-date-picker>
+            </v-menu>
+        </div>
+
+        <div>
+            <v-btn 
+                @click="filter"
+                depressed tile 
+                color="green darken-2" 
+                class="white--text mt-2">
+                filter
+            </v-btn>
+        </div>
+    </div>
+
+    <v-card class="mx-10 mt-4" color="#22A64E">
         <modal
             name="products-modal" :min-width="1000"
             :max-width="1000" :adaptive="true"
@@ -158,6 +221,10 @@ export default {
     },
 
     data: () => ({
+        menu1: false,
+        menu2: false,
+        date1: new Date().toISOString().substr(0, 10),
+        date2: new Date().toISOString().substr(0, 10),
         dialog: true,
         loading: false,
         fullPage: false,
@@ -212,6 +279,7 @@ export default {
         threadImage: '',
         tempImage: '',
         defaultImage: 'https://via.placeholder.com/150',
+        disabled: true
     }),
 
     watch: {
@@ -220,6 +288,9 @@ export default {
         },
         file(val){
             val ? this.processImage(val) : ''
+        },
+        date1(val){
+            this.disabled = false
         }
     },
 
@@ -268,7 +339,7 @@ export default {
             };
         },
         editItem (item) {
-            this.editedIndex = this.expiredProducts.indexOf(item);
+            this.editedIndex = this.productsAboutExpiring.indexOf(item);
             this.editedItem = Object.assign({}, item);
             this.threadImage = item.imageSrc;
             this.$modal.show('products-modal')
@@ -323,6 +394,13 @@ export default {
             } else {
                 this.addProduct();
             }
+        },
+        filter(){
+            let data = {
+                date1: this.date1,
+                date2: this.date2
+            }
+            this.$store.dispatch('productss/getProductsAboutToExpire', data);
         }
     }
 }

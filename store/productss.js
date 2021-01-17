@@ -204,19 +204,29 @@ export const actions = {
                 context.commit('setexpiredProducts', response.data.data)
                 context.commit('setLoader', false)
             }).catch(error => {
+                context.commit('setLoader', false)
                 context.dispatch('processError', error)
             })
     },
-    getProductsAboutToExpire(context){
-        let date1 = new Date().toISOString().substr(0, 10);
-        var date2 = new Date(); 
-        date2.setDate(date2.getDate() + 120);
-
-        this.$axios.get(`/Products/GetProductsAboutToExpire/${date1}/${date2.toISOString().substr(0, 10)}`)
+    getProductsAboutToExpire(context, data){
+        context.commit('setLoader', true)
+        var date1;
+        var date2;
+        if(data == null){
+            date1 = new Date().toISOString().substr(0, 10);
+            date2 = new Date(); 
+            date2.setDate(date2.getDate() + 120);
+            date2 = date2.toISOString().substr(0, 10);
+        } else {
+            date1 = data.date1;
+            date2 = data.date2;
+        }
+        this.$axios.get(`/Products/GetProductsAboutToExpire/${date1}/${date2}`)
             .then(response => {
                 context.commit('setProductsAboutToExpire', response.data.data)
                 context.commit('setLoader', false)
             }).catch(error => {
+                context.commit('setLoader', false)
                 context.dispatch('processError', error)
             })
     },

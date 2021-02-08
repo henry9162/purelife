@@ -126,7 +126,7 @@ export default {
     //baseURL: 'https://api.cbforum.org/api'
     //baseURL: 'https://localhost:5001/api/v1',
     //baseURL: 'http://purelifeapi.nologysolutionsng.com/api/v1',
-    baseURL: 'http://api.purelifepharmacy.com.ng/api/api/v1',
+    baseURL: 'https://api.purelifepharmacy.com.ng/api/api/v1',
     headers: {
       'Access-Control-Allow-Origin': '*',
       common: {

@@ -54,12 +54,20 @@ export const actions = {
             })
         })
     },
+    getRolesByAccountType(context, data) {
+        this.$axios.get(`/ManageRole/GetRoleByAccountTypeId/${data}`)
+            .then(response => {
+                context.commit('setRoles', response.data.data)
+            }).catch(error => {
+                context.dispatch('processError', error)
+            })
+    },
     processError(context, error){
         this.$toast.error(error).goAway(3500)
     },
     processResponse(context, response){
         this.$toast.success(response.data.message).goAway(3500)
-    }
+    },
 }
 
 export const getters = {

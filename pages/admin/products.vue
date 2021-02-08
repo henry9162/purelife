@@ -60,6 +60,22 @@
                                       label="Pharmacy Branch"
                                       chips dense>
                                 </v-select>
+                                <v-select
+                                      v-model="editedItem.productBrandId"
+                                      :items="brands"
+                                      item-text="productBrandName"
+                                      item-value="productBrandId"
+                                      label="Product Brand"
+                                      chips dense>
+                                </v-select>
+                                <v-select
+                                      v-model="editedItem.productPackagingId"
+                                      :items="packages"
+                                      item-text="productPackageName"
+                                      item-value="productPackageId"
+                                      label="Product Package"
+                                      chips dense>
+                                </v-select>
                             </v-col>
 
 
@@ -67,17 +83,21 @@
                                 <v-text-field v-model="editedItem.quantity" type="number" label="Quantity"></v-text-field>
                                 <v-text-field v-model="editedItem.serialNumber" label="Serial Number"></v-text-field>
                                 <v-select
-                                      v-model="editedItem.productGroupId"
-                                      :items="productGroups"
-                                      item-text="productGroupName"
-                                      item-value="productGroupId"
-                                      label="Group"
+                                      v-model="editedItem.productCategoryId"
+                                      :items="categories"
+                                      item-text="productCategyName"
+                                      item-value="productCategyId"
+                                      label="Product Category"
                                       chips dense>
                                 </v-select>
-                            </v-col>
-
-                            <v-col cols="12" offset-md="4" md="8" class="py-0 pr-0">
-                              <!-- <v-text-field v-model="editedItem.expiryDate" label="Expiry Date"></v-text-field> -->
+                                <v-select
+                                      v-model="editedItem.productClassificationId"
+                                      :items="classifications"
+                                      item-text="productClassificationName"
+                                      item-value="productGroupClassificationId"
+                                      label="Prodct Classification"
+                                      chips dense>
+                                </v-select>
                                 <v-menu
                                     ref="menu" v-model="menu" :close-on-content-click="false" :return-value.sync="editedItem.expiryDate"
                                     transition="scale-transition" offset-y min-width="290px">
@@ -100,6 +120,11 @@
                                         <v-btn text color="primary" @click="$refs.menu.save(editedItem.expiryDate)">OK</v-btn>
                                     </v-date-picker>
                                 </v-menu>
+                            </v-col>
+
+                            <v-col cols="12" offset-md="4" md="8" class="py-0 pr-0">
+                              <!-- <v-text-field v-model="editedItem.expiryDate" label="Expiry Date"></v-text-field> -->
+                                
                             </v-col>
 
 
@@ -225,12 +250,14 @@ export default {
             },
             { text: 'Name', value: 'productName', class: ['text-button', 'grey--text text--darken-3']},
             { text: 'Quantity', value: 'quantity', class: ['text-button', 'grey--text text--darken-3'] },
-            { text: 'Price', value: 'price', class: ['text-button', 'grey--text text--darken-3'] },
             { text: 'Packaging', value: 'productPackageName', class: ['text-button', 'grey--text text--darken-3']},
+            { text: 'Price', value: 'price', class: ['text-button', 'grey--text text--darken-3'] },
             { text: 'Expiry', value: 'expiryDate', class: ['text-button', 'grey--text text--darken-3'] },
             { text: 'Serial Number', value: 'serialNumber', class: ['text-button', 'grey--text text--darken-3'] },
-            { text: 'Branch', value: 'productBrandName', class: ['text-button', 'grey--text text--darken-3'] },
-            { text: 'Group', value: 'productGroupName', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Branch', value: 'pharmacyBranchName', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Brand', value: 'productBrandName', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Category', value: 'productCategyName', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Classification', value: '', class: ['text-button', 'grey--text text--darken-3'] },
             { text: 'Created On', value: 'createdOn', class: ['text-button', 'grey--text text--darken-3'] },
             { text: 'Actions', value: 'actions', sortable: false, class: ['text-button', 'grey--text text--darken-3'] },
         ],
@@ -244,10 +271,14 @@ export default {
             serialNumber: '',
             expiryDate: new Date().toISOString().substr(0, 10),
             productBranchId: '',
-            productGroupId: '',
+            // productGroupId: '',
             productImage: '',
             createdOn: '',
-            imageSrc: ''
+            imageSrc: '',
+            productBrandId: '',
+            productClassificationId: '',
+            productCategoryId: '',
+            productPackagingId: ''
         },
         defaultItem: {
             productId: '',
@@ -257,10 +288,14 @@ export default {
             serialNumber: '',
             expiryDate: new Date().toISOString().substr(0, 10),
             productBranchId: '',
-            productGroupId: '',
+            // productGroupId: '',
             productImage: '',
             createdOn: '',
-            imageSrc: ''
+            imageSrc: '',
+            productBrandId: '',
+            productClassificationId: '',
+            productCategoryId: '',
+            productPackagingId: ''
         },
         file: '',
         threadImage: '',
@@ -290,8 +325,20 @@ export default {
         branches(){
           return this.$store.getters["branches/allBranches"];
         },
+        brands(){
+          return this.$store.getters["brands/allBrands"];
+        },
+        classifications(){
+          return this.$store.getters["classifications/allClassifications"];
+        },
+        categories(){
+          return this.$store.getters["categories/allCategories"];
+        },
         productGroups(){
           return this.$store.getters["groups/allProductGroups"];
+        },
+        packages(){
+          return this.$store.getters["packages/allPackages"];
         },
         formTitle () {
             return this.editedIndex === -1 ? 'Add Product' : 'Edit Product';
@@ -397,6 +444,10 @@ export default {
             formData.append('expiryDate', this.editedItem.expiryDate)
             formData.append('productBranchId', this.editedItem.productBranchId)
             formData.append('productGroupId', this.editedItem.productGroupId)
+            formData.append('productBrandId', this.editedItem.productBrandId)
+            formData.append('productClassificationId', this.editedItem.productClassificationId)
+            formData.append('productCategoryId', this.editedItem.productCategoryId)
+            formData.append('productPackagingId', this.editedItem.productPackagingId)
             formData.append('image', this.editedItem.productImage)
             formData.append('createdOn', new Date())
 
@@ -429,6 +480,10 @@ export default {
             formData.append('expiryDate', this.editedItem.expiryDate)
             formData.append('productBranchId', this.editedItem.productBranchId)
             formData.append('productGroupId', this.editedItem.productGroupId)
+            formData.append('productBrandId', this.editedItem.productBrandId)
+            formData.append('productClassificationId', this.editedItem.productClassificationId)
+            formData.append('productCategoryId', this.editedItem.productCategoryId)
+            formData.append('productPackagingId', this.editedItem.productPackagingId)
             formData.append('image', this.editedItem.productImage)
             formData.append('modifiedOn', new Date())
             formData.append('isDeprecated', this.products[this.editedIndex].isDeprecated)

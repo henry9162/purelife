@@ -320,7 +320,7 @@
                             <v-list nav dense>
                                 <v-list-item-group color="primary">
                                     <div>
-                                        <v-list-item v-if="$auth.user.accountType != 2" to="/admin/dashboard">
+                                        <v-list-item v-if="$auth.user.accountType == 1" to="/admin/dashboard">
                                             <v-list-item-icon class="mr-4">
                                                 <v-icon small>mdi-view-dashboard-outline</v-icon>
                                             </v-list-item-icon>

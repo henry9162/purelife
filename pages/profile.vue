@@ -12,73 +12,78 @@
             <v-container class="pt-0">
                 <div class="d-flex justify-center">
                 <v-card class="mt-8 mb-6 px-4" color="green darken-2" flat>
-                    <v-card class="mx-4 my-0">
+                    <v-card class="profileInner my-0">
                         <div class="amount-caption pt-10 pb-8 text-center green--text text--darken-2">
                             My Profile
                         </div>
                         <div>
                            <v-container>
-                                <v-row class="px-8">
+                                <v-row class="profileRole">
                                     <v-col cols="12" md="4" class="py-0 pr-0">
-                                         <div class="viewImage mr-4">
-                                            <v-img :src="tempImage ? tempImage : threadImage ? threadImage : defaultImage" aspect-ratio="1.7"></v-img>
-                                            
-                                            <v-btn class="mx-2 viewImageBtn" fab dark small color="#40BCB6">
-                                                <v-file-input
-                                                    class="pt-0 pl-2"
-                                                    hide-input :disabled="disabled"
-                                                    v-model="file"
-                                                    placeholder="Upload image"
-                                                    label="Image"
-                                                    accept="image/*"
-                                                    show-size
-                                                >
-                                                    <!-- <template v-slot:selection="{ text }">
-                                                        <v-chip small label color="#40BCB6">{{ text }}</v-chip>
-                                                    </template> -->
-                                                </v-file-input>
-                                            </v-btn>
-                                        </div>
+                                        <client-only>
+                                            <div class="viewImage mr-4">
+                                                <v-img :src="tempImage ? tempImage : threadImage ? threadImage : defaultImage" aspect-ratio="1.7"></v-img>
+                                                
+                                                <v-btn class="mx-2 viewImageBtn" fab dark small color="#40BCB6">
+                                                    <v-file-input
+                                                        class="pt-0 pl-2"
+                                                        hide-input :disabled="disabled"
+                                                        v-model="file"
+                                                        placeholder="Upload image"
+                                                        label="Image"
+                                                        accept="image/*"
+                                                        show-size
+                                                    >
+                                                        <template v-slot:selection="{ text }">
+                                                            <v-chip small label color="#40BCB6">{{ text }}</v-chip>
+                                                        </template>
+                                                    </v-file-input>
+                                                </v-btn>
+                                            </div>
+                                        </client-only>
+                                        
                                     </v-col>
-                                    <v-col cols="12" md="4" class="py-0 px-5">
-                                        <v-text-field filled :disabled="disabled" v-model="editedItem.firstName" label="First Name"></v-text-field>
-                                        <v-text-field filled :disabled="disabled" v-model="editedItem.email" label="Email"></v-text-field>
-                                        <v-select
-                                            filled
-                                            :disabled="disabled"
-                                            v-model="editedItem.statedId"
-                                            :items="states"
-                                            item-text="stateName"
-                                            item-value="stateId"
-                                            label="State"
-                                            chips dense>
-                                        </v-select>
-                                        <v-menu
-                                            ref="menu" v-model="menu" :close-on-content-click="false" :return-value.sync="editedItem.dob"
-                                            transition="scale-transition" offset-y min-width="290px">
-
-                                            <template v-slot:activator="{ on, attrs }">
-                                            <v-text-field
+                                    <v-col cols="12" md="4" class="py-0 profileCenter">
+                                        <div class="profileMiddle">
+                                            <v-text-field filled :disabled="disabled" v-model="editedItem.firstName" label="First Name"></v-text-field>
+                                            <v-text-field filled :disabled="disabled" v-model="editedItem.email" label="Email"></v-text-field>
+                                            <v-select
                                                 filled
                                                 :disabled="disabled"
-                                                v-model="editedItem.dob"
-                                                label="Date Of Birth"
-                                            
-                                                readonly
-                                                v-bind="attrs"
-                                                v-on="on"
-                                            ></v-text-field>
-                                            </template>
+                                                v-model="editedItem.statedId"
+                                                :items="states"
+                                                item-text="stateName"
+                                                item-value="stateId"
+                                                label="State"
+                                                chips dense>
+                                            </v-select>
+                                            <v-menu
+                                                ref="menu" v-model="menu" :close-on-content-click="false" :return-value.sync="editedItem.dob"
+                                                transition="scale-transition" offset-y min-width="290px">
 
-                                            <v-date-picker v-model="editedItem.dob" no-title scrollable>
-                                                <v-spacer></v-spacer>
+                                                <template v-slot:activator="{ on, attrs }">
+                                                <v-text-field
+                                                    filled
+                                                    :disabled="disabled"
+                                                    v-model="editedItem.dob"
+                                                    label="Date Of Birth"
+                                                
+                                                    readonly
+                                                    v-bind="attrs"
+                                                    v-on="on"
+                                                ></v-text-field>
+                                                </template>
 
-                                                <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
-                                                <v-btn text color="primary" @click="$refs.menu.save(editedItem.dob)">OK</v-btn>
-                                            </v-date-picker>
-                                        </v-menu>
+                                                <v-date-picker v-model="editedItem.dob" no-title scrollable>
+                                                    <v-spacer></v-spacer>
+
+                                                    <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
+                                                    <v-btn text color="primary" @click="$refs.menu.save(editedItem.dob)">OK</v-btn>
+                                                </v-date-picker>
+                                            </v-menu>
+                                        </div>
                                     </v-col>
-                                    <v-col cols="12" md="4" class="py-0 pl-0">
+                                    <v-col cols="12" md="4" class="py-0">
                                         <v-text-field filled :disabled="disabled" v-model="editedItem.lastName" label="Last Name"></v-text-field>
                                         <v-text-field filled :disabled="disabled" v-model="editedItem.phoneNumber" label="Phone"></v-text-field>
                                          <v-select
@@ -96,26 +101,28 @@
 
                                     <v-col cols="12" offset-md="2">
                                         <div class="d-flex justify-center">
-                                            <v-btn  
-                                                @click="changeState" rounded
-                                                depressed large prepend-inner-icon="mdi-map-marker" clearable
-                                                class="white--text mt-6 mb-10 px-14 py-5 text-capitalize"
-                                                color="#009933" v-text="btnName">
-                                            </v-btn>
+                                            <client-only>
+                                                <v-btn  
+                                                    @click="changeState" rounded
+                                                    depressed large prepend-inner-icon="mdi-map-marker" clearable
+                                                    class="white--text btnState mb-10 py-5 text-capitalize"
+                                                    color="#009933" v-text="btnName">
+                                                </v-btn>
 
-                                            <v-btn rounded @click="updateUser" depressed large prepend-inner-icon="mdi-map-marker" clearable
-                                                class="white--text mt-6 mb-10 ml-4 px-14 py-5 text-capitalize"
-                                                color="red darken-2" :loading="loading" :disabled="disabled"> Update
-                                                <v-icon right>mdi-send</v-icon>
-                                                <template v-slot:loader>
-                                                    <span class="custom-loader">
-                                                        <v-icon dark>mdi-cached</v-icon>
-                                                    </span>
-                                                </template>
-                                            </v-btn>
+                                                <v-btn rounded @click="updateUser" depressed large prepend-inner-icon="mdi-map-marker" clearable
+                                                    class="white--text btnUpdate mb-10 ml-4 py-5 text-capitalize"
+                                                    color="red darken-2" :loading="loading" :disabled="disabled"> Update
+                                                    <v-icon right>mdi-send</v-icon>
+                                                    <template v-slot:loader>
+                                                        <span class="custom-loader">
+                                                            <v-icon dark>mdi-cached</v-icon>
+                                                        </span>
+                                                    </template>
+                                                </v-btn>
+                                            </client-only>
                                         </div>
                                     </v-col>
-                        
+
                                 </v-row>
                             </v-container>
                         </div>
@@ -317,5 +324,67 @@ export default {
     }
     .no-shadow {
         box-shadow: none !important;
+    }
+    .profileInner {
+        @include media("<tablet"){
+            margin-right: 4px !important;
+            margin-left: 4px !important;
+        }
+
+        @include media(">=tablet"){
+            margin-right: 16px !important;
+            margin-left: 16px !important;
+        }
+    }
+    .profileRole {
+        @include media("<tablet"){
+            padding-right: 12px !important;
+            padding-left: 12px !important;
+        }
+
+        @include media(">=tablet"){
+            padding-right: 32px !important;
+            padding-left: 32px !important;
+        }
+    }
+    .profileCenter {
+        @include media("<tablet"){
+            padding-right: 10px !important;
+            padding-left: 10px !important;
+        }
+        @include media(">=tablet"){
+            padding-right: 20px !important;
+            padding-left: 20px !important;
+        }
+
+        .profileMiddle {
+            @include media("<tablet"){
+                margin-top: 25px !important;
+            }
+        }
+    }
+    .btnState {
+        @include media("<tablet"){
+            padding-right: 24px !important;
+            padding-left: 24px !important;
+            margin-top: 16px !important;
+        }
+        @include media(">=tablet"){
+            padding-right: 56px !important;
+            padding-left: 56px !important;
+            margin-top: 24px !important;
+        }
+    }
+    .btnUpdate {
+        @include media("<tablet"){
+            padding-right: 24px !important;
+            padding-left: 24px !important;
+            margin-top: 16px !important;
+        }
+        @include media(">=tablet"){
+            padding-right: 56px !important;
+            padding-left: 56px !important;
+            margin-top: 24px !important;
+        }
     }
 </style>

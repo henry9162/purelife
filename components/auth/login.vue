@@ -102,6 +102,10 @@ export default {
                         if(user) {
                             this.$auth.setUserToken(response.data.loginToken)
                             this.$auth.setUser(user)
+                        let timeToLogout = new Date();
+                        timeToLogout = timeToLogout.setDate(timeToLogout.getDate() + 1);
+                        let bb = Date.now()
+                        debugger
                             process.client ? localStorage.setItem('signedInUser', JSON.stringify(user)) : '';
                             this.loading = false
                             this.$toast.success(response.data.message).goAway(4000)

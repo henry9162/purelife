@@ -77,6 +77,7 @@
                                     item-text="accountypeName"
                                     item-value="acountTypeId"
                                     label="Account Type"
+                                    v-on:change="getRolesByAccountType"
                                     chips dense>
                                 </v-select>
                                 <v-text-field v-model="editedItem.city" label="City"></v-text-field>
@@ -220,7 +221,11 @@ export default {
         },
         'editedItem.stateId': function (val, oldVal) {
             this.getLga(val)
-        }
+        },
+        'editedItem.accountType': function (val, oldVal) {
+            this.getRolesByAccountType(val, oldVal)
+        },
+
     },
 
     computed: {
@@ -248,6 +253,9 @@ export default {
     },
 
     methods: {
+        getRolesByAccountType(val) {
+            this.$store.dispatch('roles/getRolesByAccountType', val)
+        },
         editItem (item) {
             this.editedIndex = this.users.indexOf(item)
             this.editedItem = Object.assign({}, item)

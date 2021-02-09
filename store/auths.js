@@ -40,17 +40,18 @@ export const actions = {
     login(context, data){
         return new Promise((resolve, reject) => {
             this.$axios.post('/Account/Login', data).then(response => {
+                debugger
                 if(response.data.state == -3){
                     this.$toast.error(response.data.message).goAway(4000)
                     return
-                    } else {
-                        let user = response.data.data
-                        if(user) {
-                            this.$auth.setUserToken(response.data.loginToken)
-                            this.$auth.setUser(user)
-                            process.client ? localStorage.setItem('signedInUser', JSON.stringify(user)) : '';
-                            resolve(response)
-                        }   
+                } else {
+                    let user = response.data.data
+                    if(user) {
+                        this.$auth.setUserToken(response.data.loginToken)
+                        this.$auth.setUser(user)
+                        process.client ? localStorage.setItem('signedInUser', JSON.stringify(user)) : '';
+                        resolve(response)
+                    }   
                 }
             }).catch(error => {
                 context.dispatch('processError', error);

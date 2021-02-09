@@ -4,24 +4,18 @@
             <v-list style="padding: 0px" two-line>
                 <v-list-item class="pl-2 post-caption">
                     <v-list-item-avatar  style="margin-bottom: 13px">
-                        <!-- <img @click="$router.push({path: '/'})" :src="require(`~/assets/logos/${imgSrc.src}`)" weight="120px" height="120px"> -->
                         <img :src="user.userImage">
                     </v-list-item-avatar>
 
                     <v-list-item-content>
                         <v-list-item-title class="post-caption list-color" v-text="authName"></v-list-item-title>
                         <v-list-item-subtitle v-text="authEmail"></v-list-item-subtitle>
-                        <!-- <img @click="$router.push({path: '/'})" :src="require(`~/assets/logos/${imgSrc.src}`)" weight="30px" height="43px"> -->
                     </v-list-item-content>
                 </v-list-item>
 
                 <v-divider class="mt-3"></v-divider>
             </v-list>
-
-            <!-- <v-toolbar-title class="custom-h4 navLink" @click="$router.push({path: '/'})">
-                <img src="~assets/logos/newLogo.png" height="60px">
-            </v-toolbar-title> -->
-
+            
             <v-list>
                 <v-list-item class="post-caption" @click="$router.push({path: '/admin/dashboard'})" link>
                     <v-list-item-icon>
@@ -112,8 +106,9 @@
                 </v-list-group>
             </v-list>
         </v-navigation-drawer>
-
+        
         <v-app-bar color="#fff" height="82px" fixed app>
+            <client-only>
             <v-toolbar-title class="custom-h4 navLink" @click="$router.push({path: '/'})">
                 <img src="~assets/logos/newLogo.png" height="50px">
             </v-toolbar-title>
@@ -161,7 +156,7 @@
             </v-tooltip>
 
             <v-spacer />
-
+            
             <div v-if="$auth.loggedIn">
                 <v-menu v-model="userMenu" close-delay="200" 
                     max-width="200" :close-on-content-click="false" 
@@ -201,19 +196,6 @@
                                     </v-list-item>
                                 </div>
 
-                                <!-- <div v-else>
-                                    <v-list-item v-for="(item, i) in itemsss" :key="i" :to="item.url">
-                                        <v-list-item-icon class="mr-4">
-                                            <v-icon v-text="item.icon"></v-icon>
-                                        </v-list-item-icon>
-
-                                        <v-list-item-content>
-                                            <v-list-item-title v-text="item.text"></v-list-item-title>
-                                        </v-list-item-content>
-                                    </v-list-item>
-                                </div> -->
-
-                                <!-- <v-divider></v-divider> -->
                                 <v-list-item @click="logout">
                                     <v-list-item-icon class="mr-4">
                                         <v-icon small>mdi-logout</v-icon>
@@ -232,6 +214,7 @@
             <div v-else>
                 <v-btn @click="logout" depressed outlined rounded class="navLinkColor custom-h6 px-8 py-3 text-capitalize">Logout</v-btn>
             </div>
+            </client-only>
         </v-app-bar>
 
         <v-main style="background: #f4f0ec">
@@ -258,19 +241,12 @@ export default {
         },
         itemsss: [
             { text: 'Profile', icon: 'mdi-face-profile', url: '/admin/adminProfile' },
-            { text: 'Orders', icon: 'mdi-sale', url: '/orders' },
-            //{ text: 'Profile', icon: 'mdi-face-profile', url: '/profile' }
+            { text: 'Orders', icon: 'mdi-sale', url: '/orders' }
         ],
         defaultImage: 'https://via.placeholder.com/150'
     }),
 
     computed: {
-        // userName(){
-        //     return this.user.firstName;
-        // },
-        // userImage(){
-        //     return this.$auth.user && this.$auth.user.userImage != '' ? this.$auth.user.userImage : this.defaultImage;
-        // },
         authName(){
            return this.$store.getters['auths/authName']
         },
@@ -309,7 +285,6 @@ export default {
             this.$store.dispatch('loyalties/getLoyaltySetUp');
             this.$store.dispatch('productss/getExpiredProducts');
             this.$store.dispatch('productss/getProductsAboutToExpire', null);
-            this.getUser();
         },
         navEvent(){
             if(this.imgSrc.state == false){
@@ -326,9 +301,11 @@ export default {
         },
         async setUser(){
             await this.$store.dispatch('auths/setUser');
+            this.getUser();
         },
         async getUser(){
             if (this.$auth.loggedIn) {
+                console.log(this.$auth.user.userId)
                 await this.$store.dispatch('auths/getUser', this.$auth.user.userId);
             } 
         }

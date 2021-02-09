@@ -233,14 +233,13 @@ export default {
             })
             this.$modal.hide('branches-modal');
         },
-
         save () {
             if (this.editedIndex > -1) {
                 this.updateBranch();
             } else {
                 this.addBranch();
             }
-        },
+        }
     }
 }
 </script>

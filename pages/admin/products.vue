@@ -257,7 +257,7 @@ export default {
             { text: 'Branch', value: 'pharmacyBranchName', class: ['text-button', 'grey--text text--darken-3'] },
             { text: 'Brand', value: 'productBrandName', class: ['text-button', 'grey--text text--darken-3'] },
             { text: 'Category', value: 'productCategyName', class: ['text-button', 'grey--text text--darken-3'] },
-            { text: 'Classification', value: '', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Classification', value: 'productClassificationName', class: ['text-button', 'grey--text text--darken-3'] },
             { text: 'Created On', value: 'createdOn', class: ['text-button', 'grey--text text--darken-3'] },
             { text: 'Actions', value: 'actions', sortable: false, class: ['text-button', 'grey--text text--darken-3'] },
         ],
@@ -443,7 +443,7 @@ export default {
             formData.append('serialNumber', this.editedItem.serialNumber)
             formData.append('expiryDate', this.editedItem.expiryDate)
             formData.append('productBranchId', this.editedItem.productBranchId)
-            formData.append('productGroupId', this.editedItem.productGroupId)
+            formData.append('productGroupId', "00000000-0000-0000-0000-000000000000")
             formData.append('productBrandId', this.editedItem.productBrandId)
             formData.append('productClassificationId', this.editedItem.productClassificationId)
             formData.append('productCategoryId', this.editedItem.productCategoryId)
@@ -479,7 +479,7 @@ export default {
             formData.append('serialNumber', this.editedItem.serialNumber)
             formData.append('expiryDate', this.editedItem.expiryDate)
             formData.append('productBranchId', this.editedItem.productBranchId)
-            formData.append('productGroupId', this.editedItem.productGroupId)
+            formData.append('productGroupId', "00000000-0000-0000-0000-000000000000")
             formData.append('productBrandId', this.editedItem.productBrandId)
             formData.append('productClassificationId', this.editedItem.productClassificationId)
             formData.append('productCategoryId', this.editedItem.productCategoryId)

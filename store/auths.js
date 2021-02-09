@@ -45,9 +45,6 @@ export const actions = {
                     if(user) {
                         this.$auth.setUserToken(response.data.loginToken)
                         this.$auth.setUser(user)
-                        let timeToLogout = new Date();
-                        timeToLogout = timeToLogout.getDay() + 1;
-                        debugger
                         process.client ? localStorage.setItem('signedInUser', JSON.stringify(user)) : '';
                         resolve(response)
                     }   

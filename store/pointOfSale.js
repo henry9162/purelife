@@ -1,6 +1,19 @@
+let testProducts = [{
+            productName: 'test',
+            quantity: 10,
+            serial: 1234,
+            unitPrice: 10,
+            total: 0
+        }, {
+            productName: 'test',
+            quantity: 10,
+            serial: 1234,
+            unitPrice: 10,
+            total: 0
+        }]
 export const state = () => ({
     products: [],
-    totalQuantity: 0
+    totalQuantity: 2
 })
 
 export const mutations = {
@@ -51,6 +64,8 @@ export const actions = {
             this.$axios.get('/Products/GetPOSBySerialNumber/' + payload)
                 .then(response => {
                     let data = response.data.data;
+                    if (data == null)
+                        return resolve(data)
                     if (data.quantity < 1){
                         this.$toast.error("Product not in stock").goAway(5000)
                     } else {
@@ -65,20 +80,12 @@ export const actions = {
 
                         context.commit("setProducts", dataToSend);
                     }
-
-                    this.scanning = false;
-                    document.getElementById("scanInput").style.display = "block";
-                    document.getElementById("mdlText").style.display = "block";
-                    document.getElementById("mdlSpinner").style.display = "none";
-                    document.querySelector("#barcoeMdl .v-input__append-inner button").click()
-                    document.getElementById("scanInput").focus();
-                    this.scanNumber = 0;
                     resolve(response);
             }).catch(error => {
                 context.dispatch('processError', error);
                 reject(error);
-            })
-        })
+            });
+        });
     },
     getProductByCode(context, payload){
         return new Promise((resolve, reject) => {

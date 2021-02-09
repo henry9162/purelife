@@ -40,11 +40,31 @@
                 </v-card>
 
                 <v-card class="mt-3" color="secondary" v-if="totalPriceBool">
-                    <div class="text-center">
-                        <v-btn @click="processCashPayment()" depressed prepend-inner-icon="mdi-map-marker" clearable
+                    <div class="text-center py-3 d-flex justify-space-around">
+                        <v-btn @click="openPaymentModal(1)" depressed prepend-inner-icon="mdi-map-marker" clearable
                             class="white--text text-center rounded-0 text-capitalize"
                             color="primary" :loading="loading" :disabled="loading">
-                            PAY (CASH N{{totalPrice}})
+                            CASH
+                            <template v-slot:loader>
+                                <span class="custom-loader">
+                                    <v-icon light>mdi-cached</v-icon>
+                                </span>
+                            </template>
+                        </v-btn>
+                        <v-btn @click="openPaymentModal(2)" depressed prepend-inner-icon="mdi-map-marker" clearable
+                            class="white--text text-center rounded-0 text-capitalize"
+                            color="indigo" :loading="loading" :disabled="loading">
+                            POS
+                            <template v-slot:loader>
+                                <span class="custom-loader">
+                                    <v-icon light>mdi-cached</v-icon>
+                                </span>
+                            </template>
+                        </v-btn>
+                        <v-btn @click="openPaymentModal(3)" depressed prepend-inner-icon="mdi-map-marker" clearable
+                            class="white--text text-center rounded-0 text-capitalize"
+                            color="cyan" :loading="loading" :disabled="loading">
+                            TRANSFER
                             <template v-slot:loader>
                                 <span class="custom-loader">
                                     <v-icon light>mdi-cached</v-icon>
@@ -52,7 +72,7 @@
                             </template>
                         </v-btn>
 
-                        <paystack
+                        <!-- <paystack
                             style="margin:auto;"
                             class="v-btn my-3 v-btn--contained theme--light v-size--large green white--text"
                             :amount="totalPrice * 100"
@@ -63,7 +83,7 @@
                             :close="closePaystack"
                             :embed="false"
                         >
-                        PAY (ONLINE N {{totalPrice}})</paystack>
+                        PAY (ONLINE N {{totalPrice}})</paystack> -->
 
                     </div>
                 </v-card>
@@ -163,6 +183,54 @@
             </v-card-text>
         </v-card>
     </modal>
+    
+    <modal
+        name="payment-modal" :min-width="500"
+        :max-width="100" :adaptive="true"
+        :scrollable="true" height="auto"
+        transition="fade-transition" :clickToClose="false" id="paymentMdl">
+
+        <v-card>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="red" text @click="closePayment()">
+                    <v-icon>mdi-window-close</v-icon>
+                </v-btn>
+            </v-card-actions>
+
+            <div class="text-center" id="">
+                <span class="headline list-color custom-style">{{paymentModalText}}</span>
+            </div>
+
+            <v-card-text>
+                <v-container>
+                    <div>
+                        <v-btn @click="processPOSPaymentFromModal()" depressed prepend-inner-icon="mdi-map-marker" clearable
+                            class="white--text text-center rounded-0 text-capitalize"
+                            color="green" :loading="paymentLoading" :disabled="paymentLoading">
+                            Yes
+                            <template v-slot:loader>
+                                <span class="custom-loader">
+                                    <v-icon light>mdi-cached</v-icon>
+                                </span>
+                            </template>
+                        </v-btn>
+                        
+                        <v-btn @click="closePayment()" depressed prepend-inner-icon="mdi-map-marker" clearable
+                            class="white--text text-center rounded-0 text-capitalize"
+                            color="red" :loading="paymentLoading" :disabled="paymentLoading">
+                            Cancel
+                            <template v-slot:loader>
+                                <span class="custom-loader">
+                                    <v-icon light>mdi-cached</v-icon>
+                                </span>
+                            </template>
+                        </v-btn>
+                    </div>
+                </v-container>
+            </v-card-text>
+        </v-card>
+    </modal>
 </div>
 </template>
 
@@ -187,14 +255,18 @@ export default {
         PUBLIC_KEY: 'pk_live_3f9bd55ca82c67fa47f64d80490f14ac49c510e8',
         methodOfPayment: {
             cash: 1,
-            online: 2
+            pos: 2,
+            transfer: 3
         },
         transactionStatus: {
             pending: 1,
             success: 2,
             declined: 3
         },
-        isPageLoading: false
+        isPageLoading: false,
+        paymentModalText: "",
+        paymentMode: 0,
+        paymentLoading: false
     }),
 
     computed: {
@@ -236,6 +308,26 @@ export default {
             // this.addEventForBarcode()
             //document.getElementById("scanInput").focus();
         },
+        openPaymentModal(mode){
+            this.paymentMode = mode;
+
+            switch (mode) {
+                case 1:
+                    this.paymentModalText = "Customer paid CASH?"
+                    break;
+                case 2:
+                    this.paymentModalText = "Customer paid with POS?"
+                    break;
+                case 3:
+                    this.paymentModalText = "Customer paid with TRANSFER?"
+                    break;
+                default:
+                    break;
+            }
+
+            this.$modal.show('payment-modal');
+
+        },
         onBarcodeScanned (barcode) {
             this.scanNumber = ++this.scanNumber;
             
@@ -250,12 +342,36 @@ export default {
             }
         },
         async processBarCode(barcode){
-            await this.getProduct(barcode).then(()=> {
+            await this.getProduct(barcode).then(response => {
+                if (response == null){
+                    this.$toast.info("Product not in stock").goAway(5000);
+                }
+
+                this.scanning = false;
+                document.getElementById("scanInput").style.display = "block";
+                document.getElementById("mdlText").style.display = "block";
+                document.getElementById("mdlSpinner").style.display = "none";
+                document.querySelector("#barcoeMdl .v-input__append-inner button").click();
+                document.getElementById("scanInput").focus();
                 this.scanNumber = 0
+            }).catch(err => {
+
+                this.$toast.error("An error occurred, please contact admin").goAway(5000);
+                
+                this.scanning = false;
+                document.getElementById("scanInput").style.display = "block";
+                document.getElementById("mdlText").style.display = "block";
+                document.getElementById("mdlSpinner").style.display = "none";
+                document.querySelector("#barcoeMdl .v-input__append-inner button").click();
+                document.getElementById("scanInput").focus();
+                this.scanNumber = 0;
             });
         },
         close () {
             this.$modal.hide('barcode-modal');
+        },
+        closePayment () {
+            this.$modal.hide('payment-modal');
         },
         addItem (){
             let data = {
@@ -283,19 +399,94 @@ export default {
         genRef() {
             return uniqid("pstk-");
         },
+        processPOSPaymentFromModal() {
+            let mode = this.paymentMode;
+            let paymentModeText = "";
+
+            switch (mode) {
+                case 1:
+                    paymentModeText = "CASH"
+                    break;
+                case 2:
+                    paymentModeText = "POS"
+                    break;
+                case 3:
+                    paymentModeText = "TRANSFER"
+                    break;
+            
+                default:
+                    break;
+            }
+
+            let {css} = require('../../middleware/receipt');
+            let tableData = "";
+
+            this.products.map(product => {
+                let data = `<tr>
+                        <td class="description">${product.productName}</td>
+                        <td class="quantity">${product.quantity}</td>
+                        <td class="price">${product.unitPrice}</td>
+                        <td class="price">${product.total}</td>
+                    </tr>`;
+                
+                tableData += data;
+            });
+            let total = `<tr>
+                        <td class="description">TOTAL</td>
+                        <td class="quantity"></td>
+                        <td class="quantity"></td>
+                        <td class="price">${this.totalPrice}</td>
+                    </tr>`
+            tableData += total;
+
+            let printWindow = window.open("", "PRINT", "width= 400, height= 600");
+            this.$modal.hide('payment-modal');
+            printWindow.document.write('<html><head><title> Print Receipt </title>');
+            printWindow.document.write('<html><head><style>' + css + '</style>');
+            printWindow.document.write('</head><body>');
+            printWindow.document.write('<div class="ticket"><img src="/_nuxt/assets/logos/newLogo.png" alt="Logo">');
+            printWindow.document.write('<p class="centered">RECEIPT</p>');
+            printWindow.document.write(`<p class="centered">Mode of payment: ${paymentModeText}</p>`);
+            printWindow.document.write('<table>');
+            printWindow.document.write('<thead><tr>');
+            printWindow.document.write('<th class="quantity">Product</th>');
+            printWindow.document.write('<th class="quantity">Qty</th>');
+            printWindow.document.write('<th class="quantity">Price</th>');
+            printWindow.document.write('<th class="quantity">Total</th>');
+            printWindow.document.write('</tr></thead>');
+            printWindow.document.write('<tbody>');
+            printWindow.document.write(tableData);
+            printWindow.document.write('</tbody></table>');
+            printWindow.document.write(`<p class="centered">Thanks for your purchase!
+                <br>Purelife Pharmacy</p>`);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close(); // necessary for IE >= 10
+            printWindow.focus(); // necessary for IE >= 10*/
+
+            printWindow.onload = function(){
+                this.addEventListener('afterprint', (event) => {
+                    printWindow.close();
+                    this.processCashPayment();
+                })
+            };
+            printWindow.print();
+
+
+
+        },
         async processCashPayment(){
 
             let data = {
                 "transactionStatusId": this.transactionStatus.success,
                 "totalSum": this.totalPrice,
-                "methodOfPaymentId": this.methodOfPayment.cash,
+                "methodOfPaymentId": this.paymentMode,
                 "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                 "itemsCount": this.totalQuantity,
                 "isRemoved": false,
                 transactionId: this.genRef()
             }
 
-            this.processPOSPayment(data, "cash");
+            this.processPOSPayment(data, this.paymentMode);
 
         },
         processCardPayment(data) {
@@ -315,9 +506,10 @@ export default {
         async processPOSPayment(data, mode = ""){
             this.isPageLoading = true;
             
-            let message = mode == 'cash' ? 'Successfully made payment with cash' : 'Successfully made payment online';
+            let message = mode == 1 ? 'Successfully made payment with CASH' :
+                mode == 2 ? 'Successfully made payment with POS' : 'Successfully made payment with TRANSFER';
 
-            await this.processPayment(data).then(payload => {
+            await this.processPayment(data).then(() => {
                 this.isPageLoading = false;
                 this.$toast.success(message).goAway(4000);
                 this.clearProducts();

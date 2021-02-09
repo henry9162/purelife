@@ -95,8 +95,6 @@
                                     </v-list-item> -->
                                 </v-list-group>
                             </v-list>
-
-
                             <!-- <v-list>
                                 <v-list-group v-model="expandCategories">
                                     <template v-slot:activator>
@@ -136,7 +134,7 @@
                             </div>
                             <div class="d-flex">
                                 <div class="blue--text d-none d-sm-flex mt-1 mr-2">Change Layout</div>
-                                <div class="d-flex">
+                                <div class="d-none d-sm-flex">
                                     <v-tooltip color="primary" top>
                                         <template v-slot:activator="{ on }">                                   
                                             <v-icon class="font-weight-bold mx-2 black--text" @click="changeGrid('3')" v-on="on">mdi-format-list-bulleted</v-icon>                                   
@@ -156,9 +154,7 @@
                     </div>
                     <!-- Product Cards -->
                     <product-modal @cartAdded="$store.dispatch('activateSnackbar')"></product-modal>
-                    <transition enter-active-class="animated pulse" leave-active-class="animated fadeOut" mode="out-in">
-                        <product-list :visible="visible" :gridValue="gridValue" :products="products"></product-list>
-                    </transition>
+                    <product-list :visible="visible" :gridValue="gridValue" :loader="isLoading" :products="products"></product-list>
                 </v-col>
             </v-row>
         </v-container>
@@ -206,7 +202,7 @@ export default {
         ...mapGetters({
             allProducts: 'filters/filteredProducts',
             categories: 'filters/getCategories',
-            isLoading: 'filters/getLoader'
+            isLoading: 'filters/getLoader',
         }),
         products(){
             return this.getAllProducts().filter(product => {
@@ -253,12 +249,26 @@ export default {
             } else {
                 this.visible = true
             }
+        },
+        runTest(){
+            let arr = [1,2,3,4,6];
+
+            const getMissingNum = (arr) => {
+                for (var i = 0; i < arr.length - 1; i++){
+                    if(arr[i] + 1 != arr[i + 1]){
+                        return arr[i] + 1
+                    } 
+                }
+            }
+
+            console.log(getMissingNum(arr))
         }
     },
 
     mounted() {
         this.initialise()
         this.setWidth()
+        //this.runTest()
     }
 }
 

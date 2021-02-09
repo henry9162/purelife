@@ -122,10 +122,10 @@
             </v-card>
         </modal>
 
-        <v-data-table :headers="headers" :items="expiredProducts" sort-by="calories" class="mx-4 py-4">
+        <v-data-table :headers="headers" :items="outOfStockProducts" sort-by="calories" class="mx-4 py-4">
             <template v-slot:top>
                 <v-toolbar flat color="white">
-                    <v-toolbar-title class="list-color custom-style">Expired Products</v-toolbar-title>
+                    <v-toolbar-title class="list-color custom-style">Out of Stock Products</v-toolbar-title>
                     <v-divider class="mx-4" inset vertical></v-divider>
                     <v-spacer></v-spacer>
                 </v-toolbar>
@@ -224,8 +224,8 @@ export default {
     },
 
     computed: {
-        expiredProducts(){
-            return this.$store.getters["productss/expiredProducts"];
+        outOfStockProducts(){
+            return this.$store.getters["productss/outOfStockProducts"];
         },
         isLoading(){
             return this.$store.getters['productss/getLoader']

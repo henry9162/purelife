@@ -5,7 +5,7 @@
                 <v-list-item class="pl-2 post-caption">
                     <v-list-item-avatar  style="margin-bottom: 13px">
                         <!-- <img @click="$router.push({path: '/'})" :src="require(`~/assets/logos/${imgSrc.src}`)" weight="120px" height="120px"> -->
-                        <img :src="defaultImage">
+                        <img :src="user.userImage">
                     </v-list-item-avatar>
 
                     <v-list-item-content>
@@ -50,7 +50,7 @@
                     </v-list-item>
                 </v-list-group>
 
-                <v-list-group color="#22A64E" class="post-caption list-color" no-action prepend-icon="mdi-post-outline">
+                <v-list-group color="#22A64E" class="post-caption list-color" no-action prepend-icon="mdi-basket-fill">
                     <template v-slot:activator>
                         <v-list-item-title class="list-color">Refill Management</v-list-item-title>
                     </template>
@@ -146,6 +146,19 @@
                 </template>
                 <span>Items to expire in 4 month</span>
             </v-tooltip>
+            <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                    <v-btn @click="$router.push({path: '/admin/outOfStock'})" icon class="" v-bind="attrs" v-on="on">
+                        <v-badge @click="$router.push({path: '/admin/outOfStock'})" class="title" overlap color="red">
+                            <template class="cart-notification" v-slot:badge>
+                                <span dark v-text="outOfStockCount"></span>
+                            </template>
+                            <v-icon class="custom-red pt-2">mdi-delete-empty</v-icon>
+                        </v-badge>
+                    </v-btn>
+                </template>
+                <span>Out of stock products</span>
+            </v-tooltip>
 
             <v-spacer />
 
@@ -157,9 +170,9 @@
                     <template v-slot:activator="{ on }">
                         <v-btn class="post-caption white--text" text style="height: 57px" v-on="on">
                             <v-avatar class="mr-4" size="36">
-                                <img :src="$auth.user.image ? url+$auth.user.image.image : defaultImage" :alt="$auth.user.firstName">
+                                <img :src="user.userImage" :alt="user.firstName">
                             </v-avatar>
-                            <span class="grey--text text--darken-2" v-text="userName"></span> <v-icon>mdi-chevron-down</v-icon>
+                            <span class="grey--text text--darken-2" v-text="user.firstName"></span> <v-icon>mdi-chevron-down</v-icon>
                         </v-btn>
                     </template>
 
@@ -244,6 +257,7 @@ export default {
             src: 'logo1.png'
         },
         itemsss: [
+            { text: 'Profile', icon: 'mdi-face-profile', url: '/admin/adminProfile' },
             { text: 'Orders', icon: 'mdi-sale', url: '/orders' },
             //{ text: 'Profile', icon: 'mdi-face-profile', url: '/profile' }
         ],
@@ -251,24 +265,29 @@ export default {
     }),
 
     computed: {
-        userName(){
-            return this.$auth.user.firstName;
-        },
-        userImage(){
-            let url = this.$store.state.productionUrl
-            return this.$auth.user.image ? url+this.$auth.user.image.image : this.defaultImage;
-        },
+        // userName(){
+        //     return this.user.firstName;
+        // },
+        // userImage(){
+        //     return this.$auth.user && this.$auth.user.userImage != '' ? this.$auth.user.userImage : this.defaultImage;
+        // },
         authName(){
            return this.$store.getters['auths/authName']
         },
         authEmail(){
             return this.$store.getters['auths/authEmail']
         },
+        user(){
+            return this.$store.getters['auths/getUser']
+        },
         expiredProductsCount(){
             return this.$store.getters['productss/expiredProductsCount']
         },
         productsAboutToExpireCount(){
             return this.$store.getters['productss/productsAboutToExpireCount']
+        },
+        outOfStockCount(){
+            return this.$store.getters['productss/outOfStockCount']
         }
     },
 
@@ -290,6 +309,7 @@ export default {
             this.$store.dispatch('loyalties/getLoyaltySetUp');
             this.$store.dispatch('productss/getExpiredProducts');
             this.$store.dispatch('productss/getProductsAboutToExpire', null);
+            this.getUser();
         },
         navEvent(){
             if(this.imgSrc.state == false){
@@ -306,6 +326,11 @@ export default {
         },
         async setUser(){
             await this.$store.dispatch('auths/setUser');
+        },
+        async getUser(){
+            if (this.$auth.loggedIn) {
+                await this.$store.dispatch('auths/getUser', this.$auth.user.userId);
+            } 
         }
     },
     mounted(){

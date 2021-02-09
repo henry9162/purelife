@@ -1,8 +1,14 @@
 <template>
     <div>
         <v-container class="pt-0" fluid>
-            <v-row v-if="products.length > 0">
-                <v-col class="px-3 py-4" v-for="product in products" :key="product.productId" :md="gridValue == 3 ? '4' : gridValue == 4 ? '3' : '4'">
+            <v-row v-if="loader">
+                <v-col cols="12" v-for="n in 9" :key="n" sm="12" md="4">
+                    <v-skeleton-loader type="card"></v-skeleton-loader>
+                </v-col>
+            </v-row>
+
+            <v-row v-else-if="products.length > 0">
+                <v-col class="px-3 py-4" v-for="product in products" :key="product.productId" cols="12" sm="12" :md="gridValue == 3 ? '4' : gridValue == 4 ? '3' : '4'">
                     <v-hover v-slot:default="{ hover }">
                         <v-card color="white" max-width="400" :elevation="hover ? 20 : '4'">
                             <v-img :aspect-ratio="16/12" :src="product.imageSrc">
@@ -82,8 +88,15 @@
             </v-row>
 
             <v-row v-else>
-                <v-col cols="12" v-for="n in 9" :key="n" sm="12" md="4">
-                    <v-skeleton-loader type="card"></v-skeleton-loader>
+                <v-col cols="12">
+                    <div class="d-flex justify-center post-caption red--text grey lighten-2 pa-5 mt-15">
+                        <div class="text-center">
+                            <div>Sorry, no product was found!</div>
+                            <!-- <div class="mt-2">
+                                <v-btn @click="$router.push({path: '/'})" color="green lighten-2" depressed small class="white--text">Continue shopping</v-btn>
+                            </div> -->
+                        </div>
+                    </div>
                 </v-col>
             </v-row>
         </v-container>
@@ -94,7 +107,7 @@
 import { mapActions, mapGetters } from 'vuex'
 
 export default {
-    props: ['products', 'gridValue', 'visible'],
+    props: ['products', 'loader', 'gridValue', 'visible'],
 
     computed: {
         ...mapGetters({

@@ -14,7 +14,8 @@ export const state = () => ({
     transProducts: [],
     transProductsByUser: [],
     expiredProducts: [],
-    productsAboutToExpire: []
+    productsAboutToExpire: [],
+    outOfStockProducts: []
 })
 
 export const mutations = {
@@ -23,6 +24,9 @@ export const mutations = {
     },
     setexpiredProducts(state, data){
         state.expiredProducts = data
+    },
+    setOutOfStockProducts(state, data){
+        state.outOfStockProducts = data
     },
     setLoader(state, value){
         value == true ? state.loader = true : state.loader = false
@@ -202,6 +206,17 @@ export const actions = {
         this.$axios.get('/Products/GetExpiredProducts')
             .then(response => {
                 context.commit('setexpiredProducts', response.data.data)
+                context.commit('setLoader', false)
+            }).catch(error => {
+                context.commit('setLoader', false)
+                context.dispatch('processError', error)
+            })
+    },
+    getOutOfStockProducts(context){
+        context.commit('setLoader', true)
+        this.$axios.get('/Products/GetOutOfStockProducts')
+            .then(response => {
+                context.commit('setOutOfStockProducts', response.data.data)
                 context.commit('setLoader', false)
             }).catch(error => {
                 context.commit('setLoader', false)
@@ -436,5 +451,11 @@ export const getters = {
     },
     productsAboutToExpireCount(state){
         return state.productsAboutToExpire.length
+    },
+    outOfStockProducts(state){
+        return state.outOfStockProducts
+    },
+    outOfStockCount(state){
+        return state.outOfStockProducts.length
     }
 }

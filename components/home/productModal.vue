@@ -1,17 +1,33 @@
 <template>
-    <modal :classes="classes" name="product-modal" :max-width="900" :adaptive="true" :scrollable="true" height="auto" transition="fade-transition" @before-open="productDetails">
-            <v-container class="pt-0" fluid>
+    <modal :classes="classes" name="product-modal" :width="800" :max-width="900" :adaptive="true" :scrollable="true" :height="600" transition="fade-transition" @before-open="productDetails">
+            <v-container class="pt-0 custom-modal-container" fluid>
                 <v-row class="mx-0 py-4 px-4">
                     <v-col cols="12" sm="12" md="6">
                         <v-row>
                             <v-card color="grey lighten-3" flat>
-                                <v-card-title v-text="product.productName" class="pt-0 blue--text font-weight-bold title pl-0"></v-card-title>
+                                <div class="d-flex justify-space-between">
+                                    <div>
+                                        <v-card-title 
+                                            v-text="product.productName" 
+                                            class="pt-0 blue--text text-uppercase font-weight-bold title pl-0">
+                                        </v-card-title>
+                                    </div>
+
+                                    <div>
+                                        <v-icon 
+                                            @click="$modal.hide('product-modal')"
+                                            large class="d-md-flex d-lg-none red--text">
+                                            mdi-close-circle
+                                        </v-icon>
+                                    </div>  
+                                </div>
+                                
                                 <zoom :img-normal="imageSelected"></zoom>
                                 <!-- <v-img :aspect-ratio="16/18" :src="product.image"></v-img> -->
                             </v-card>
                         </v-row>
-                        <v-row>
-                            <!-- <v-col class="pl-0">
+                        <!-- <v-row>
+                            <v-col class="pl-0">
                                 <v-card @click="selectImage(product.productImage)" tile flat max-width="100" color="white">
                                     <v-img :aspect-ratio="16/16" :src="product.productImage"></v-img>
                                 </v-card>
@@ -25,8 +41,8 @@
                                 <v-card @click="selectImage(product.productImage)" tile flat max-width="100" color="white">
                                     <v-img :aspect-ratio="16/16" :src="product.productImage"></v-img>
                                 </v-card>
-                            </v-col> -->
-                        </v-row>
+                            </v-col>
+                        </v-row> -->
                     </v-col>
                     <v-col cols="12" sm="12" md="6" class="pl-8">
                         <div class="mt-1">
@@ -63,19 +79,23 @@
                             </v-card>
                         </div>
 
-                        <div class="mt-6 d-flex justify-space-between">
-                            <div class="d-flex">
-                                <v-btn tile @click="updateQuantity({ product: product, type: 'decrease' })" color="blue darken-3" class="my-0 mt-4" dark x-small depressed>
-                                    <v-icon x-small>mdi-minus</v-icon>
-                                </v-btn>
+                        <div class="mt-6">
+                            <div class="d-flex justify-center">
+                                <div class="quantity-div">
+                                    <div class="d-flex">
+                                        <v-btn tile @click="updateQuantity({ product: product, type: 'decrease' })" color="blue darken-3" class="my-0 mt-4" dark x-small depressed>
+                                            <v-icon x-small>mdi-minus</v-icon>
+                                        </v-btn>
 
-                                <v-text-field class="custom-input-height" disabled dense flat solo v-model="quantity"></v-text-field>
+                                        <v-text-field class="custom-input-height" disabled dense flat solo v-model="quantity"></v-text-field>
 
-                                <v-btn @click="updateQuantity({ product: product, type: 'increase' })" tile color="blue darken-3 mt-0" class="my-0 mt-4" dark x-small depressed>
-                                    <v-icon x-small>mdi-plus</v-icon>
-                                </v-btn>
+                                        <v-btn @click="updateQuantity({ product: product, type: 'increase' })" tile color="blue darken-3 mt-0" class="my-0 mt-4" dark x-small depressed>
+                                            <v-icon x-small>mdi-plus</v-icon>
+                                        </v-btn>
+                                    </div>
+                                </div>
                             </div>
-                    
+                
                             <v-btn 
                                 @click="addToCart({ 
                                     productId: product.productId, 
@@ -85,8 +105,8 @@
                                     price: product.price * quantity,
                                     isRefill: false
                                 })" 
-                                class="mt-1" depressed color="primary" dark>
-                                <v-icon left>mdi-cart-arrow-down</v-icon> Add to Cart
+                                class="white--text rounded-0 text-capitalize" x-large block depressed color="primary">
+                                    Add to Cart <v-icon right>mdi-cart-arrow-down</v-icon>
                             </v-btn>
                         </div>
                     </v-col>
@@ -115,7 +135,7 @@ export default {
             quantity: 'productss/quantity'
         }),
         classes() {
-            return ['grey lighten-3'];
+            return ['grey lighten-3 product-modal'];
         }
     },
 
@@ -138,5 +158,12 @@ export default {
 <style lang="scss" scoped>
     .custom-input-height {
         padding: 5px 0px !important;
+    }
+    .quantity-div {
+        width: 40%;
+    }
+    .custom-modal-container {
+        max-height: 600px !important;
+        overflow-y: auto !important;
     }
 </style>

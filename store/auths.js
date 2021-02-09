@@ -1,6 +1,7 @@
 export const state = () => ({
     view: 'login',
-    authUser: {}
+    authUser: {},
+    loggedUser: {}
 })
 
 export const mutations = {
@@ -9,6 +10,9 @@ export const mutations = {
     },
     setAuthData(state, user){
         state.authUser = user
+    },
+    setLoggedUser(state, user){
+        state.loggedUser = user
     }
 }
 
@@ -92,6 +96,12 @@ export const actions = {
             }
         }
     },
+    getUser(context, id){
+        this.$axios.get(`/ManageUser/GetUser/${id}`).then(response => {
+            let user = response.data.data
+            context.commit('setLoggedUser', user);
+        })
+    },
     logout(context){
         if(process.client){
             let user = localStorage.getItem('signedInUser');
@@ -111,9 +121,12 @@ export const actions = {
 
 export const getters = {
     authName(state){
-        return state.authUser.firstName + ' ' + state.authUser.lastName 
+        return state.loggedUser.firstName + ' ' + state.loggedUser.lastName 
     },
     authEmail(state){
-        return state.authUser.email
+        return state.loggedUser.email
+    },
+    getUser(state){
+        return state.loggedUser
     }
 }

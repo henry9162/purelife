@@ -18,7 +18,7 @@
             <v-container>
                 
                     <div v-if="cartProducts" class="d-flex justify-center">
-                        <div class="mx-15" style="width: 80%">
+                        <div class="mx-15 cartInfo-container">
                             <div class="">
                             <v-simple-table fixed-header>
                                 <template v-slot:default>
@@ -47,7 +47,7 @@
                                                         <v-icon x-small>mdi-minus</v-icon>
                                                     </v-btn>
 
-                                                    <div style="width: 10%">
+                                                    <div class="table-input">
                                                         <v-text-field 
                                                             class="custom-input-height" 
                                                             disabled dense flat solo 
@@ -90,7 +90,7 @@
                         <div class="mt-2">
                             <v-container fluid>
                                 <v-row>
-                                    <v-col class="pl-0" md="8">
+                                    <v-col cols="12" sm="12" class="pl-0 pr-0" md="8">
                                         <div style="border: 20px solid #b6bbc6">
                                             <v-expansion-panels flat focusable>
                                                 <!-- <v-expansion-panel>
@@ -111,10 +111,18 @@
                                                     <v-expansion-panel-content>
                                                         <div class="d-flex justify-space-between pt-8">
                                                             <!-- <div>Enter your Loyalty point here</div> -->
-                                                            <div class="ml-4 d-flex">
-                                                                <v-text-field label="Enter point" clearable outlined dense></v-text-field>
-                                                                <v-btn class="ml-2" tile depressed color="primary" dark>Apply Loyalty Point</v-btn>
+                                                            <div class="ml-4 d-sm-flex d-lg-none">
+                                                                <div class="d-flex flex-column">
+                                                                    <v-text-field label="Enter point" clearable outlined dense></v-text-field>
+                                                                    <v-btn class="ml-2 text-capitalize" tile depressed color="primary" dark>Apply Loyalty Point</v-btn>
+                                                                </div>
                                                             </div>
+                                                            <div class="d-none d-sm-flex">
+                                                                <div class="ml-4 d-flex">
+                                                                    <v-text-field label="Enter point" clearable outlined dense></v-text-field>
+                                                                    <v-btn class="ml-2 text-capitalize" tile depressed color="primary" dark>Apply Loyalty Point</v-btn>
+                                                                </div>
+                                                            </div> 
                                                         </div> 
                                                     </v-expansion-panel-content>
                                                 </v-expansion-panel>
@@ -122,7 +130,7 @@
                                         </div>
                                     </v-col>
 
-                                    <v-col md="4" class="pr-0">
+                                    <v-col cols="12" sm="12" md="4" class="pl-0 pr-0">
                                         <div style="border: 20px solid #b6bbc6">
                                             <v-simple-table fixed-header>
                                                 <template v-slot:default>
@@ -144,8 +152,12 @@
                         </div>
 
                         <div class="white darken-2 pa-4 mb-4 d-flex justify-space-between">
-                            <v-btn @click="$router.push({ path: '/', query: { name: '' } })" depressed tile large color="red" dark>
+                            <v-btn class="d-none d-sm-flex" @click="$router.push({ path: '/', query: { name: '' } })" depressed tile large color="red" dark>
                                 <v-icon left>mdi-arrow-left</v-icon> Continue Shopping
+                            </v-btn>
+
+                            <v-btn class="d-md-flex d-lg-none" @click="$router.push({ path: '/', query: { name: '' } })" depressed tile large color="red" dark>
+                                <v-icon left>mdi-arrow-left</v-icon> Back
                             </v-btn>
                         
                             <v-btn @click="$router.push({ path: '/checkOut' })" depressed large tile color="success" dark>
@@ -395,6 +407,14 @@ export default {
 .custom-input-height {
     padding: 5px 0px !important;
 }
+.table-input {
+    @include media('<tablet'){
+        width: 100% !important;
+    }
+    @include media('>=tablet'){
+        width: 10% !important;
+    }
+}
 .custom-h5 {
     font-family: light-font(family);
     font-size: 18px !important;
@@ -418,7 +438,14 @@ export default {
     position: absolute;
     width: 100%;
 }
-
+.cartInfo-container {
+    @include media('<tablet'){
+        width: 100% !important
+    }
+    @include media('>=tablet'){
+        width: 80% !important
+    }
+}
 .product-label-div {
     width: 100%;
     display: flex;

@@ -547,7 +547,7 @@
                                 If you have any suggestions, comments, and/or questions about the Site and/or these Terms of Use, please contact Us at info@purelife.com
                             </div>
                             <div class="text-right">
-                                <v-btn color="green darken-2" @click="$modal.hide('terms-modal')" class="white--text">Accept</v-btn>
+                                <v-btn color="red darken-2" @click="$modal.hide('terms-modal')" class="white--text">Close</v-btn>
                             </div>
                         </div>
                     </v-card-text>

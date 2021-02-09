@@ -36,7 +36,7 @@
                 </v-col> -->
 
                 <!-- Zoomable Image -->
-                <v-col md="6">
+                <v-col cols="12" sm="12" md="6">
                     <v-card v-if="product.productImage" tile color="white">
                         <zoom :img-normal="product.imageSrc" :scale="2"></zoom>
                     </v-card>
@@ -46,7 +46,7 @@
                 </v-col>
 
                 <!-- Product Description And Specification -->
-                <v-col md="6" class="px-15">
+                <v-col cols="12" sm="12" md="6" class="product-description">
                     <!-- <v-card class="mb-3" color="transparent" flat>
                         <div class="d-flex">
                             <div class="pl-2">
@@ -120,30 +120,34 @@
                         </div>
                     </v-card>
 
-                    <div class="mt-8 d-flex justify-space-between">
-                        <div class="d-flex">
-                            <v-btn  
-                                @click="updateQuantity({ product: product, type: 'decrease' })" 
-                                color="red darken-2" class="my-0 mt-4" 
-                                dark x-small tile depressed>
-                                    <v-icon x-small>mdi-minus</v-icon>
-                            </v-btn>
+                    <div class="mt-8">
+                        <div class="d-flex justify-center">
+                            <div class="productPage-quantity">
+                                <div class="d-flex">
+                                    <v-btn  
+                                        @click="updateQuantity({ product: product, type: 'decrease' })" 
+                                        color="red darken-2" class="my-0 mt-4" 
+                                        dark x-small tile depressed>
+                                            <v-icon x-small>mdi-minus</v-icon>
+                                    </v-btn>
 
-                            <v-text-field 
-                                class="custom-input-height" 
-                                style="width: 40px" disabled dense 
-                                flat solo v-model="quantity">
-                            </v-text-field>
+                                    <v-text-field 
+                                        class="custom-input-height" 
+                                        style="width: 40px" disabled dense 
+                                        flat solo v-model="quantity">
+                                    </v-text-field>
 
-                            <v-btn 
-                                @click="updateQuantity({ product: product, type: 'increase' })" 
-                                tile color="red darken-2" 
-                                class="my-0 mt-4" dark x-small depressed>
-                                    <v-icon x-small>mdi-plus</v-icon>
-                            </v-btn>
+                                    <v-btn 
+                                        @click="updateQuantity({ product: product, type: 'increase' })" 
+                                        tile color="red darken-2" 
+                                        class="my-0 mt-4" dark x-small depressed>
+                                            <v-icon x-small>mdi-plus</v-icon>
+                                    </v-btn>
+                                </div>
+                            </div>
                         </div>
-
-                        <div>
+                
+                        <div class="d-flex justify-center">
                             <v-btn 
                                 @click="addToCart({ 
                                     productId: product.productId,
@@ -153,7 +157,7 @@
                                     price: product.price * quantity,
                                     isRefill: false 
                                 })" 
-                                tile class="ml-6 mt-1" depressed color="success" dark>
+                                tile class="addToCart mt-1" depressed color="success" dark>
 
                                 <v-icon left>mdi-cart-arrow-down</v-icon> Add to Cart
                             </v-btn>
@@ -257,4 +261,34 @@ export default {
     .custom-input-height {
         padding: 5px 0px !important;
     }
+    .productPage-quantity {
+        @include media("<tablet"){
+            width: 40% !important;
+        }
+
+        @include media(">=tablet"){
+            width: 20% !important;
+        }
+    }
+    .addToCart {
+        @include media("<tablet"){
+            margin-left: 0px !important;
+        }
+
+        @include media(">=tablet"){
+            margin-left: 24px !important;
+        }
+    }
+        
+    // .product-description {
+    //     @include media("<tablet"){
+    //         padding-left: 0px !important;
+    //         padding-right: 0px !important;
+    //     }
+        
+    //     @include media(">=tablet"){
+    //         padding-left: 60px !important;
+    //         padding-right: 60px !important;
+    //     }
+    // }
 </style>

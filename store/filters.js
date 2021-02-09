@@ -38,7 +38,7 @@ export const mutations = {
         if (payload.type == 'styles') state.filters.style = state.filters.style.filter(style => style != payload.name)
     },
     setFilteredProduct(state, payload) {
-        state.filteredProducts = payload.productList;
+        state.filteredProducts = payload;
         state.isClicked = true
     },
     emptyFilteredProduct(state) {
@@ -66,10 +66,12 @@ export const actions = {
         // } 
     },
     getCategoryById(context, id){
-        this.$axios.get(`/ProductCategory/GetProductCategoryById/${id}`)
+        context.commit('setLoader', true)
+        this.$axios.get(`/Products/GetProductsByCategoryId/${id}`)
             .then(response => {
                 console.log(response.data.data);
                 context.commit('setFilteredProduct', response.data.data) 
+                context.commit('setLoader', false)
                 //context.commit('setFilteredProduct', categories.productList) 
             }).catch(error => {
                 console.log(error)

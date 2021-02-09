@@ -42,7 +42,7 @@ export const actions = {
     },
     updateUser(context, data){
         return new Promise((resolve, reject) => {
-            this.$axios.put(`/ManageUser/${data.userId}`, data).then(response => {
+            this.$axios.put(`/ManageUser/${data.userId}`, data.data).then(response => {
                 context.dispatch('processResponse', response)
                 resolve(response)
             })

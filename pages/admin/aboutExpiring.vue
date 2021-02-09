@@ -23,7 +23,7 @@
                     ></v-text-field>
                 </template>
 
-                <v-date-picker v-model="date1" no-title scrollable>
+                <v-date-picker v-model="date1" :min="minDate" no-title scrollable>
                     <v-spacer></v-spacer>
 
                     <v-btn text color="primary" @click="menu1 = false">Cancel</v-btn>
@@ -40,7 +40,7 @@
                 <template v-slot:activator="{ on, attrs }">
                     <v-text-field
                         v-model="date2"
-                        label="Start Date"
+                        label="End Date"
                         prepend-inner-icon="mdi-calendar"
                         :disabled="disabled"
                         v-bind="attrs"
@@ -147,7 +147,7 @@
 
                                     <template v-slot:activator="{ on, attrs }">
                                         <v-text-field
-                                            v-model="editedItem.expiryDate"
+                                            v-model="expiryDate"
                                             label="Expiry Date"
                                             
                                             readonly
@@ -225,6 +225,7 @@ export default {
         menu2: false,
         date1: new Date().toISOString().substr(0, 10),
         date2: new Date().toISOString().substr(0, 10),
+        minDate: new Date().toISOString().substr(0, 10),
         dialog: true,
         loading: false,
         fullPage: false,
@@ -312,6 +313,9 @@ export default {
         },
         btnText(){
             return this.editedIndex === -1 ? 'Submit' : 'Update';
+        },
+        expiryDate(){
+            return this.$moment(this.editedItem.expiryDate).format('DD/MM/YYYY')
         }
     },
 

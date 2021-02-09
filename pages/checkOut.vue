@@ -41,7 +41,7 @@
 
                                                     <v-form ref="form" class="text-center" v-model="valid" lazy-validation>
                                                         <v-row class="px-12 pb-4">
-                                                            <v-col md="6">
+                                                            <v-col cols="12" sm="12" md="6">
                                                                 <v-text-field 
                                                                     @keyup="activateBtn"
                                                                     v-model="fullName" 
@@ -50,7 +50,7 @@
                                                                     color="green" label="Full Name">
                                                                 </v-text-field>
                                                             </v-col>
-                                                            <v-col md="6">
+                                                            <v-col cols="12" sm="12" md="6">
                                                                 <v-text-field 
                                                                     @keyup="activateBtn"
                                                                     v-model="email" 
@@ -59,7 +59,7 @@
                                                                     color="green" label="Email">
                                                                 </v-text-field>
                                                             </v-col>
-                                                            <v-col class="py-0 my-0" md="6">
+                                                            <v-col cols="12" sm="12" class="py-0 my-0" md="6">
                                                                 <v-text-field 
                                                                     @keyup="activateBtn"
                                                                     v-model="phoneNumber" 
@@ -68,7 +68,7 @@
                                                                     color="green" label="Phone Number">
                                                                 </v-text-field>
                                                             </v-col>
-                                                            <v-col class="py-0 my-0" md="6">
+                                                            <v-col cols="12" sm="12" class="py-0 my-0" md="6">
                                                                 <v-text-field 
                                                                     @keyup="activateBtn"
                                                                     v-model="address" 
@@ -77,7 +77,7 @@
                                                                     color="green" label="Address">
                                                                 </v-text-field>
                                                             </v-col>
-                                                            <v-col class="py-0" md="6">
+                                                            <v-col cols="12" sm="12" class="py-0" md="6">
                                                                 <v-select
                                                                     prepend-inner-icon="mdi-map-marker"
                                                                     :rules="stateRules"
@@ -91,7 +91,7 @@
                                                                 </v-select>
                                                             </v-col>
                                                         
-                                                            <v-col class="py-0" md="6">
+                                                            <v-col cols="12" sm="12" class="py-0" md="6">
                                                                 <v-select
                                                                     readonly
                                                                     :rules="countryRules"
@@ -136,7 +136,7 @@
                     </v-col>
 
                     <!-- Review Your Order -->
-                    <v-col  v-if="cartProducts" md="5">
+                    <v-col v-if="cartProducts" md="5">
                         <div style="width: 100%">
                             <v-container>
                                 <v-row>
@@ -297,6 +297,8 @@ import uniqid from 'uniqid';
 export default {
     layout: 'home',
     components: { titleParalax },
+    middleware: 'auth',
+
     data: () => ({
         date: new Date().toISOString().substr(0, 10),
         menu: false,

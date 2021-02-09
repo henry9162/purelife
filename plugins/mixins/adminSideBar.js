@@ -10,7 +10,7 @@ export default {
             { name: 'Products', icon: 'mdi-post-outline', url: '/admin/products' },
             { name: 'Expired Products', icon: 'mdi-post-outline', url: '/admin/expiredProducts' },
             { name: 'About to Expire ', icon: 'mdi-post-outline', url: '/admin/aboutExpiring' },
-            
+            { name: 'Out-Of-Stock Products', icon: 'mdi-post-outline', url: '/admin/outOfStock' },
         ],
         refillList: [
             { name: 'Refills', icon: 'mdi-shape', url: '/admin/refills' }

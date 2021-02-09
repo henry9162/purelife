@@ -52,7 +52,7 @@
                                     <div class="d-flex mr-4">
                                         <!-- <v-icon color="red">mdi-arrow-down</v-icon> -->
                                         <!-- <div class="red--text subtitle-1 mt-1 mr-4">0%</div> -->
-                                        <div class="grey--text text--darken-1 post-caption mt-2">This week</div>
+                                        <div class="grey--text text--darken-1 post-caption mt-2">Weekly</div>
                                     </div>
                                 </div>
                             </v-card>
@@ -80,7 +80,7 @@
                                     <div class="d-flex mr-4">
                                         <!-- <v-icon color="red">mdi-arrow-down</v-icon> -->
                                         <!-- <div class="red--text subtitle-1 mt-1 mr-4">0%</div> -->
-                                        <div class="grey--text text--darken-1 post-caption mt-2">This month</div>
+                                        <div class="grey--text text--darken-1 post-caption mt-2">Monthly</div>
                                     </div>
                                 </div>
                             </v-card>
@@ -108,7 +108,7 @@
                                     <div class="d-flex mr-4">
                                         <!-- <v-icon color="green">mdi-arrow-up</v-icon> -->
                                         <!-- <div class="green--text subtitle-1 mt-1 mr-4">0%</div> -->
-                                        <div class="grey--text text--darken-1 post-caption mt-2">This year</div>
+                                        <div class="grey--text text--darken-1 post-caption mt-2">Yearly</div>
                                     </div>
                                 </div>
                             </v-card>

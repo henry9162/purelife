@@ -4,10 +4,12 @@
             
             <div style="margin: 20px 15px 10px 15px">
                 <v-autocomplete
-                    v-model="selectt"
+                    v-model="model"
                     :loading="loading"
                     :items="items"
                     :search-input.sync="search"
+                    item-text="productName"
+                    item-value="productId"
                     cache-items
                     class="px-4"
                     flat
@@ -42,9 +44,9 @@
                     <template v-slot:activator="{ on }">
                         <v-btn class="post-caption" text style="height: 57px" v-on="on">
                             <v-avatar class="mr-4" size="36">
-                                <img :src="$auth.user != null ? $auth.user.image ? url+$auth.user.image.image : defaultImage : defaultImage" :alt="$auth.user != null ? $auth.user.firstName: ''">
+                                <img :src="$auth.loggedIn ? user.userImage : defaultImage" :alt="$auth.loggedIn ? user.firstName: ''">
                             </v-avatar>
-                            <span style="margin-left: 10px" v-text="$auth.user != null ? $auth.user.firstName: ''"></span> <v-icon>mdi-chevron-down</v-icon>
+                            <span style="margin-left: 10px" v-text="$auth.loggedIn ? user.firstName: ''"></span> <v-icon>mdi-chevron-down</v-icon>
                         </v-btn>
                     </template>
 
@@ -52,6 +54,16 @@
                         <v-list nav dense>
                             <v-list-item-group color="primary">
                                 <div>
+                                    <v-list-item v-if="$auth.user.accountType != 2" to="/admin/dashboard">
+                                        <v-list-item-icon class="mr-4">
+                                            <v-icon small>mdi-view-dashboard-outline</v-icon>
+                                        </v-list-item-icon>
+
+                                        <v-list-item-content>
+                                            <v-list-item-title>Dashboard</v-list-item-title>
+                                        </v-list-item-content>
+                                    </v-list-item>
+
                                     <v-list-item v-for="(item, i) in itemsss" :key="i" :to="item.url">
                                         <v-list-item-icon class="mr-4">
                                             <v-icon small v-text="item.icon"></v-icon>
@@ -310,9 +322,9 @@
                         <template v-slot:activator="{ on }">
                             <v-btn class="post-caption" text style="height: 57px" v-on="on">
                                 <v-avatar class="mr-4" size="36">
-                                    <img :src="$auth.user != null ? $auth.user.image ? url+$auth.user.image.image : defaultImage : defaultImage" :alt="$auth.user != null ? $auth.user.firstName: ''">
+                                    <img :src="$auth.loggedIn ? user.userImage : defaultImage" :alt="$auth.loggedIn ? user.firstName: ''">
                                 </v-avatar>
-                                <span v-text="$auth.user != null ? $auth.user.firstName: ''"></span> <v-icon>mdi-chevron-down</v-icon>
+                                <span v-text="$auth.loggedIn ? user.firstName: ''"></span> <v-icon>mdi-chevron-down</v-icon>
                             </v-btn>
                         </template>
 
@@ -450,7 +462,6 @@ export default {
         userMenu: false,
         userMenu1: false,
         drawer: false,
-        items: [],
         categories: [ { title: 'MEN' }, { title: 'WOMEN'}, { title: 'KIDS'} ],
         categories2: [ { title: 'ACCESORIES' }, { title: 'BAGS'}, { title: 'MORE'} ],
         itemss: [
@@ -469,16 +480,8 @@ export default {
         ],
         search: null,
         select: null,
-        selectt: null,
-        states: [
-          'Paracetamol',
-          'Buscopan',
-          'Amoxil',
-          'Atesunate',
-          'Tetracyclin',
-          'Lonart DS',
-          'Amaterm Soft Gel'
-        ],
+        model: null,
+        items: [],
         itemsss: [
             { text: 'Profile', icon: 'mdi-face-profile', url: '/profile' },
             { text: 'Orders', icon: 'mdi-sale', url: '/orders' }
@@ -486,14 +489,18 @@ export default {
         scanning: false,
         scanNumber: 0,
         barcode: ""
-        // itemsss: [
-        //     { text: 'Dashboard', icon: 'mdi-view-dashboard-outline', url: '/admin/myThreads' },
-        // ],
     }),
     
     watch: {
+        // search (val) {
+        //     val && val !== this.select && this.querySelections(val)
+        // },
         search (val) {
-            val && val !== this.select && this.querySelections(val)
+            if (this.items.length > 0) return
+            this.searchThread(val)
+        },
+        model (val) {
+            val ? this.getSearchedResult(val) : ''
         },
     },
 
@@ -503,7 +510,8 @@ export default {
             //user: 'loggedUser',
             cartItem: 'productss/numberOfCartItems',
             cartProducts: 'productss/cartProducts',
-            cartTotal: 'productss/cartTotal'
+            cartTotal: 'productss/cartTotal',
+            user: 'auths/getUser'
         }),
         snackBar: {
             get: function() { return this.$store.getters['snackBar'] },
@@ -519,6 +527,18 @@ export default {
             //logout: 'logout',
             removeCartItem: 'productss/removeCartItem'
         }),
+        searchThread(val){
+            // let data = { query: val }
+            // this.loading = true
+            // this.$store.dispatch('products/searchProducts', data).then(response => {
+            //     let searchResult = response.data.data
+            //     this.items = searchResult
+            //     this.loading = false
+            // })
+        },
+        getSearchedResult(val){
+
+        },
         querySelections (v) {
             this.loading = true
             // Simulated ajax query
@@ -529,14 +549,10 @@ export default {
             this.loading = false
             }, 500)
         },
-        getAll(){
-           
-        },
         deactivateSnackbar(){
             this.$store.dispatch('deactivateSnackbar')
         },
         async initialise(){
-            //this.getAll()
             //this.deactivateSnackbar();
             await this.$store.dispatch('productss/getAllProducts');
             //this.$store.dispatch('productss/persistCart');
@@ -554,6 +570,7 @@ export default {
             this.$store.dispatch('prescriptions/getAllPrescriptions');
             this.$store.dispatch('diseases/getAllDiseases');
             this.$store.dispatch('filters/getAllCategories');
+            this.getUser()
         },
         async logout() {
             await this.$store.dispatch('auths/logout');
@@ -561,50 +578,11 @@ export default {
         async setUser(){
             await this.$store.dispatch('auths/setUser');
         },
-        // openScanModal(){
-        //     this.$modal.show('barcode-modal');
-
-        //     setTimeout(function (){
-        //         document.getElementById("mdlText").style.display = "block";
-        //         document.getElementById("mdlSpinner").style.display = "none";
-        //         document.getElementById("scanInput").focus();
-        //         // this.$refs.barcodeInput.focus();
-        //     }, 1000)
-            
-        //     // this.addEventForBarcode()
-        //     //document.getElementById("scanInput").focus();
-        // },
-        // onBarcodeScanned (barcode) {
-        //     this.scanNumber = ++this.scanNumber;
-        //     console.log(this.scanNumber)
-        //     if (this.scanNumber < 2){
-        //         this.barcode = barcode;
-        //         this.scanning = true;
-        //         document.getElementById("scanInput").style.display = "none";
-        //         document.getElementById("mdlText").style.display = "none";
-        //         document.getElementById("mdlSpinner").style.display = "block";
-        //         document.querySelector("#barcoeMdl .v-input__append-inner button").click()
-        //         this.processBarCode(this.barcode);
-        //     }
-        // },
-        // BarcodeEvent(e){
-        //     console.log("ww", e)
-        // },
-        // processBarCode(barcode){
-        //     setTimeout(() => {
-        //         this.scanning = false;
-        //         document.getElementById("scanInput").style.display = "block";
-        //         document.getElementById("mdlText").style.display = "block";
-        //         document.getElementById("mdlSpinner").style.display = "none";
-        //         document.querySelector("#barcoeMdl .v-input__append-inner button").click()
-        //         document.getElementById("scanInput").focus();
-        //         this.scanNumber = 0;
-        //         alert(barcode);
-        //     }, 1000);
-        // },
-        // close () {
-        //     this.$modal.hide('barcode-modal');
-        // }
+        async getUser(){
+            if (this.$auth.loggedIn) {
+                await this.$store.dispatch('auths/getUser', this.$auth.user.userId);
+            } 
+        }
     },    
 
     mounted(){

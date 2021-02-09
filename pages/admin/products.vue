@@ -97,7 +97,7 @@
 
                                     <template v-slot:activator="{ on, attrs }">
                                         <v-text-field
-                                            v-model="editedItem.expiryDate"
+                                            v-model="expiryDate"
                                             label="Expiry Date"
                                             
                                             readonly
@@ -305,6 +305,9 @@ export default {
         },
         btnText(){
             return this.editedIndex === -1 ? 'Submit' : 'Update';
+        },
+        expiryDate(){
+            return this.$moment(this.editedItem.expiryDate).format('DD/MM/YYYY')
         }
     },
 
@@ -391,6 +394,7 @@ export default {
         editItem (item) {
             this.editedIndex = this.products.indexOf(item);
             this.editedItem = Object.assign({}, item);
+            console.log(this.editedItem)
             this.threadImage = item.imageSrc;
             this.$modal.show('products-modal')
         },
@@ -407,19 +411,6 @@ export default {
             formData.append('image', this.editedItem.productImage)
             formData.append('createdOn', new Date())
 
-            // let data = {
-            //     productName: this.editedItem.productName,
-            //     quantity: this.editedItem.quantity,
-            //     price: this.editedItem.price,
-            //     serialNumber: this.editedItem.serialNumber,
-            //     expiryDate: this.editedItem.expiryDate,
-            //     productBranchId: this.editedItem.productBranchId,
-            //     productGroupId: this.editedItem.productGroupId,
-            //     image: formData,
-            //     createdOn: new Date(),
-            // }
-            // console.log(this.editedItem.productImage);
-
             await this.$store.dispatch('productss/addProduct', formData).then(response => {
                 this.loading = false
                 this.refreshTable()
@@ -429,18 +420,6 @@ export default {
         async updateProduct(){
             this.loading = true
 
-            // let formData = {
-            //     productName: this.editedItem.productName,
-            //     quantity: this.editedItem.quantity,
-            //     price: this.editedItem.price,
-            //     serialNumber: this.editedItem.serialNumber,
-            //     expiryDate: this.editedItem.expiryDate,
-            //     productBranchId: this.editedItem.productBranchId,
-            //     productGroupId: this.editedItem.productGroupId,
-            //     productImage: this.editedItem.productImage,
-            //     isDeprecated: this.products[this.editedIndex].isDeprecated,
-            // }
-
             const formData = new FormData();
             formData.append('productName', this.editedItem.productName)
             formData.append('quantity', this.editedItem.quantity)
@@ -449,7 +428,8 @@ export default {
             formData.append('expiryDate', this.editedItem.expiryDate)
             formData.append('productBranchId', this.editedItem.productBranchId)
             formData.append('productGroupId', this.editedItem.productGroupId)
-            formData.append('productImage', this.editedItem.productImage)
+            formData.append('image', this.editedItem.productImage)
+            //formData.append('productImage', this.editedItem.productImage)
             formData.append('modifiedOn', new Date())
             formData.append('isDeprecated', this.products[this.editedIndex].isDeprecated)
 

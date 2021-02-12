@@ -441,7 +441,6 @@ export default {
         editItem (item) {
             this.editedIndex = this.products.indexOf(item);
             this.editedItem = Object.assign({}, item);
-            console.log(this.editedItem)
             this.threadImage = item.imageSrc;
             this.$modal.show('products-modal')
         },
@@ -484,7 +483,7 @@ export default {
             formData.append('productCategoryId', this.editedItem.productCategoryId)
             formData.append('productPackagingId', this.editedItem.productPackagingId)
             formData.append('image', this.editedItem.productImage)
-            //formData.append('productImage', this.editedItem.productImage)
+            formData.append('productImage', this.editedItem.productImage)
             formData.append('modifiedOn', new Date())
             formData.append('isDeprecated', this.products[this.editedIndex].isDeprecated)
 

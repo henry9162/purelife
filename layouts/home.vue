@@ -75,18 +75,6 @@
                                     </v-list-item>
                                 </div>
 
-                                <!-- <div v-else>
-                                    <v-list-item v-for="(item, i) in itemsss" :key="i" :to="item.url">
-                                        <v-list-item-icon class="mr-4">
-                                            <v-icon v-text="item.icon"></v-icon>
-                                        </v-list-item-icon>
-
-                                        <v-list-item-content>
-                                            <v-list-item-title v-text="item.text"></v-list-item-title>
-                                        </v-list-item-content>
-                                    </v-list-item>
-                                </div> -->
-
                                 <v-divider></v-divider>
 
                                 <v-list-item @click="logout">
@@ -105,78 +93,6 @@
             </div>
             </client-only>
 
-
-
-
-            <!-- <div class="mx-8 mt-6">
-                <client-only>
-                <div v-if="$auth.loggedIn">
-                    <v-menu v-model="userMenuDrawer" close-delay="200" 
-                        max-width="200" :close-on-content-click="false" 
-                        nudge-bottom="13" nudge-right="20" open-on-hover 
-                        :nudge-width="200" offset-y>
-                        <template v-slot:activator="{ on }">
-                            <v-btn class="post-caption" text color="#FF1493" style="height: 57px" v-on="on">
-                                <v-avatar class="mr-4" size="36">
-                                    <img :src="$auth.user.image ? url+$auth.user.image.image : defaultImage" alt="John">
-                                </v-avatar>
-                                <span v-text="$auth.user.username"></span> <v-icon>mdi-chevron-down</v-icon>
-                            </v-btn>
-                        </template>
-
-                        <v-card>
-                            <v-list nav dense>
-                                <v-list-item-group color="primary">
-                                    <div v-if="$auth.user.isAdmin">
-                                        <v-list-item v-for="(item, i) in itemss" :key="i" :to="item.url">
-                                            <v-list-item-icon class="mr-4">
-                                                <v-icon v-text="item.icon"></v-icon>
-                                            </v-list-item-icon>
-
-                                            <v-list-item-content>
-                                                <v-list-item-title v-text="item.text"></v-list-item-title>
-                                            </v-list-item-content>
-                                        </v-list-item>
-                                    </div>
-
-                                    <div v-else>
-                                        <v-list-item v-for="(item, i) in itemsss" :key="i" :to="item.url">
-                                            <v-list-item-icon class="mr-4">
-                                                <v-icon v-text="item.icon"></v-icon>
-                                            </v-list-item-icon>
-
-                                            <v-list-item-content>
-                                                <v-list-item-title v-text="item.text"></v-list-item-title>
-                                            </v-list-item-content>
-                                        </v-list-item>
-                                    </div>
-
-                                    <v-divider></v-divider>
-
-                                    <v-list-item @click="logout">
-                                        <v-list-item-icon class="mr-4">
-                                            <v-icon>mdi-logout</v-icon>
-                                        </v-list-item-icon>
-
-                                        <v-list-item-content>
-                                            <v-list-item-title>Logout</v-list-item-title>
-                                        </v-list-item-content>
-                                    </v-list-item>
-                                </v-list-item-group>
-                            </v-list>
-                        </v-card>
-                    </v-menu>
-                </div>
-
-                <div v-else>
-                    <v-btn  href="/auth" depressed outlined rounded 
-                        class="navLinkColor custom-h6 px-8 py-5 text-capitalize" 
-                        color="#49AEAA">
-                        Sign Up/Login
-                    </v-btn>
-                </div>  
-                </client-only> 
-            </div> -->
         </v-navigation-drawer>
         <v-app>
             <!-- SnackBar -->
@@ -203,6 +119,8 @@
                     :loading="loading"
                     :items="items"
                     :search-input.sync="search"
+                    item-text="productName"
+                    item-value="productId"
                     cache-items
                     class="d-none d-sm-flex mx-4"
                     flat
@@ -499,7 +417,7 @@ export default {
             if (this.items.length > 0) return
             this.searchThread(val)
         },
-        model (val) {
+        select (val) {
             val ? this.getSearchedResult(val) : ''
         },
     },
@@ -511,7 +429,8 @@ export default {
             cartItem: 'productss/numberOfCartItems',
             cartProducts: 'productss/cartProducts',
             cartTotal: 'productss/cartTotal',
-            user: 'auths/getUser'
+            user: 'auths/getUser',
+            productss: 'productss/allProducts'
         }),
         snackBar: {
             get: function() { return this.$store.getters['snackBar'] },
@@ -528,6 +447,12 @@ export default {
             removeCartItem: 'productss/removeCartItem'
         }),
         searchThread(val){
+            this.loading = true
+            const products = [...this.productss]
+            let result = products.filter(product => product.productName.toLowerCase().includes(val));
+            this.items = result
+            this.loading = false
+
             // let data = { query: val }
             // this.loading = true
             // this.$store.dispatch('products/searchProducts', data).then(response => {
@@ -537,7 +462,7 @@ export default {
             // })
         },
         getSearchedResult(val){
-
+            this.$route.path == '/' ? this.$store.dispatch('filters/displayBaseFilter', { name: 'search', id: val, type: 'search' }) : this.$router.push({path: '/', query: {search : val}})
         },
         querySelections (v) {
             this.loading = true

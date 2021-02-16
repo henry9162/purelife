@@ -10,9 +10,22 @@ let testProducts = [{
             serial: 1234,
             unitPrice: 10,
             total: 0
-        }]
+        }];
+
 export const state = () => ({
-    products: [],
+    products: [{
+            productName: 'test',
+            quantity: 10,
+            serial: 1234,
+            unitPrice: 10,
+            total: 0
+        }, {
+            productName: 'test',
+            quantity: 10,
+            serial: 1234,
+            unitPrice: 10,
+            total: 0
+        }],
     totalQuantity: 2
 })
 

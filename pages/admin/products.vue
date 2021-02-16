@@ -161,12 +161,32 @@
         </modal>
 
 
-        <v-data-table :headers="headers" :items="products" sort-by="calories" class="mx-4 py-4">
+        <v-data-table :headers="headers" :items="products" sort-by="calories" 
+            class="mx-4 py-4" :search="search" :custom-filter="filterOnlyCapsText">
             <template v-slot:top>
                 <v-toolbar flat color="white">
                     <v-toolbar-title class="list-color custom-style">All Products</v-toolbar-title>
                     <v-divider class="mx-4" inset vertical></v-divider>
+                    <v-row align="center">
+                        <v-col
+                            class="d-flex"
+                            cols="12"
+                            sm="4"
+                        >
+                            <v-select
+                                :items="dropdownCategories"
+                                label="Categories Filter"
+                                class="mt-5"
+                                v-on:change="selectOnChange"
+                            ></v-select>
+                        </v-col>
+                    </v-row>
                 </v-toolbar>
+                <v-text-field
+                    v-model="search"
+                    label="Search"
+                    class="mx-4"
+                ></v-text-field>
             </template>
 
             <template v-slot:item.imageSrc="{ item }">
@@ -247,6 +267,7 @@ export default {
         dialog: true,
         loading: false,
         fullPage: false,
+        search: '',
         headers: [
             {
                 text: 'Image',
@@ -319,7 +340,7 @@ export default {
         },
         file(val){
             val ? this.processImage(val) : ''
-        }
+        },
     },
 
     computed: {
@@ -355,10 +376,26 @@ export default {
         },
         expiryDate(){
             return this.$moment(this.editedItem.expiryDate).format('DD/MM/YYYY')
+        },
+        dropdownCategories() {
+            return this.categories.map(val => val.productCategyName);
         }
     },
 
     methods: {
+        selectOnChange(val) {
+            this.search = val;
+        },
+        filterOnlyCapsText (value, search, item) {
+            console.log(value != null &&
+                search != null &&
+                typeof value === 'string' &&
+                value.toString().toLowerCase().indexOf(search.toLowerCase()) !== -1)
+            return value != null &&
+                search != null &&
+                typeof value === 'string' &&
+                value.toString().toLowerCase().indexOf(search.toLowerCase()) !== -1
+        },
         processImage(imageFile){
             let imageSize = Number((imageFile.size / 1024 / 1024).toFixed(3));
             if(imageSize > 0.322){

@@ -60,6 +60,9 @@ export const actions = {
             let category = categories.find(category => category.productCategyId == payload.id);
             context.dispatch('getCategoryById', category.productCategyId)
         } 
+        if (payload.type == 'search'){
+            context.dispatch('getProductById', payload.id) 
+        }
         // else if (payload.type == 'brand') {
         //     let brand = brands.find(brand => brand.name == payload.name);
         //     brand ? context.commit('setFilteredProduct', brand.products)  : '';
@@ -69,8 +72,19 @@ export const actions = {
         context.commit('setLoader', true)
         this.$axios.get(`/Products/GetProductsByCategoryId/${id}`)
             .then(response => {
-                console.log(response.data.data);
                 context.commit('setFilteredProduct', response.data.data) 
+                context.commit('setLoader', false)
+                //context.commit('setFilteredProduct', categories.productList) 
+            }).catch(error => {
+                console.log(error)
+            }) 
+    },
+    getProductById(context, id){
+        this.$axios.get(`/Products/GetProducts/${id}`)
+            .then(response => {
+                let data = []
+                data.push(response.data.data)
+                context.commit('setFilteredProduct', data) 
                 context.commit('setLoader', false)
                 //context.commit('setFilteredProduct', categories.productList) 
             }).catch(error => {

@@ -268,7 +268,8 @@ export default {
     mounted() {
         this.initialise()
         this.setWidth()
-        //this.runTest()
+        let search = this.$route.query.search
+        if(search) this.$store.dispatch('filters/displayBaseFilter', { name: 'search', id: search, type: 'search' })
     }
 }
 

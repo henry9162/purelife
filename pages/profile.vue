@@ -245,19 +245,19 @@ export default {
             this.isLoading = true
             this.$store.dispatch('users/getUserById', this.$auth.user.userId).then(response => {
                 let user = response.data.data
-                this.editedItem.userId = user.userId
-                this.editedItem.firstName = user.firstName
-                this.editedItem.lastName = user.lastName
-                this.editedItem.email = user.email
-                this.editedItem.phoneNumber = user.phoneNumber
-                this.editedItem.dob = user.dob
-                this.editedItem.roleId = user.roleId
-                this.editedItem.statedId = user.statedId
-                this.editedItem.lgaid = user.lgaid
-                this.editedItem.city = user.city
-                this.editedItem.accountType = user.accountType
-                this.editedItem.userImage = user.userImage
-                this.threadImage = user.userImage
+                this.editedItem.userId = user.userId == null ? '' : user.userId
+                this.editedItem.firstName = user.firstName == null ? '' : user.firstName
+                this.editedItem.lastName = user.lastName == null ? '' : user.lastName
+                this.editedItem.email = user.email == null ? '' : user.email
+                this.editedItem.phoneNumber = user.phoneNumber == null ? '' : user.phoneNumber
+                this.editedItem.dob = user.dob == null ? '' : user.dob
+                this.editedItem.roleId = user.roleId == null ? '' : user.roleId
+                this.editedItem.statedId = user.statedId == null ? '' : user.statedId
+                this.editedItem.lgaid = user.lgaid == null ? '' : user.lgaid
+                this.editedItem.city = user.city == null ? '' : user.city
+                this.editedItem.accountType = user.accountType == null ? '' : user.accountType
+                this.editedItem.userImage = user.userImage == null ? '' : user.userImage
+                this.threadImage = user.userImage == null ? '' : user.userImage
                 this.isLoading = false
             })
         },
@@ -288,7 +288,7 @@ export default {
             await this.$store.dispatch('users/updateUser', data).then(response => {
                 this.loading = false
                 this.porpulateUser()
-            })
+            }).catch(error => this.loading = false)
         },
     },
 

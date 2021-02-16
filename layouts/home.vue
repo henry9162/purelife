@@ -44,9 +44,12 @@
                     <template v-slot:activator="{ on }">
                         <v-btn class="post-caption" text style="height: 57px" v-on="on">
                             <v-avatar class="mr-4" size="36">
-                                <img :src="$auth.loggedIn ? user.userImage : defaultImage" :alt="$auth.loggedIn ? user.firstName: ''">
+                                <img :src="$auth.loggedIn ? 
+                                    user == null ? defaultImage : user.userImage : defaultImage" 
+                                    :alt="$auth.loggedIn ? user == null ? '' : user.firstName: ''">
                             </v-avatar>
-                            <span style="margin-left: 10px" v-text="$auth.loggedIn ? user.firstName: ''"></span> <v-icon>mdi-chevron-down</v-icon>
+                            <span style="margin-left: 10px" v-text="$auth.loggedIn ? user == null ? '' : user.firstName: ''"></span> 
+                            <v-icon>mdi-chevron-down</v-icon>
                         </v-btn>
                     </template>
 
@@ -240,9 +243,12 @@
                         <template v-slot:activator="{ on }">
                             <v-btn class="post-caption" text style="height: 57px" v-on="on">
                                 <v-avatar class="mr-4" size="36">
-                                    <img :src="$auth.loggedIn ? user.userImage : defaultImage" :alt="$auth.loggedIn ? user.firstName: ''">
+                                    <img :src="$auth.loggedIn ? 
+                                        user == null ? defaultImage : user.userImage : defaultImage" 
+                                        :alt="$auth.loggedIn ? user == null ? '' : user.firstName: ''">
                                 </v-avatar>
-                                <span v-text="$auth.loggedIn ? user.firstName: ''"></span> <v-icon>mdi-chevron-down</v-icon>
+                                <span v-text="$auth.loggedIn ? user == null ? '' : user.firstName: ''"></span> 
+                                <v-icon>mdi-chevron-down</v-icon>
                             </v-btn>
                         </template>
 

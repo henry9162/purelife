@@ -34,7 +34,22 @@
                             </v-col>
                             <v-col cols="12" class="py-0 px-0">
                                 <v-textarea v-model="editedItem.prescriptionDescription" class="post-caption" 
-                                    filled auto-grow label="Description" rows="2" row-height="30">
+                                    filled auto-grow label="Prescription" rows="2" row-height="30">
+                                </v-textarea>
+                            </v-col>
+                            <v-col cols="12" class="py-0 px-0" v-show="this.editedIndex > -1">
+                                <v-select
+                                    v-model="editedItem.genderId"
+                                    :items="genders"
+                                    item-text="gender"
+                                    item-value="genderId"
+                                    label="Gender"
+                                    chips dense>
+                                </v-select>
+                            </v-col>
+                            <v-col cols="12" class="py-0 px-0">
+                                <v-textarea v-model="editedItem.prescriptionComment" class="post-caption" 
+                                    filled auto-grow label="Comment" rows="2" row-height="30">
                                 </v-textarea>
                             </v-col>
                             <v-col cols="12" class="py-0 px-0">
@@ -106,7 +121,7 @@ export default {
         btnText: 'Submit',
         headers: [
             {
-                text: 'Description',
+                text: 'Prescription',
                 align: 'start',
                 sortable: false,
                 value: 'prescriptionDescription',
@@ -116,6 +131,8 @@ export default {
             { text: 'Patient', value: 'firstName', class: ['text-button', 'grey--text text--darken-3'] },
             { text: 'Email', value: 'email', class: ['text-button', 'grey--text text--darken-3']},
             { text: 'Phone', value: 'phoneNumber', class: ['text-button', 'grey--text text--darken-3']},
+            { text: 'Age', value: '', class: ['text-button', 'grey--text text--darken-3']},
+            { text: 'Comment', value: '', class: ['text-button', 'grey--text text--darken-3']},
             { text: 'Created On', value: 'createdOn', class: ['text-button', 'grey--text text--darken-3'] },
             { text: 'Actions', value: 'actions', sortable: false, class: ['text-button', 'grey--text text--darken-3'] },
         ],
@@ -126,6 +143,8 @@ export default {
             complaint: '',
             patientId: '',
             createdOn: '',
+            prescriptionComment: '',
+            genderId: '',
         },
         defaultItem: {
             prescriptionId: '',
@@ -133,7 +152,19 @@ export default {
             complaint: '',
             patientId: '',
             createdOn: '',
+            prescriptionComment: '',
+            genderId: '',
         },
+        genders: [
+            {
+                gender: 'Male',
+                genderId: 1
+            },
+            {
+                gender: 'Female',
+                genderId: 2
+            },
+        ],
     }),
 
     watch: {
@@ -167,6 +198,7 @@ export default {
                 prescriptionDescription: this.editedItem.prescriptionDescription,
                 complaint: this.editedItem.complaint,
                 patientId: this.editedItem.patientId,
+                Comment: this.editedItem.prescriptionComment,
                 createdOn: new Date()
             }
             this.$store.dispatch('prescriptions/addPrescription', data).then(response => {
@@ -182,6 +214,7 @@ export default {
                 prescriptionDescription: this.editedItem.prescriptionDescription,
                 complaint: this.editedItem.complaint,
                 patientId: this.editedItem.patientId,
+                Comment: this.editedItem.prescriptionComment,
                 createdOn: this.prescriptions[this.editedIndex].createdOn,
                 modifiedOn: new Date(),
                 isDeprecated: this.prescriptions[this.editedIndex].isDeprecated

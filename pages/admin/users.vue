@@ -90,6 +90,16 @@
                                     chips dense>
                                 </v-select>
                             </v-col>
+                            <v-col cols="12" md="6" class="py-0 px-0">
+                                <v-select
+                                    v-model="editedItem.genderId"
+                                    :items="genders"
+                                    item-text="gender"
+                                    item-value="genderId"
+                                    label="Gender"
+                                    chips dense>
+                                </v-select>
+                            </v-col>
 
                             <!-- <v-col cols="12" class="pl-0">
                                 <v-text-field 
@@ -170,6 +180,7 @@ export default {
             { text: 'Email', value: 'email', class: ['text-button', 'grey--text text--darken-3'] },
             { text: 'Phone', value: 'phoneNumber', class: ['text-button', 'grey--text text--darken-3'] },
             { text: 'D.O.B', value: 'dob', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Gender', value: '', class: ['text-button', 'grey--text text--darken-3'] },
             { text: 'Role', value: 'roleName', class: ['text-button', 'grey--text text--darken-3'] },
             { text: 'State', value: 'statedId', class: ['text-button', 'grey--text text--darken-3'] },
             { text: 'LGA', value: 'lgaid', class: ['text-button', 'grey--text text--darken-3'] },
@@ -197,7 +208,8 @@ export default {
             lgaid: '',
             city: '',
             password: '',
-            accountType: ''
+            accountType: '',
+            genderId: ''
         },
         defaultItem: {
             userId: '',
@@ -212,7 +224,18 @@ export default {
             city: '',
             password: '',
             accountType: '',
+            genderId: ''
         },
+        genders: [
+            {
+                gender: 'Male',
+                genderId: 1
+            },
+            {
+                gender: 'Female',
+                genderId: 2
+            },
+        ],
     }),
 
     watch: {
@@ -276,7 +299,8 @@ export default {
                 accountType: this.editedItem.accountType,
                 password: this.editedItem.password,
                 createdOn: new Date(),
-                createdBy: this.$auth.user.userId
+                createdBy: this.$auth.user.userId,
+                gender: this.editedItem.genderId
             }
             
             this.$store.dispatch('users/addUser', data).then(response => {
@@ -301,7 +325,8 @@ export default {
                 city: this.editedItem.city,
                 accountType: this.editedItem.accountType,
                 modifiedOn: this.users[this.editedIndex].modifiedOn,
-                isDeprecated: this.users[this.editedIndex].isDeprecated
+                isDeprecated: this.users[this.editedIndex].isDeprecated,
+                gender: this.editedItem.genderId
             }
             
             this.$store.dispatch('users/updateUser', data).then(response => {

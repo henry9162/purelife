@@ -197,7 +197,7 @@
                                     filled auto-grow label="Comments" rows="4" row-height="40" shaped>
                                 </v-textarea>
                             </v-col>
-                            <v-btn block @click="savePatient" v-if="isPatientEdit" depressed large prepend-inner-icon="mdi-map-marker" clearable
+                            <v-btn block @click="savePatient" depressed large prepend-inner-icon="mdi-map-marker" clearable
                                 class="white--text rounded-0 mt-6 mb-10 px-8 py-5 text-capitalize"
                                 color="#009933" :loading="userLoading" :disabled="userLoading" v-text="btnText">
                                 <v-icon right>mdi-send</v-icon>

@@ -23,6 +23,16 @@
                     <v-container>
                         <v-row class="px-8">
                             <v-col cols="12" class="py-0 px-0">
+                                <v-select
+                                    v-model="editedItem.productCategoryId"
+                                    :items="categories"
+                                    item-text="productCategyName"
+                                    item-value="productCategyId"
+                                    label="Category"
+                                    chips dense>
+                                </v-select>
+                            </v-col>
+                            <v-col cols="12" class="py-0 px-0">
                                 <v-text-field v-model="editedItem.productClassificationName" label="Classification Name"></v-text-field>
                             </v-col>
                             <v-col cols="12" class="py-0 px-0">
@@ -103,12 +113,14 @@ export default {
             productClassificationName: '',
             productClassificationDescription: '',
             createdOn: '',
+            productCategoryId: '',
         },
         defaultItem: {
             productGroupClassificationId: '',
             productClassificationName: '',
             productClassificationDescription: '',
             createdOn: '',
+            productCategoryId: '',
         },
     }),
 
@@ -127,7 +139,10 @@ export default {
         },
         btnText(){
             return this.editedIndex === -1 ? 'Submit' : 'Update';
-        }
+        },
+        categories(){
+            return this.$store.getters["categories/allCategories"];
+        },
     },
 
     methods: {
@@ -137,12 +152,18 @@ export default {
             this.$modal.show('classifications-modal')
         },
         addClassification(){
+            if (this.editedItem.productCategoryId.length < 1) return this.$toast.error("Please select a category").goAway(2000);
+            if (this.editedItem.productClassificationName.length < 1) return this.$toast.error("Please enter a classification").goAway(2000);
+
             this.loading = true
+
             let data = {
                 productClassificationName: this.editedItem.productClassificationName,
                 productClassificationDescription: this.editedItem.productClassificationDescription,
-                createdOn: new Date()
+                createdOn: new Date(),
+                productCategoryId: this.editedItem.productCategoryId
             }
+
             this.$store.dispatch('classifications/addClassification', data).then(response => {
                 this.loading = false
                 this.refreshTable()
@@ -160,6 +181,7 @@ export default {
                 isDeprecated: this.classifications[this.editedIndex].isDeprecated,
                 createdBy: this.classifications[this.editedIndex].createdBy
             }
+
             this.$store.dispatch('classifications/updateClassification', data).then(response => {
                 this.loading = false
                 this.refreshTable();

@@ -64,7 +64,8 @@
                             </v-col>
                             <v-col cols="12" md="4" class="py-0 pr-8">
                                 <v-text-field v-model="editedItem.productName" label="Product Name"></v-text-field>
-                                <v-text-field v-model="editedItem.price" label="Price"></v-text-field>
+                                <v-text-field v-model="editedItem.purchasePrice" type="number" label="Purchase Price"></v-text-field>
+                                <v-text-field v-model="editedItem.price" type="number" label="Price"></v-text-field>
                                 <v-select
                                       v-model="editedItem.productBranchId"
                                       :items="branches"
@@ -101,11 +102,12 @@
                                       item-text="productCategyName"
                                       item-value="productCategyId"
                                       label="Product Category"
+                                      @change="categoryChange"
                                       chips dense>
                                 </v-select>
                                 <v-select
                                       v-model="editedItem.productClassificationId"
-                                      :items="classifications"
+                                      :items="categoryClassifications"
                                       item-text="productClassificationName"
                                       item-value="productGroupClassificationId"
                                       label="Prodct Classification"
@@ -306,7 +308,8 @@ export default {
             productBrandId: '',
             productClassificationId: '',
             productCategoryId: '',
-            productPackagingId: ''
+            productPackagingId: '',
+            purchasePrice: '',
         },
         defaultItem: {
             productId: '',
@@ -323,7 +326,8 @@ export default {
             productBrandId: '',
             productClassificationId: '',
             productCategoryId: '',
-            productPackagingId: ''
+            productPackagingId: '',
+            purchasePrice: '',
         },
         file: '',
         threadImage: '',
@@ -379,12 +383,18 @@ export default {
         },
         dropdownCategories() {
             return this.categories.map(val => val.productCategyName);
-        }
+        },
+        categoryClassifications() {
+            return this.$store.getters["classifications/allCategoryClassifications"];
+        },
     },
 
     methods: {
         selectOnChange(val) {
             this.search = val;
+        },
+        async categoryChange(val) {
+            await this.$store.dispatch('classifications/getAllClassificationsByCategoryId', val);
         },
         filterOnlyCapsText (value, search, item) {
             console.log(value != null &&
@@ -495,6 +505,7 @@ export default {
             formData.append('productClassificationId', this.editedItem.productClassificationId)
             formData.append('productCategoryId', this.editedItem.productCategoryId)
             formData.append('productPackagingId', this.editedItem.productPackagingId)
+            formData.append('purchasePrice', this.editedItem.purchasePrice)
             formData.append('image', this.editedItem.productImage)
             formData.append('createdOn', new Date())
 

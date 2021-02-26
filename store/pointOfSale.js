@@ -13,20 +13,8 @@ let testProducts = [{
         }];
 
 export const state = () => ({
-    products: [{
-            productName: 'test',
-            quantity: 10,
-            serial: 1234,
-            unitPrice: 10,
-            total: 0
-        }, {
-            productName: 'test',
-            quantity: 10,
-            serial: 1234,
-            unitPrice: 10,
-            total: 0
-        }],
-    totalQuantity: 2
+    products: [],
+    totalQuantity: 0
 })
 
 export const mutations = {

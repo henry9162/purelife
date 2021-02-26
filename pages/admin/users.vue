@@ -185,7 +185,7 @@ export default {
             { text: 'State', value: 'statedId', class: ['text-button', 'grey--text text--darken-3'] },
             { text: 'LGA', value: 'lgaid', class: ['text-button', 'grey--text text--darken-3'] },
             { text: 'City', value: 'city', class: ['text-button', 'grey--text text--darken-3'] },
-            { text: 'Account Type', value: 'accountType', class: ['text-button', 'grey--text text--darken-3'] },
+            { text: 'Account Type', value: 'accountypeName', class: ['text-button', 'grey--text text--darken-3'] },
             { text: 'Created On', value: 'createdOn', class: ['text-button', 'grey--text text--darken-3'] },
             { text: 'Actions', value: 'actions', sortable: false, class: ['text-button', 'grey--text text--darken-3'] },
         ],

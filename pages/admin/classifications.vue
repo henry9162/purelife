@@ -58,11 +58,20 @@
         </modal>
 
 
-        <v-data-table :headers="headers" :items="classifications" sort-by="calories" class="mx-4 py-4">
+        <v-data-table :headers="headers" :items="classifications" sort-by="calories" 
+            class="mx-4 py-4" :search="search" :custom-filter="filterOnlyCapsText">
             <template v-slot:top>
                 <v-toolbar flat color="white">
                     <v-toolbar-title class="list-color custom-style">All Classifications</v-toolbar-title>
                     <v-divider class="mx-4" inset vertical></v-divider>
+                    <v-spacer></v-spacer>
+
+                    <v-text-field
+                        v-model="search"
+                        label="Search"
+                        class="mx-4"
+                    ></v-text-field>
+
                     <v-spacer></v-spacer>
 
                     <v-btn @click="$modal.show('classifications-modal')" depressed large color="#22A64E" dark class="rounded-0 post-caption">
@@ -95,6 +104,7 @@ export default {
     data: () => ({
         dialog: true,
         loading: false,
+        search: '',
         headers: [
             {
                 text: 'Name',
@@ -150,6 +160,16 @@ export default {
             this.editedIndex = this.classifications.indexOf(item)
             this.editedItem = Object.assign({}, item)
             this.$modal.show('classifications-modal')
+        },
+        filterOnlyCapsText (value, search, item) {
+            console.log(value != null &&
+                search != null &&
+                typeof value === 'string' &&
+                value.toString().toLowerCase().indexOf(search.toLowerCase()) !== -1)
+            return value != null &&
+                search != null &&
+                typeof value === 'string' &&
+                value.toString().toLowerCase().indexOf(search.toLowerCase()) !== -1
         },
         addClassification(){
             if (this.editedItem.productCategoryId.length < 1) return this.$toast.error("Please select a category").goAway(2000);

@@ -486,14 +486,20 @@ export default {
             };
         },
         editItem (item) {
+            let newItem = {...item};
+            for (const property in newItem) {
+                newItem[property] == null ? newItem[property] = '' : ''
+            };
+
             this.editedIndex = this.products.indexOf(item);
-            this.editedItem = Object.assign({}, item);
-            this.threadImage = item.imageSrc;
+            this.editedItem = Object.assign({}, newItem);
+            this.threadImage = newItem.imageSrc;
             this.$modal.show('products-modal')
         },
         async addProduct(){
             this.loading = true
             const formData = new FormData();
+            
             formData.append('productName', this.editedItem.productName)
             formData.append('quantity', this.editedItem.quantity)
             formData.append('price', this.editedItem.price)
@@ -507,7 +513,7 @@ export default {
             formData.append('productPackagingId', this.editedItem.productPackagingId)
             formData.append('purchasePrice', this.editedItem.purchasePrice)
             formData.append('image', this.editedItem.productImage)
-            formData.append('createdOn', new Date())
+            formData.append('createdOn', new Date());
 
             await this.$store.dispatch('productss/addProduct', formData).then(response => {
                 this.loading = false
@@ -539,7 +545,7 @@ export default {
                 id: this.products[this.editedIndex].productId,
                 data: formData
             }
-
+            // debugger
             await this.$store.dispatch('productss/updateProduct', data1).then(response => {
                 this.loading  = false
                 this.refreshTable();

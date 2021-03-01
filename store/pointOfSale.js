@@ -10,10 +10,11 @@ let testProducts = [{
             serial: 1234,
             unitPrice: 10,
             total: 0
-        }]
+        }];
+
 export const state = () => ({
     products: [],
-    totalQuantity: 2
+    totalQuantity: 0
 })
 
 export const mutations = {

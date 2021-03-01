@@ -64,7 +64,8 @@
                             </v-col>
                             <v-col cols="12" md="4" class="py-0 pr-8">
                                 <v-text-field v-model="editedItem.productName" label="Product Name"></v-text-field>
-                                <v-text-field v-model="editedItem.price" label="Price"></v-text-field>
+                                <v-text-field v-model="editedItem.purchasePrice" type="number" label="Purchase Price"></v-text-field>
+                                <v-text-field v-model="editedItem.price" type="number" label="Price"></v-text-field>
                                 <v-select
                                       v-model="editedItem.productBranchId"
                                       :items="branches"
@@ -101,11 +102,12 @@
                                       item-text="productCategyName"
                                       item-value="productCategyId"
                                       label="Product Category"
+                                      @change="categoryChange"
                                       chips dense>
                                 </v-select>
                                 <v-select
                                       v-model="editedItem.productClassificationId"
-                                      :items="classifications"
+                                      :items="categoryClassifications"
                                       item-text="productClassificationName"
                                       item-value="productGroupClassificationId"
                                       label="Prodct Classification"
@@ -161,12 +163,32 @@
         </modal>
 
 
-        <v-data-table :headers="headers" :items="products" sort-by="calories" class="mx-4 py-4">
+        <v-data-table :headers="headers" :items="products" sort-by="calories" 
+            class="mx-4 py-4" :search="search" :custom-filter="filterOnlyCapsText">
             <template v-slot:top>
                 <v-toolbar flat color="white">
                     <v-toolbar-title class="list-color custom-style">All Products</v-toolbar-title>
                     <v-divider class="mx-4" inset vertical></v-divider>
+                    <v-row align="center">
+                        <v-col
+                            class="d-flex"
+                            cols="12"
+                            sm="4"
+                        >
+                            <v-select
+                                :items="dropdownCategories"
+                                label="Categories Filter"
+                                class="mt-5"
+                                v-on:change="selectOnChange"
+                            ></v-select>
+                        </v-col>
+                    </v-row>
                 </v-toolbar>
+                <v-text-field
+                    v-model="search"
+                    label="Search"
+                    class="mx-4"
+                ></v-text-field>
             </template>
 
             <template v-slot:item.imageSrc="{ item }">
@@ -247,6 +269,7 @@ export default {
         dialog: true,
         loading: false,
         fullPage: false,
+        search: '',
         headers: [
             {
                 text: 'Image',
@@ -285,7 +308,8 @@ export default {
             productBrandId: '',
             productClassificationId: '',
             productCategoryId: '',
-            productPackagingId: ''
+            productPackagingId: '',
+            purchasePrice: '',
         },
         defaultItem: {
             productId: '',
@@ -302,7 +326,8 @@ export default {
             productBrandId: '',
             productClassificationId: '',
             productCategoryId: '',
-            productPackagingId: ''
+            productPackagingId: '',
+            purchasePrice: '',
         },
         file: '',
         threadImage: '',
@@ -319,7 +344,7 @@ export default {
         },
         file(val){
             val ? this.processImage(val) : ''
-        }
+        },
     },
 
     computed: {
@@ -355,10 +380,32 @@ export default {
         },
         expiryDate(){
             return this.$moment(this.editedItem.expiryDate).format('DD/MM/YYYY')
-        }
+        },
+        dropdownCategories() {
+            return this.categories.map(val => val.productCategyName);
+        },
+        categoryClassifications() {
+            return this.$store.getters["classifications/allCategoryClassifications"];
+        },
     },
 
     methods: {
+        selectOnChange(val) {
+            this.search = val;
+        },
+        async categoryChange(val) {
+            await this.$store.dispatch('classifications/getAllClassificationsByCategoryId', val);
+        },
+        filterOnlyCapsText (value, search, item) {
+            console.log(value != null &&
+                search != null &&
+                typeof value === 'string' &&
+                value.toString().toLowerCase().indexOf(search.toLowerCase()) !== -1)
+            return value != null &&
+                search != null &&
+                typeof value === 'string' &&
+                value.toString().toLowerCase().indexOf(search.toLowerCase()) !== -1
+        },
         processImage(imageFile){
             let imageSize = Number((imageFile.size / 1024 / 1024).toFixed(3));
             if(imageSize > 0.322){
@@ -439,14 +486,20 @@ export default {
             };
         },
         editItem (item) {
+            let newItem = {...item};
+            for (const property in newItem) {
+                newItem[property] == null ? newItem[property] = '' : ''
+            };
+
             this.editedIndex = this.products.indexOf(item);
-            this.editedItem = Object.assign({}, item);
-            this.threadImage = item.imageSrc;
+            this.editedItem = Object.assign({}, newItem);
+            this.threadImage = newItem.imageSrc;
             this.$modal.show('products-modal')
         },
         async addProduct(){
             this.loading = true
             const formData = new FormData();
+            
             formData.append('productName', this.editedItem.productName)
             formData.append('quantity', this.editedItem.quantity)
             formData.append('price', this.editedItem.price)
@@ -458,8 +511,9 @@ export default {
             formData.append('productClassificationId', this.editedItem.productClassificationId)
             formData.append('productCategoryId', this.editedItem.productCategoryId)
             formData.append('productPackagingId', this.editedItem.productPackagingId)
+            formData.append('purchasePrice', this.editedItem.purchasePrice)
             formData.append('image', this.editedItem.productImage)
-            formData.append('createdOn', new Date())
+            formData.append('createdOn', new Date());
 
             await this.$store.dispatch('productss/addProduct', formData).then(response => {
                 this.loading = false
@@ -491,7 +545,7 @@ export default {
                 id: this.products[this.editedIndex].productId,
                 data: formData
             }
-
+            // debugger
             await this.$store.dispatch('productss/updateProduct', data1).then(response => {
                 this.loading  = false
                 this.refreshTable();

@@ -6,7 +6,91 @@
         :is-full-page="fullPage">
     </loading> -->
 
-    <v-card class="mx-10 mt-14" color="#22A64E">
+    
+
+        <div class="mx-10 mt-10">
+            <v-row>
+                <v-col md="8">
+                    <v-row>
+                        <v-col cols="12" md="3" class="p-0" >
+                            <v-select
+                                v-model="transactionFilter"
+                                :items="filters"
+                                item-text="filter"
+                                item-value="filterId"
+                                label="Method"
+                                chips dense>
+                            </v-select>
+                        </v-col>
+                        <v-col cols="12" md="5">
+                            <v-menu
+                                ref="toDateMenu"
+                                v-model="toDateMenu"
+                                :close-on-content-click="false"
+                                :return-value.sync="dates"
+                                transition="scale-transition"
+                                offset-y
+                                min-width="auto"
+                            >
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-text-field
+                                        v-model="dateRangeText"
+                                        label="Date Range"
+                                        prepend-icon="mdi-calendar"
+                                        readonly
+                                        v-bind="attrs"
+                                        v-on="on"
+                                    ></v-text-field>
+                                </template>
+                                <v-date-picker
+                                    v-model="dates"
+                                    no-title
+                                    scrollable
+                                    range
+                                >
+                                    <v-spacer></v-spacer>
+                                    <v-btn 
+                                        text color="primary" @click="$refs.toDateMenu.save([])">Clear
+                                    </v-btn>
+                                    <v-spacer></v-spacer>
+                                    <v-btn
+                                        text
+                                        color="primary"
+                                        @click="toDateMenu = false"
+                                    >
+                                        Cancel
+                                    </v-btn>
+                                    <v-btn
+                                        text
+                                        color="primary"
+                                        @click="$refs.toDateMenu.save(dates)"
+                                    >
+                                        OK
+                                    </v-btn>
+                                </v-date-picker>
+                            </v-menu>
+                        </v-col>
+                        <v-col cols="12" md="2">
+                            <v-btn block @click="filterTransactions" max-width="100" depressed small prepend-inner-icon="mdi-map-marker" clearable
+                                class="white--text rounded-0 mt-6 mb-10 px-8 py-5 text-capitalize"
+                                color="#009933" :loading="filterLoading" :disabled="filterLoading" v-text="filterText" 
+                                >
+                                <v-icon right>mdi-send</v-icon>
+                                <template v-slot:loader>
+                                    <span class="custom-loader">
+                                        <v-icon light>mdi-cached</v-icon>
+                                    </span>
+                                </template>
+                            </v-btn>
+                        </v-col>
+                    </v-row>
+
+                </v-col>
+            </v-row>
+        </div>
+
+
+    <v-card class="mx-10" color="#22A64E">
         <modal
             name="transaction-modal" :min-width="800"
             :max-width="1000" :adaptive="true"
@@ -70,14 +154,24 @@
             </v-card>
         </modal>
 
-
         <v-data-table :headers="headers" :items="transactions" class="mx-4 py-4" :loading="isLoading" loading-text="loading... please wait">
             <template v-slot:top>
                 <v-toolbar flat color="white">
                     <v-toolbar-title class="list-color custom-style">All Transactions</v-toolbar-title>
                     <v-divider class="mx-4" inset vertical></v-divider>
+
                     <v-spacer></v-spacer>
+
+                    <v-text-field
+                        v-model="total"
+                        label="Total"
+                        readonly
+                        disabled
+                        class="shrink"
+                    ></v-text-field>
+                    
                 </v-toolbar>
+
             </template>
 
             <template v-slot:[`item.transSummary.methodOfPaymentId`]="{ item }">
@@ -107,6 +201,33 @@ export default {
     },
 
     data: () => ({
+        dates: [],
+        fromDateMenu: false,
+        toDateFilter: '',
+        toDateMenu: false,
+        transactionFilter: '',
+        filterLoading: false,
+        filterText: "Filter",
+        date: new Date().toISOString().substr(0, 10),
+        modal: false,
+        filters: [
+            {
+               filter: 'All',
+               filterId: 0 
+            },
+            {
+               filter: 'Cash',
+               filterId: 1
+            },
+            {
+               filter: 'Online',
+               filterId: 2
+            },
+            {
+               filter: 'POS',
+               filterId: 3
+            },
+        ],
         headers: [
             {
                 text: 'Customer',
@@ -154,7 +275,13 @@ export default {
         },
         transactions(){
             return this.$store.getters['transactions/allTransactions'];
-        }
+        },
+        dateRangeText () {
+            return this.dates.join(' ~ ')
+        },
+        total () {
+            return this.$store.getters['transactions/getTotal'];
+        },
     },
 
     methods: {
@@ -187,6 +314,17 @@ export default {
         getMethodOfPayment(id) {
             let methodOfPayment = this.methodOfPayments.find( item => item.methodOfPaymentId == id);
             return methodOfPayment != undefined ? methodOfPayment.methodOfPayment : "";
+        },
+        async filterTransactions() {
+            let data = {
+                methodOfPaymentId: this.transactionFilter,
+                from: this.dates[0],
+                to: this.dates[1],
+            }
+
+            await this.$store.dispatch('transactions/filterTransaction', data).then(response => {
+                console.log(response)
+            });
         }
     },
     mounted(){

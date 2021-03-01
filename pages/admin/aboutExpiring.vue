@@ -185,13 +185,18 @@
             </v-card>
         </modal>
 
-        <v-data-table :headers="headers" :items="productsAboutExpiring" sort-by="calories" class="mx-4 py-4">
+        <v-data-table :headers="headers" :items="productsAboutExpiring" sort-by="calories"
+            class="mx-4 py-4" :search="search" :custom-filter="filterOnlyCapsText">
             <template v-slot:top>
                 <v-toolbar flat color="white">
                     <v-toolbar-title class="list-color custom-style">Products About to Expire</v-toolbar-title>
                     <v-divider class="mx-4" inset vertical></v-divider>
                     <v-spacer></v-spacer>
-                </v-toolbar>
+                </v-toolbar><v-text-field
+                    v-model="search"
+                    label="Search"
+                    class="mx-4"
+                ></v-text-field>
             </template>
 
             <template v-slot:item.imageSrc="{ item }">
@@ -229,6 +234,7 @@ export default {
         dialog: true,
         loading: false,
         fullPage: false,
+        search: '',
         headers: [
             {
                 text: 'Image',
@@ -320,6 +326,12 @@ export default {
     },
 
     methods: {
+        filterOnlyCapsText (value, search, item) {
+            return value != null &&
+                search != null &&
+                typeof value === 'string' &&
+                value.toString().toLowerCase().indexOf(search.toLowerCase()) !== -1
+        },
         processImage(imageFile){
             let imageSize = Number((imageFile.size / 1024 / 1024).toFixed(3));
             if(imageSize > 0.322){

@@ -23,6 +23,16 @@
                     <v-container>
                         <v-row class="px-8">
                             <v-col cols="12" class="py-0 px-0">
+                                <v-select
+                                    v-model="editedItem.productCategoryId"
+                                    :items="categories"
+                                    item-text="productCategyName"
+                                    item-value="productCategyId"
+                                    label="Category"
+                                    chips dense>
+                                </v-select>
+                            </v-col>
+                            <v-col cols="12" class="py-0 px-0">
                                 <v-text-field v-model="editedItem.productClassificationName" label="Classification Name"></v-text-field>
                             </v-col>
                             <v-col cols="12" class="py-0 px-0">
@@ -48,11 +58,20 @@
         </modal>
 
 
-        <v-data-table :headers="headers" :items="classifications" sort-by="calories" class="mx-4 py-4">
+        <v-data-table :headers="headers" :items="classifications" sort-by="calories" 
+            class="mx-4 py-4" :search="search" :custom-filter="filterOnlyCapsText">
             <template v-slot:top>
                 <v-toolbar flat color="white">
                     <v-toolbar-title class="list-color custom-style">All Classifications</v-toolbar-title>
                     <v-divider class="mx-4" inset vertical></v-divider>
+                    <v-spacer></v-spacer>
+
+                    <v-text-field
+                        v-model="search"
+                        label="Search"
+                        class="mx-4"
+                    ></v-text-field>
+
                     <v-spacer></v-spacer>
 
                     <v-btn @click="$modal.show('classifications-modal')" depressed large color="#22A64E" dark class="rounded-0 post-caption">
@@ -85,6 +104,7 @@ export default {
     data: () => ({
         dialog: true,
         loading: false,
+        search: '',
         headers: [
             {
                 text: 'Name',
@@ -103,12 +123,14 @@ export default {
             productClassificationName: '',
             productClassificationDescription: '',
             createdOn: '',
+            productCategoryId: '',
         },
         defaultItem: {
             productGroupClassificationId: '',
             productClassificationName: '',
             productClassificationDescription: '',
             createdOn: '',
+            productCategoryId: '',
         },
     }),
 
@@ -127,7 +149,10 @@ export default {
         },
         btnText(){
             return this.editedIndex === -1 ? 'Submit' : 'Update';
-        }
+        },
+        categories(){
+            return this.$store.getters["categories/allCategories"];
+        },
     },
 
     methods: {
@@ -136,13 +161,29 @@ export default {
             this.editedItem = Object.assign({}, item)
             this.$modal.show('classifications-modal')
         },
+        filterOnlyCapsText (value, search, item) {
+            console.log(value != null &&
+                search != null &&
+                typeof value === 'string' &&
+                value.toString().toLowerCase().indexOf(search.toLowerCase()) !== -1)
+            return value != null &&
+                search != null &&
+                typeof value === 'string' &&
+                value.toString().toLowerCase().indexOf(search.toLowerCase()) !== -1
+        },
         addClassification(){
+            if (this.editedItem.productCategoryId.length < 1) return this.$toast.error("Please select a category").goAway(2000);
+            if (this.editedItem.productClassificationName.length < 1) return this.$toast.error("Please enter a classification").goAway(2000);
+
             this.loading = true
+
             let data = {
                 productClassificationName: this.editedItem.productClassificationName,
                 productClassificationDescription: this.editedItem.productClassificationDescription,
-                createdOn: new Date()
+                createdOn: new Date(),
+                productCategoryId: this.editedItem.productCategoryId
             }
+
             this.$store.dispatch('classifications/addClassification', data).then(response => {
                 this.loading = false
                 this.refreshTable()
@@ -160,6 +201,7 @@ export default {
                 isDeprecated: this.classifications[this.editedIndex].isDeprecated,
                 createdBy: this.classifications[this.editedIndex].createdBy
             }
+
             this.$store.dispatch('classifications/updateClassification', data).then(response => {
                 this.loading = false
                 this.refreshTable();

@@ -117,7 +117,7 @@ export const actions = {
         if(this.$auth.loggedIn){
             this.$axios.get(`/Cart/GetCartByUserId/${this.$auth.user.userId}`)
             .then(response => {
-                console.log(response.data)
+                // console.log(response.data)
             }).catch(error => {
                 console.log(error)
             })
@@ -140,7 +140,7 @@ export const actions = {
                 userId: this.$auth.user.userId
             }
             this.$axios.post('/Cart', data).then(response => {
-               console.log(response)
+            //    console.log(response)
             }).catch(error => {
                 console.log(error)
             })
@@ -274,7 +274,7 @@ export const actions = {
         })
     },
     updateProduct(context, data){
-        console.log(data);
+        // console.log(data);
         return new Promise((resolve, reject) => {
             this.$axios.put(`/Products/${data.id}`, data.data, {
                 'headers': {
@@ -381,14 +381,14 @@ export const getters = {
             return state.cart.map(cartItem => {
                 const product = state.products.find(product => product.productId == cartItem.productId);
                 return {
-                    productId: product.productId,
-                    title: product.productName,
-                    price: product.price,
-                    image_front: product.imageSrc,
+                    productId: !product ? '' : product.productId,
+                    title: !product ? '' : product.productName,
+                    price: !product ? '' : product.price,
+                    image_front: !product ? '' : product.imageSrc,
                     quantity: cartItem.quantity,
                     inventory: cartItem.inventory,
-                    packageName: product.productPackageName,
-                    brandName: product.productBrandName,
+                    packageName: !product ? '' : product.productPackageName,
+                    brandName: !product ? '' : product.productBrandName,
                     isRefill: cartItem.isRefill
                 };
             })

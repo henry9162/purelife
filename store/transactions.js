@@ -1,6 +1,7 @@
 export const state = () => ({
     transactions: [],
-    loader: false
+    loader: false,
+    total: 0
 })
 
 export const mutations = {
@@ -9,7 +10,10 @@ export const mutations = {
     },
     setLoader(state, data) {
         state.loader = data;
-    }
+    },
+    setTotal(state, data) {
+        state.total = data;
+    },
 }
 
 export const actions = {
@@ -41,6 +45,20 @@ export const actions = {
             })
         })
     },
+    filterTransaction(context, data){
+        this.$axios.post('/Transaction/FilterTransactionByDateAndPaymentMethod', data)
+            .then(response => {
+                let data = [...response.data.data.transactions];
+                let total = response.data.data.totalSum;
+
+                context.commit('setTransactions', data);
+                context.commit('setTotal', total);
+            })
+            .catch(error => {
+                context.dispatch('processError', error);
+                reject(error);
+            })
+    },
     cancelTransaction(context, id){
         this.$axios.get(`/Transaction/RemoveTransactionSummary/${id}`).then(response => {
             this.loading = false;
@@ -58,10 +76,12 @@ export const actions = {
 
 export const getters = {
     allTransactions(state){
-        console.log(state)
         return state.transactions;
     },
     getLoader(state){
         return state.loader;
-    }
+    },
+    getTotal(state){
+        return state.total;
+    },
 }

@@ -1,7 +1,7 @@
 <template>
     <v-card elevation="12" color="#fff" :width="width" height="565px" class="authDiv">
         <div class="div-context">
-            <div class="login-form px-12 pt-12 pb-6">
+            <div class="login-form px-12 pt-5 pb-6">
                 <div class="login-header d-flex justify-center mb-4">
                     <div class="login-header-content">
                         <div class="login-header-logo">
@@ -48,6 +48,16 @@
                                         <v-btn text color="primary" @click="$refs.menu.save(date)">OK</v-btn>
                                     </v-date-picker>
                                 </v-menu>
+
+                                <v-select
+                                    v-model="genderId"
+                                    :items="genders"
+                                    item-text="gender"
+                                    item-value="genderId"
+                                    label="Gender" 
+                                    :rules="genderRules"
+                                    chips dense>
+                                </v-select>
                             </v-col>
 
                             <v-col cols="12" sm="12" md="6">
@@ -136,7 +146,21 @@ export default {
         show1: false,
         valid: true,
         loading: false,
-        width: ''
+        width: '',
+        genders: [
+            {
+                gender: 'Male',
+                genderId: 1
+            },
+            {
+                gender: 'Female',
+                genderId: 2
+            },
+        ],
+        genderId: '',
+        genderRules: [
+            v => !!v || 'Gender is required'
+        ]
     }),
 
     methods: {
@@ -152,14 +176,14 @@ export default {
                     email: this.email,
                     phoneNumber: this.phone,
                     password: this.password,
-                    dob: this.date
+                    dob: this.date,
+                    gender: this.genderId
                 }
 
                 this.$store.dispatch("auths/register", user).then(response => {
                     if(response) {
-                        this.loading = false
-                        //this.$refs.form.resetValidation()
-                        this.getView()
+                        this.loading = false;
+                        this.getView();
                     }
                 })
             } else {

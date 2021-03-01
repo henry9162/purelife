@@ -1,10 +1,14 @@
 export const state = () => ({
     classifications: [],
+    categoryClassfications: []
 })
 
 export const mutations = {
     setClassifications(state, data){
         state.classifications = data
+    },
+    setCategoryClassifications(state, data){
+        state.categoryClassfications = data
     }
 }
 
@@ -13,6 +17,14 @@ export const actions = {
         this.$axios.get('/ProductClassification/GetAllProductClassification')
             .then(response => {
                 context.commit('setClassifications', response.data.data)
+            }).catch(error => {
+                context.dispatch('processError', error)
+            })
+    },
+    getAllClassificationsByCategoryId(context, categoryId){
+        this.$axios.get('/ProductClassification/GetProductClassificationByCategoryID/' + categoryId)
+            .then(response => {
+                context.commit('setCategoryClassifications', response.data.data)
             }).catch(error => {
                 context.dispatch('processError', error)
             })
@@ -66,5 +78,8 @@ export const actions = {
 export const getters = {
     allClassifications(state){
         return state.classifications;
-    }
+    },
+    allCategoryClassifications(state){
+        return state.categoryClassfications;
+    },
 }

@@ -4,7 +4,7 @@
             
             <div style="margin: 20px 15px 10px 15px">
                 <v-autocomplete
-                    v-model="model"
+                    v-model="select"
                     :loading="loading"
                     :items="items"
                     :search-input.sync="search"
@@ -462,6 +462,7 @@ export default {
             // })
         },
         getSearchedResult(val){
+            this.drawer = false
             this.$route.path == '/' ? this.$store.dispatch('filters/displayBaseFilter', { name: 'search', id: val, type: 'search' }) : this.$router.push({path: '/', query: {search : val}})
         },
         querySelections (v) {

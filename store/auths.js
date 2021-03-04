@@ -6,7 +6,7 @@ export const state = () => ({
 
 export const mutations = {
     setView(state, view){
-        view == 'login' ? state.view = 'login' : state.view = 'register'
+        view == 'login' ? state.view = 'login' : view == 'register' ? state.view = 'register' : view == 'forgotpassword' ? state.view = 'forgotpassword' : state.view = 'confirmpassword';
     },
     setAuthData(state, user){
         state.authUser = user

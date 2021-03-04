@@ -1,5 +1,5 @@
 <template>
-    <v-card elevation="12" color="#fff" :width="width" height="565px" class="authDiv">
+    <v-card elevation="12" color="#fff" :width="width" height="600px" class="authDiv">
         <div class="div-context">
             <div class="login-form px-12 pt-5 pb-6">
                 <div class="login-header d-flex justify-center mb-4">
@@ -50,7 +50,7 @@
                                 </v-menu>
 
                                 <v-select
-                                    v-model="genderId"
+                                    v-model="genderId" filled rounded
                                     :items="genders"
                                     item-text="gender"
                                     item-value="genderId"
@@ -78,6 +78,14 @@
                                     label="Password" required hint="At least 8 characters" counter color="green"
                                     :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" @click:append="show1 = !show1"
                                     :type="show1 ? 'text' : 'password'">
+                                </v-text-field>
+
+                                <v-text-field 
+                                    v-model="confirmPassword" prepend-inner-icon="mdi-lock" label="Confirm Password" color="green"
+                                    :rules="[(password === confirmPassword) || 'Password must match']" filled dense rounded 
+                                    required hint="At least 8 characters" counter 
+                                    :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'" @click:append="show2 = !show2"
+                                    :type="show2 ? 'text' : 'password'">
                                 </v-text-field>
                             </v-col>
                         </v-row>
@@ -143,6 +151,7 @@ export default {
             v => !!v || 'Password is required',
             v => (v && v.length >= 6) || 'Password must not be less than 6 characters',
         ],
+        confirmPassword: '',
         show1: false,
         valid: true,
         loading: false,

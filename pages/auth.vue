@@ -11,10 +11,12 @@
 <script>
 import register from '../components/auth/register'
 import login from '../components/auth/login'
+import forgotpassword from '../components/auth/forgotpassword'
+import confirmpassword from '../components/auth/confirmpassword'
 
 export default {
     layout: 'default',
-    components: { register,  login},
+    components: { register, login, forgotpassword, confirmpassword},
 
     computed: {
         view() {

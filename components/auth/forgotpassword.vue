@@ -1,13 +1,18 @@
 <template>
     <v-card elevation="12" color="#fff" :width="width" height="570px" class="authDiv">
+        <v-alert 
+            v-if="showAlert" :color="alertColor" dark dense icon="mdi-checkbox-marked-circle" prominent >
+            {{ alertMsg }}
+        </v-alert>
+
         <div class="div-context">
             <div class="login-form py-4">
                 <div class="login-header d-flex justify-center pb-8">
                     <div class="login-header-content">
-                        <div class="login-header-logo">
+                        <div class="login-header-logo text-center">
                             <img src="~assets/logos/logo1.png" alt="" width="60px" height="60px">
                         </div>
-                        <div class="my-2 custom-light-h2">Sign In</div>
+                        <div class="my-2 custom-light-h2">Forgot Password</div>
                     </div> 
                 </div>
 
@@ -19,20 +24,15 @@
                             :rules="emailRules" filled dense rounded label="Email" required>
                         </v-text-field>
 
-                        <v-text-field 
-                            v-model="password" prepend-inner-icon="mdi-lock" :rules="passwordRules" filled dense rounded 
-                            label="Password" required hint="At least 8 characters" counter color="green"
-                            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" @click:append="show1 = !show1"
-                            :type="show1 ? 'text' : 'password'">
-                        </v-text-field>
-
                         <div class="text-right">
-                            <v-btn @click="getForgotPasswordView" class="text-capitalize" text color="#40BCB6">Forgot Password?</v-btn>
+                            <v-btn @click="getLoginView" class="text-capitalize mt-0" text color="#40BCB6">
+                                <v-icon small left>mdi-arrow-left</v-icon> Back to Login
+                            </v-btn>
                         </div>
 
-                        <v-btn @click="login" depressed large prepend-inner-icon="mdi-map-marker" clearable 
+                        <v-btn @click="validateMail" depressed large prepend-inner-icon="mdi-map-marker" clearable 
                             class="white--text mt-4 rounded-0 px-8 py-5 text-capitalize" 
-                            color="#009933" :loading="loading" :disabled="loading">Sign In 
+                            color="#009933" :loading="loading" :disabled="loading">Validate Email
                             <v-icon right>mdi-send</v-icon>
                             <template v-slot:loader>
                                 <span class="custom-loader">
@@ -58,71 +58,56 @@
 
 export default {
     data: () => ({
-        name: '',
-        nameRules: [
-            v => !!v || 'Name is required',
-            v => (v && v.length <= 30) || 'Name must not be more than 30 characters',
-        ],
-        username: '',
-        usernameRules: [
-            v => !!v || 'Username is required',
-            v => (v && v.length <= 10) || 'Username must not be more than 10 characters',
-        ],
         email: '',
         emailRules: [
             v => !!v || 'E-mail is required',
             v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
         ],
-        password: '',
-        passwordRules: [
-            v => !!v || 'Password is required',
-            v => (v && v.length >= 6) || 'Password must not be less than 6 characters',
-        ],
         show1: false,
         valid: true,
         loading: false,
-        width: ''
+        width: '',
+        showAlert: false,
+        alertMsg: '',
+        alertColor: ''
     }),
 
     methods: {
         getView(){
             this.$store.dispatch('auths/changeView', 'register')
         },
-        getForgotPasswordView(){
-            this.$store.dispatch('auths/changeView', 'forgotpassword')
+        getLoginView(){
+            this.$store.dispatch('auths/changeView', 'login')
         },
-        async login(){
+        getForgotPasswordView(){
+            this.$store.dispatch('auths/changeView', 'forgotPassword')
+        },
+        getResetPasswordView(){
+            this.$store.dispatch('auths/changeView', 'confirmpassword')
+        },
+        async validateMail(){
             this.loading = true
             if (this.$refs.form.validate()) {
-                let data = {
-                    emailOrPhone: this.email,
-                    password: this.password
-                }
-
-                this.$axios.post('/Account/Login', data).then(response => {
-                if(response.data.state == -3){
+                this.$axios.get(`/Account/SendOTPForgetPassword/${this.email}`).then(response => {
+                if(response.data.state == -3 || response.data.state == -1){
                     this.$toast.error(response.data.message).goAway(4000)
                     this.loading = false
                     return
-                    } else {
-                        let user = response.data.data
-                        if(user) {
-                            this.$auth.setUserToken(response.data.loginToken)
-                            this.$auth.setUser(user)
-                            let timeToLogout = new Date();
-                            timeToLogout = timeToLogout.setDate(timeToLogout.getDate() + 1);
-                            let bb = Date.now()
-                            process.client ? localStorage.setItem('signedInUser', JSON.stringify(user)) : '';
-                            this.loading = false
-                            this.$toast.success(response.data.message).goAway(4000)
-                            this.$router.push({path: '/'})
-                        }   
-                }
+                } else {
+                    this.showResponse(response, 'success', 1)
+                    this.getResetPasswordView();
+                }  
             }).catch(error => {
-                context.dispatch('processError', error);
-                    reject(error)   
+                    this.showResponse(error, 'danger', 0)
                 })
             }
+        },
+        showResponse(response, color, state){
+            this.loading = false 
+            state == 1 ? this.alertMsg = response.data.message : this.alertMsg = response.response
+            this.alertColor = color
+            this.showAlert = true
+            this.email = ''
         },
         myEventHandler(e) {
             let screenWidth = e.target.innerWidth

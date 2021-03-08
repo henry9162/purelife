@@ -1,19 +1,19 @@
 let testProducts = [{
-            productName: 'test',
+            productName: 'biscuitsandpenv',
             quantity: 10,
             serial: 1234,
             unitPrice: 10,
-            total: 0
+            total: 100
         }, {
             productName: 'test',
             quantity: 10,
             serial: 1234,
             unitPrice: 10,
-            total: 0
+            total: 100
         }];
 
 export const state = () => ({
-    products: [],
+    products: testProducts,
     totalQuantity: 0
 })
 

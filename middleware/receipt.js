@@ -47,6 +47,14 @@ img {
   width: inherit;
 }
 
+mt-1 {
+  margin-top: 1rem
+}
+
+mb-1 {
+  margin-bottom: 3rem
+}
+
 @media print {
   .hidden-print,
   .hidden-print * {

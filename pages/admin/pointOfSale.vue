@@ -285,6 +285,9 @@ export default {
         },
         totalQuantity(){
             return this.$store.getters["pointOfSale/totalQuantity"];
+        },
+        authUser() {
+            return this.$store.state.auths.authUser.firstName + " " + this.$store.state.auths.authUser.lastName
         }
     },
 
@@ -401,79 +404,7 @@ export default {
             return uniqid("pstk-");
         },
         processPOSPaymentFromModal() {
-            let mode = this.paymentMode;
-            let paymentModeText = "";
-
-            switch (mode) {
-                case 1:
-                    paymentModeText = "CASH"
-                    break;
-                case 2:
-                    paymentModeText = "POS"
-                    break;
-                case 3:
-                    paymentModeText = "TRANSFER"
-                    break;
-            
-                default:
-                    break;
-            }
-
-            let {css} = require('../../middleware/receipt');
-            let tableData = "";
-
-            this.products.map(product => {
-                let data = `<tr>
-                        <td class="description">${product.productName}</td>
-                        <td class="quantity">${product.quantity}</td>
-                        <td class="price">${product.unitPrice}</td>
-                        <td class="price">${product.total}</td>
-                    </tr>`;
-                
-                tableData += data;
-            });
-            let total = `<tr>
-                        <td class="description">TOTAL</td>
-                        <td class="quantity"></td>
-                        <td class="quantity"></td>
-                        <td class="price">${this.totalPrice}</td>
-                    </tr>`
-            tableData += total;
-
-            let printWindow = window.open("", "PRINT", "width= 400, height= 600");
-            this.$modal.hide('payment-modal');
-            printWindow.document.write('<html><head><title> Print Receipt </title>');
-            printWindow.document.write('<html><head><style>' + css + '</style>');
-            printWindow.document.write('</head><body>');
-            printWindow.document.write('<div class="ticket"><img src="/_nuxt/assets/logos/newLogo.png" alt="Logo">');
-            printWindow.document.write('<p class="centered">RECEIPT</p>');
-            printWindow.document.write(`<p class="centered">Mode of payment: ${paymentModeText}</p>`);
-            printWindow.document.write('<table>');
-            printWindow.document.write('<thead><tr>');
-            printWindow.document.write('<th class="quantity">Product</th>');
-            printWindow.document.write('<th class="quantity">Qty</th>');
-            printWindow.document.write('<th class="quantity">Price</th>');
-            printWindow.document.write('<th class="quantity">Total</th>');
-            printWindow.document.write('</tr></thead>');
-            printWindow.document.write('<tbody>');
-            printWindow.document.write(tableData);
-            printWindow.document.write('</tbody></table>');
-            printWindow.document.write(`<p class="centered">Thanks for your purchase!
-                <br>Purelife Pharmacy</p>`);
-            printWindow.document.write('</body></html>');
-            printWindow.document.close(); // necessary for IE >= 10
-            printWindow.focus(); // necessary for IE >= 10*/
-
-            printWindow.onload = function(){
-                this.addEventListener('afterprint', (event) => {
-                    printWindow.close();
-                    this.processCashPayment();
-                })
-            };
-            printWindow.print();
-
-
-
+            this.processCashPayment();
         },
         async processCashPayment(){
 
@@ -510,10 +441,89 @@ export default {
             let message = mode == 1 ? 'Successfully made payment with CASH' :
                 mode == 2 ? 'Successfully made payment with POS' : 'Successfully made payment with TRANSFER';
 
-            await this.processPayment(data).then(() => {
+            await this.processPayment(data).then((data) => {
                 this.isPageLoading = false;
                 this.$toast.success(message).goAway(4000);
-                this.clearProducts();
+                let mode = this.paymentMode;
+                let paymentModeText = "";
+                
+
+                switch (mode) {
+                    case 1:
+                        paymentModeText = "CASH"
+                        break;
+                    case 2:
+                        paymentModeText = "POS"
+                        break;
+                    case 3:
+                        paymentModeText = "TRANSFER"
+                        break;
+                
+                    default:
+                        break;
+                }
+                
+                let {css} = require('../../middleware/receipt');
+                let tableData = "";
+
+                this.products.map(product => {
+                    let data = `<tr>
+                            <td class="description">${product.productName.toLowerCase().slice(0, 14)}</td>
+                            <td class="quantity">${product.quantity}</td>
+                            <td class="price">${product.unitPrice}</td>
+                            <td class="price">${product.total}</td>
+                        </tr>`;
+                    
+                    tableData += data;
+                });
+                let total = `<tr>
+                                <td class="description">SUBTOTAL</td>
+                                <td class="quantity"></td>
+                                <td class="quantity"></td>
+                                <td class="price">${this.totalPrice}</td>
+                            </tr>
+                            `
+                tableData += total;
+                
+                let printWindow = window.open("", "PRINT", "width= 400, height= 600");
+                this.$modal.hide('payment-modal');
+                printWindow.document.write('<html><head><title> Print Receipt </title>');
+                printWindow.document.write('<html><head><style>' + css + '</style>');
+                printWindow.document.write('</head><body>');
+                printWindow.document.write('<div style="display: flex;flex-direction: column;align-content: center;height: 100%;justify-content: space-between;">');
+                printWindow.document.write('<div class="ticket"><img src="/_nuxt/assets/logos/newLogo.png" alt="Logo">');
+                printWindow.document.write('<p class="centered">RECEIPT</p>');
+                printWindow.document.write(`<p class="centered">Mode of payment: ${paymentModeText}</p>`);
+                printWindow.document.write(`<p class="centered mt-1">Cust. Name: <span style="text-transform: uppercase"></span></p>`);
+                printWindow.document.write(`<p class="centered mb-1">Attended by: <span style="text-transform: uppercase">${this.authUser}</span></p>`);
+                printWindow.document.write('<table>');
+                printWindow.document.write('<thead><tr>');
+                printWindow.document.write('<th class="quantity">Product</th>');
+                printWindow.document.write('<th class="quantity">Qty</th>');
+                printWindow.document.write('<th class="quantity">Price</th>');
+                printWindow.document.write('<th class="quantity">Total</th>');
+                printWindow.document.write('</tr></thead>');
+                printWindow.document.write('<tbody>');
+                printWindow.document.write(tableData);
+                printWindow.document.write('</tbody></table>');
+                printWindow.document.write(`<p class="mt-1" style="text-align:right">Total: <span style="margin-left:93px;margin-right: 40px">${this.totalPrice}</span></p>`);
+                printWindow.document.write(`<p class="mt-1">Invoice No: <span>${data.data.data}</span></p>`);
+                printWindow.document.write('</div>');
+                printWindow.document.write(`<p class="centered">Thanks for your purchase!
+                    <br>Purelife Pharmacy</p>`);
+                printWindow.document.write('</body></html>');
+                printWindow.document.close(); // necessary for IE >= 10
+                printWindow.focus(); // necessary for IE >= 10*/
+
+                printWindow.onload = function(){
+                    this.addEventListener('afterprint', (event) => {
+                        printWindow.close();
+                        this.clearProducts();
+                    });
+                };
+                
+                printWindow.print();
+
             });
         }
     },

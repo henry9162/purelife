@@ -4,6 +4,7 @@ import { buildFilters } from '../plugins/buildFilters';
 
 export const state = () => ({
     categories: [],
+    filteredCategory: "",
     styles: [],
     materials: [],
     colors: [],
@@ -46,7 +47,10 @@ export const mutations = {
     },
     setCategories(state, payload){
         state.categories = payload;
-    }
+    },
+    setFilteredCategory(state, payload){
+        state.filteredCategory = payload;
+    },
 }
 
 export const actions = {
@@ -56,9 +60,10 @@ export const actions = {
 
     displayBaseFilter(context, payload) {
         if (payload.type == 'category'){
-            let categories = context.rootState.categories.categories
+            let categories = context.rootState.categories.categories;
             let category = categories.find(category => category.productCategyId == payload.id);
-            context.dispatch('getCategoryById', category.productCategyId)
+            context.dispatch('getCategoryById', category.productCategyId);
+            context.commit('setFilteredCategory', payload.id);
         } 
         if (payload.type == 'search'){
             context.dispatch('getProductById', payload.id) 

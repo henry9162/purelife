@@ -33,7 +33,7 @@
                                             </v-list-item-title>
                                         </v-list-item-content>
                                     </template>
-                                    <v-list-item class="pl-0" @click="">
+                                    <v-list-item class="pl-0">
                                         <v-list-item-content>
                                             <div class="px-3">
                                                 <v-range-slider v-model="range" :max="max" :min="min" hide-details class="align-center"></v-range-slider>
@@ -75,7 +75,7 @@
                         <!-- Categories -->
                         <div class="px-4">
                              <v-list class="pb-0">
-                                <v-list-group v-model="expandCategories" no-action>
+                                <v-list-group v-model="expandCategories" no-action class=" categorySection">
                                     <template v-slot:activator>
                                         <v-list-item-content>
                                             <v-list-item-title>
@@ -83,8 +83,11 @@
                                             </v-list-item-title>
                                         </v-list-item-content>
                                     </template>
-                                    <v-list-item class="pl-10 post-caption" v-for="(category, i) in categories" :key="i" @click="">
-                                        <v-list-item-title @click="$store.dispatch('filters/displayBaseFilter', { name: category.productCategyName, id: category.productCategyId, type: 'category' });" v-text="category.productCategyName"></v-list-item-title>
+                                    <v-list-item class="pl-10 post-caption" v-for="(category, i) in categories" :key="i">
+                                        <v-list-item-title style="cursor:pointer"
+                                            @click="dispatchActions(category)" 
+                                            v-text="category.productCategyName">
+                                        </v-list-item-title>
                                     </v-list-item>
                                     <!-- <v-list-item class="pl-0 pb-0" @click="">
                                         <v-list-item-content class="pb-0">
@@ -204,11 +207,14 @@ export default {
             categories: 'filters/getCategories',
             isLoading: 'filters/getLoader',
         }),
+        // products(){
+        //     return this.getAllProducts().filter(product => {
+        //         return this.inStock ? product.price > this.range[0] && product.price < this.range[1] && product.quantity > 0 : product.price > this.range[0] && product.price < this.range[1];
+        //     })
+        // },
         products(){
-            return this.getAllProducts().filter(product => {
-                return this.inStock ? product.price > this.range[0] && product.price < this.range[1] && product.quantity > 0 : product.price > this.range[0] && product.price < this.range[1];
-            })
-        }
+            return this.$store.getters["productss/paginatedProducts"];
+        },
     },
 
      methods: {
@@ -262,6 +268,13 @@ export default {
             }
 
             console.log(getMissingNum(arr))
+        },
+        dispatchActions(category) {
+            // this.$store.dispatch('filters/displayBaseFilter', 
+            //     { name: category.productCategyName, id: category.productCategyId, type: 'category' });
+
+            this.$store.dispatch('productss/setFilterCategory', 
+                { name: category.productCategyName, id: category.productCategyId, type: 'category' });
         }
     },
 
@@ -279,5 +292,9 @@ export default {
     .post-caption {
         font-family: light-font(family);
         font-weight: 100 !important;
+    }
+    .categorySection .v-list-group__items{
+        max-height: 300px;
+        overflow-y: auto;
     }
 </style>

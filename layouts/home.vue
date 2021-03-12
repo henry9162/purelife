@@ -3,7 +3,7 @@
         <v-navigation-drawer width="300" v-model="drawer" absolute temporary>
             
             <div style="margin: 20px 15px 10px 15px">
-                <v-autocomplete
+                <!-- <v-autocomplete
                     v-model="select"
                     :loading="loading"
                     :items="items"
@@ -18,7 +18,15 @@
                     rounded
                     label="Search products?"
                     solo-inverted>
-                </v-autocomplete>
+                </v-autocomplete> -->
+                <v-text-field
+                    placeholder="Search for products"
+                    filled
+                    rounded
+                    class="px-4"
+                    flat
+                    v-model="searchFilterProduct"
+                ></v-text-field>
             </div>
 
             <client-only>
@@ -117,7 +125,7 @@
 
                 <v-spacer />
 
-                <v-autocomplete
+                <!-- <v-autocomplete
                     v-model="select"
                     :loading="loading"
                     :items="items"
@@ -132,7 +140,18 @@
                     rounded
                     label="Search products?"
                     solo-inverted>
-                </v-autocomplete>
+                </v-autocomplete> -->
+                <v-text-field
+                    placeholder="Search for products"
+                    filled
+                    rounded
+                    class="d-none d-sm-flex mt-4 mx-4 my-auto"
+                    flat
+                    v-model="searchFilterProduct"
+                    append-icon="mdi-book-search"
+                    @click:append="searchFilterProducts"
+                    @keydown.enter="searchFilterProducts"
+                ></v-text-field>
 
                 <v-spacer />
 
@@ -381,6 +400,7 @@ export default {
     data: () => ({
         defaultImage: 'https://via.placeholder.com/150',
         loading: false,
+        searchFilterProduct: '',
         menu2: false,
         menu3: false,
         userMenu: false,
@@ -452,6 +472,9 @@ export default {
             //logout: 'logout',
             removeCartItem: 'productss/removeCartItem'
         }),
+        searchFilterProducts() {
+            this.$store.dispatch('productss/setSearchFilter', this.searchFilterProduct);
+        },
         searchThread(val){
             this.loading = true
             const products = [...this.productss]
@@ -487,6 +510,7 @@ export default {
         async initialise(){
             //this.deactivateSnackbar();
             await this.$store.dispatch('productss/getAllProducts');
+            await this.$store.dispatch('productss/getPaginatedProducts');
             //this.$store.dispatch('productss/persistCart');
             this.$store.dispatch('categories/getAllCategories');
             this.$store.dispatch('filters/getAllProducts');

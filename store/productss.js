@@ -1,5 +1,8 @@
 export const state = () => ({
     products: [],
+    paginatedProducts: [],
+    filteredCategory: "00000000-0000-0000-0000-000000000000",
+    searchFilter: "",
     product: {},
     cart: [],
     billInfo: {},
@@ -21,6 +24,9 @@ export const state = () => ({
 export const mutations = {
     setProducts(state, data){
         state.products = data
+    },
+    setPaginatedProducts(state, data){
+        state.paginatedProducts  = data
     },
     setexpiredProducts(state, data){
         state.expiredProducts = data
@@ -104,6 +110,12 @@ export const mutations = {
     setTransactionByUserId(state, data){
         state.transProductsByUser = data
     },
+    setFilteredCategory(state, payload){
+        state.filteredCategory = payload;
+    },
+    setSearchFilter(state, payload){
+        state.searchFilter = payload;
+    },
     setProductsAboutToExpire(state, data){
         state.productsAboutToExpire = data
     }
@@ -112,6 +124,29 @@ export const mutations = {
 export const actions = {
     toggleProductDropdown(context, id) {
         context.commit('toggleShow', id)
+    },
+    setFilterCategory(context, payload) {
+        context.commit('setFilteredCategory', payload.id);
+        context.dispatch("getPaginatedProducts")
+    },
+    setSearchFilter(context, payload) {
+        context.commit('setSearchFilter', payload);
+        context.dispatch("getPaginatedProducts")
+    },
+    getPaginatedProducts(context){
+        context.commit('setLoader', true)
+        let data = {
+            "prodName": context.state.searchFilter,
+            "categoryId": context.state.filteredCategory
+        }
+        this.$axios.put('/Products/GetAllProductsForOnlineShop/1/10', data)
+            .then(response => {
+                context.commit('setPaginatedProducts', response.data.data)
+                context.commit('setLoader', false)
+                context.dispatch('persistCart')
+            }).catch(error => {
+                context.dispatch('processError', error)
+            })
     },
     persistCart(context) {
         if(this.$auth.loggedIn){
@@ -193,6 +228,17 @@ export const actions = {
     getAllProducts(context){
         context.commit('setLoader', true)
         this.$axios.get('/Products/GetAllProducts')
+            .then(response => {
+                context.commit('setProducts', response.data.data)
+                context.commit('setLoader', false)
+                context.dispatch('persistCart')
+            }).catch(error => {
+                context.dispatch('processError', error)
+            })
+    },
+    getAllPaginatedProducts(context, data){
+        context.commit('setLoader', true)
+        this.$axios.get('/Products/GetAllProductsForOnlineShop/1/10')
             .then(response => {
                 context.commit('setProducts', response.data.data)
                 context.commit('setLoader', false)
@@ -362,6 +408,8 @@ export const getters = {
         return state.products;
     },
     products(state) { return state.products },
+
+    paginatedProducts(state) { return state.paginatedProducts },
 
     product(state) { return state.product },
 
